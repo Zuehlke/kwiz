@@ -1,0 +1,38 @@
+# QwiZ - The Zühlke Pub Quiz
+
+## Introduction
+A pub quiz is a quiz held in a pub or bar. These quizzes are popular social events that combine knowledge testing with a fun, relaxed atmosphere. This document outlines the basic rules for running and participating in a pub quiz.
+
+## General Rules
+1. **Teams**: Participants form teams
+2. **No Cheating**: The Online research or asking people not part of the team is not allowed.
+3. **Quiet During Questions**: Teams should remain quiet while questions are being read.
+4**Time Limit**: Each round typically has a set time limit for answering questions.
+
+## Team Formation
+1. Choose a creative team name.
+2. Register your team with the quiz master before the quiz begins.
+
+## Scoring
+1. Each correct answer is typically worth one point.
+2. Some questions may be worth more points if they are particularly difficult.
+3. The team with the highest total score at the end of all rounds wins.
+4. In case of a tie, a tie-breaker question will be used to determine the winner.
+
+## Rounds
+A typical pub quiz consists of several rounds, which may include:
+1. **General Knowledge**: Questions covering a wide range of topics.
+2. **Music**: Identifying songs, artists, or lyrics.
+3. **Picture Round**: Identifying images, celebrities, landmarks, etc.
+4. **Sports**: Questions related to various sports and sporting events.
+5. **History**: Questions about historical events, figures, and periods.
+6. **Science and Nature**: Questions about scientific facts, discoveries, and natural phenomena.
+7. **Entertainment**: Questions about movies, TV shows, books, etc.
+
+## Etiquette
+1. Be respectful to the quiz master and other teams.
+2. Keep your answers and discussions quiet to avoid giving away answers to other teams.
+3. Accept the quiz master's decision as final.
+4. Have fun! The primary purpose of a pub quiz is entertainment.
+
+Remember, the main goal of a pub quiz is to have fun while testing your knowledge in a social setting!
