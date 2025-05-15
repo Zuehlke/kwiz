@@ -19,7 +19,6 @@ bin/
 
 ### IntelliJ IDEA ###
 !.idea/runConfigurations
-.idea
 *.iws
 *.iml
 *.ipr
