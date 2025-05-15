@@ -35,7 +35,20 @@ The quizmaster is responsible for:
 1. A Team can join a quiz with the unique ID provided by the quizmaster.
 2. A Team can join a quiz with the link provided by the quizmaster.
 3. As a first step, a team has to choose a team name. The team name has to be unique per quiz.
+4. As long as the quiz is not started, a team can change the team name.
+5. As long as the quiz is not started, a team can leave the quiz.
+6. As long as the quiz is not started, a team can join the quiz.
+7. As long as the quiz is not started, a team can contribute own questions.
 
 ## Running a quiz as a quizmaster
+1. The quizmaster can start a quiz.
+2. The questions will be presented to the teams.
+3. Once all teams have answered the question, the quizmaster can see the answers of all teams.
+4. If all teams have answered, the quiz advances to the next question.
+5. If all questions are answered, the quizmaster can end the quiz and see the ranking.
 
-## Running a quis as a team
+## Running a quiz as a team
+1. A team sees the current question and can submit an answer.
+2. Once an answer is submitted, the answer cannot be changed.
+3. Before a team sees the next question, the team sees a countdown.
+4. After every round, every team can see the ranking.
