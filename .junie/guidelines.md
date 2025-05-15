@@ -1,7 +1,6 @@
 1. Tech Stack
 * Backend: Java 21+ with Spring Boot 
 * Frontend: Angular 19 with TypeScript and Scss
-* Prefer Angular Signals over traditional state management when applicable, separate template from component.
 
 2. Communication Between Frontend & Backend 
 * Use WebSockets for real-time or frequent interactions. 
@@ -33,8 +32,7 @@
   * Package by domain, not by technical layer. 
   * Each domain should be self-contained. 
 * Frontend:
-  * Use feature-based module structure. 
-  * State management should use Angular Signals or RxJS where necessary.
+  * Use feature-based module structure.
 
 7. AI-Specific Instructions
 * Think step-by-step. 
