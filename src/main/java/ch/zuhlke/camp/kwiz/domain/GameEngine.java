@@ -218,19 +218,20 @@ public class GameEngine {
 
     /**
      * Allows a participant to submit a question to a quiz.
-     * The question will be added to a special round for participant-submitted questions.
+     * The question will be added to the specified round.
      * This is only allowed if the quiz has not started yet.
      *
      * @param quizId the ID of the quiz to add the question to
      * @param playerId the ID of the player submitting the question
+     * @param roundId the ID of the round to add the question to
      * @param questionText the text of the question
      * @param correctAnswers the list of correct answers
      * @param timeLimit the time limit for the question in seconds
      * @return the created question
-     * @throws IllegalArgumentException if no quiz with the given ID exists, or no player with the given ID exists
+     * @throws IllegalArgumentException if no quiz with the given ID exists, no player with the given ID exists, or no round with the given ID exists
      * @throws IllegalStateException if the quiz has already started
      */
-    public Question submitParticipantQuestion(String quizId, String playerId, String questionText, List<String> correctAnswers, int timeLimit) {
+    public Question submitParticipantQuestion(String quizId, String playerId, String roundId, String questionText, List<String> correctAnswers, int timeLimit) {
         Quiz quiz = getQuizById(quizId);
         if (quiz == null) {
             throw new IllegalArgumentException("No quiz found with ID: " + quizId);
@@ -245,18 +246,11 @@ public class GameEngine {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No player found with ID: " + playerId));
 
-        // Find or create a round for participant-submitted questions
-        String participantRoundName = "Participant Questions";
-        Optional<Round> participantRound = quiz.getRounds().stream()
-                .filter(r -> r.getName().equals(participantRoundName))
-                .findFirst();
-
-        Round round;
-        if (participantRound.isPresent()) {
-            round = participantRound.get();
-        } else {
-            round = addRoundToQuiz(quizId, participantRoundName);
-        }
+        // Find the specified round
+        Round round = quiz.getRounds().stream()
+                .filter(r -> r.getId().equals(roundId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No round found with ID: " + roundId));
 
         // Add the question to the round with the player ID as the submitter
         Question question = new Question(questionText, correctAnswers, timeLimit, playerId);
@@ -285,18 +279,9 @@ public class GameEngine {
             throw new IllegalArgumentException("No player found with ID: " + playerId);
         }
 
-        // Find the participant questions round
-        String participantRoundName = "Participant Questions";
-        Optional<Round> participantRound = quiz.getRounds().stream()
-                .filter(r -> r.getName().equals(participantRoundName))
-                .findFirst();
-
-        if (participantRound.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        // Filter questions by submitter ID
-        return participantRound.get().getQuestions().stream()
+        // Find all questions submitted by the player across all rounds
+        return quiz.getRounds().stream()
+                .flatMap(round -> round.getQuestions().stream())
                 .filter(q -> playerId.equals(q.getSubmitterId()))
                 .toList();
     }

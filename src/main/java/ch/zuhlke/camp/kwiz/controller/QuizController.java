@@ -327,34 +327,19 @@ public class QuizController {
             @PathVariable String playerId,
             @RequestBody SubmitQuestionRequest request) {
         try {
-            // If roundId is provided, add the question to that round
-            // Otherwise, use the default behavior (add to "Participant Questions" round)
-            Question question;
-            if (request.getRoundId() != null && !request.getRoundId().isEmpty()) {
-                question = gameEngine.addQuestionToRound(
-                        quizId,
-                        request.getRoundId(),
-                        request.getQuestionText(),
-                        request.getCorrectAnswers(),
-                        request.getTimeLimit()
-                );
-                // Set the submitter ID manually since addQuestionToRound doesn't do it
-                // This is a workaround until we update the GameEngine method
-                question = new Question(
-                        question.getText(),
-                        question.getCorrectAnswers(),
-                        question.getTimeLimit(),
-                        playerId
-                );
-            } else {
-                question = gameEngine.submitParticipantQuestion(
-                        quizId,
-                        playerId,
-                        request.getQuestionText(),
-                        request.getCorrectAnswers(),
-                        request.getTimeLimit()
-                );
+            // A round ID is required for submitting a question
+            if (request.getRoundId() == null || request.getRoundId().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "A round ID is required for submitting a question"));
             }
+
+            Question question = gameEngine.submitParticipantQuestion(
+                    quizId,
+                    playerId,
+                    request.getRoundId(),
+                    request.getQuestionText(),
+                    request.getCorrectAnswers(),
+                    request.getTimeLimit()
+            );
 
             Map<String, Object> response = new HashMap<>();
             response.put("questionId", question.getId());
