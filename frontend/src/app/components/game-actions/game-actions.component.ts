@@ -17,7 +17,7 @@ export class GameActionsComponent {
 
   // Form data
   quizName = signal('');
-  teamName = signal('');
+  playerName = signal('');
   quizId = signal('');
   errorMessage = signal('');
 
@@ -68,13 +68,13 @@ export class GameActionsComponent {
       return;
     }
 
-    if (!this.teamName()) {
+    if (!this.playerName()) {
       this.errorMessage.set('Please enter a team name');
       return;
     }
 
     const request: JoinQuizRequest = {
-      participantName: this.teamName()
+      participantName: this.playerName()
     };
 
     this.quizService.joinQuiz(this.quizId(), request)

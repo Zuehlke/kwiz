@@ -3,7 +3,7 @@ package ch.zuhlke.camp.kwiz.domain;
 import java.util.Objects;
 
 /**
- * Answer is a value object that represents a team's answer to a question.
+ * Answer is a value object that represents a player's answer to a question.
  */
 public class Answer {
     private final String questionId;
