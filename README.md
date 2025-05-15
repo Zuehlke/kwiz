@@ -132,4 +132,4 @@ The KwiZ application follows a streamlined release and deployment process that e
 
 ### Known Issues
 
-Somehow the pure URL without any trainling path seems notto work yet - which is a bug in current WebConfig that our most valued developer IntelliJ Junie was not yet able to fix.
+* Somehow the pure URL without any trailing path seems not to work yet - which is a bug in current WebConfig that our most valued developer IntelliJ Junie was not yet able to fix.
