@@ -72,4 +72,14 @@ export class QuizService {
   joinQuiz(quizId: string, request: JoinQuizRequest): Observable<JoinQuizResponse> {
     return this.http.post<JoinQuizResponse>(`${this.apiUrl}/${quizId}/players`, request);
   }
+
+  /**
+   * Starts a quiz.
+   * 
+   * @param quizId The ID of the quiz to start
+   * @returns An observable of the quiz details
+   */
+  startQuiz(quizId: string): Observable<QuizDetails> {
+    return this.http.post<QuizDetails>(`${this.apiUrl}/${quizId}/start`, {});
+  }
 }

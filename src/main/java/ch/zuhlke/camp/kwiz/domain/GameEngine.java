@@ -1,5 +1,6 @@
 package ch.zuhlke.camp.kwiz.domain;
 
+import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class GameEngine {
     private final Map<String, Quiz> quizzes;
+    private final WebSocketController webSocketController;
 
-    public GameEngine() {
+    public GameEngine(WebSocketController webSocketController) {
         this.quizzes = new ConcurrentHashMap<>();
+        this.webSocketController = webSocketController;
     }
 
     /**
@@ -75,6 +78,10 @@ public class GameEngine {
 
         Player player = new Player(playerName);
         quiz.addPlayer(player);
+
+        // Send WebSocket message with updated quiz information
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted());
+
         return player;
     }
 
@@ -91,6 +98,9 @@ public class GameEngine {
         }
 
         quiz.start();
+
+        // Send WebSocket message with updated quiz information
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted());
     }
 
     /**
