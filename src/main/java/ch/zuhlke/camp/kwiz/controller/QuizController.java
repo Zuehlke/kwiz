@@ -42,12 +42,12 @@ public class QuizController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createQuiz(@RequestBody CreateQuizRequest request) {
         Quiz quiz = gameEngine.createQuiz(request.getQuizId(), request.getQuizName(), request.getMaxPlayers());
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
         response.put("maxPlayers", quiz.getMaxPlayers());
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -80,7 +80,7 @@ public class QuizController {
         response.put("started", quiz.isStarted());
         response.put("ended", quiz.isEnded());
         response.put("playerCount", quiz.getPlayers().size());
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -107,7 +107,7 @@ public class QuizController {
             @RequestBody JoinQuizRequest request) {
         try {
             Player player = gameEngine.addPlayerToQuiz(quizId, request.getPlayerName());
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("quizId", quizId);
             response.put("playerId", player.getId());
