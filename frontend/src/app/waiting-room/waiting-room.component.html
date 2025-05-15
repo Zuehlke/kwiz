@@ -15,6 +15,72 @@
         <span class="status-text">Waiting for quiz master to start the quiz</span>
       </div>
     </div>
+
+    <!-- Question submission form -->
+    @if (!quizDetails.started) {
+      <div class="question-submission">
+        <h3>Submit Your Own Question</h3>
+        <p>While waiting, you can create and submit your own questions for the quiz!</p>
+
+        @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+        }
+
+        @if (questionSubmitted) {
+          <div class="success-message">Question submitted successfully!</div>
+        }
+
+        <form (ngSubmit)="submitQuestion()">
+          <div class="form-group">
+            <label for="questionText">Question:</label>
+            <textarea 
+              id="questionText" 
+              name="questionText" 
+              [(ngModel)]="newQuestion.questionText" 
+              required
+              placeholder="Enter your question here"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Correct Answers:</label>
+            @for (answer of newQuestion.correctAnswers; track $index) {
+              <div class="answer-input">
+                <input 
+                  type="text" 
+                  [(ngModel)]="newQuestion.correctAnswers[$index]" 
+                  name="correctAnswer{{$index}}" 
+                  placeholder="Enter a correct answer"
+                  required
+                >
+                @if (newQuestion.correctAnswers.length > 1) {
+                  <button type="button" class="remove-btn" (click)="removeCorrectAnswer($index)">Remove</button>
+                }
+              </div>
+            }
+            <button type="button" class="add-btn" (click)="addCorrectAnswer()">Add Another Answer</button>
+          </div>
+
+          <div class="form-group">
+            <label for="timeLimit">Time Limit (seconds):</label>
+            <input 
+              type="number" 
+              id="timeLimit" 
+              name="timeLimit" 
+              [(ngModel)]="newQuestion.timeLimit" 
+              min="5" 
+              max="120"
+              required
+            >
+          </div>
+
+          <button type="submit" [disabled]="submittingQuestion">
+            {{ submittingQuestion ? 'Submitting...' : 'Submit Question' }}
+          </button>
+        </form>
+      </div>
+    }
   } @else {
     <div class="loading">
       <p>Loading quiz details...</p>

@@ -2,6 +2,7 @@ package ch.zuhlke.camp.kwiz.controller;
 
 import ch.zuhlke.camp.kwiz.domain.GameEngine;
 import ch.zuhlke.camp.kwiz.domain.Player;
+import ch.zuhlke.camp.kwiz.domain.Question;
 import ch.zuhlke.camp.kwiz.domain.Quiz;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -167,6 +169,84 @@ public class QuizController {
 
         public void setPlayerName(String playerName) {
             this.playerName = playerName;
+        }
+    }
+
+    /**
+     * Allows a participant to submit a question to a quiz.
+     *
+     * @param quizId the ID of the quiz to add the question to
+     * @param playerId the ID of the player submitting the question
+     * @param request the request containing question details
+     * @return the created question
+     */
+    @Operation(
+            summary = "Submit a participant question",
+            description = "Allows a participant to submit a question to a quiz. This is only allowed if the quiz has not started yet.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Question submitted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz or player not found"),
+                    @ApiResponse(responseCode = "409", description = "Quiz has already started")
+            }
+    )
+    @PostMapping("/{quizId}/players/{playerId}/questions")
+    public ResponseEntity<Map<String, Object>> submitParticipantQuestion(
+            @PathVariable String quizId,
+            @PathVariable String playerId,
+            @RequestBody SubmitQuestionRequest request) {
+        try {
+            Question question = gameEngine.submitParticipantQuestion(
+                    quizId,
+                    playerId,
+                    request.getQuestionText(),
+                    request.getCorrectAnswers(),
+                    request.getTimeLimit()
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("questionId", question.getId());
+            response.put("questionText", question.getText());
+            response.put("correctAnswers", question.getCorrectAnswers());
+            response.put("timeLimit", question.getTimeLimit());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Request object for submitting a question.
+     */
+    public static class SubmitQuestionRequest {
+        private String questionText;
+        private List<String> correctAnswers;
+        private int timeLimit;
+
+        public String getQuestionText() {
+            return questionText;
+        }
+
+        public void setQuestionText(String questionText) {
+            this.questionText = questionText;
+        }
+
+        public List<String> getCorrectAnswers() {
+            return correctAnswers;
+        }
+
+        public void setCorrectAnswers(List<String> correctAnswers) {
+            this.correctAnswers = correctAnswers;
+        }
+
+        public int getTimeLimit() {
+            return timeLimit;
+        }
+
+        public void setTimeLimit(int timeLimit) {
+            this.timeLimit = timeLimit;
         }
     }
 }

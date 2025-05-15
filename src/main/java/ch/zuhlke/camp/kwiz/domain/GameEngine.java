@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -203,5 +204,53 @@ public class GameEngine {
             Answer answer = player.getAnswerForQuestion(questionId);
             answer.markAsCorrect();
         }
+    }
+
+    /**
+     * Allows a participant to submit a question to a quiz.
+     * The question will be added to a special round for participant-submitted questions.
+     * This is only allowed if the quiz has not started yet.
+     *
+     * @param quizId the ID of the quiz to add the question to
+     * @param playerId the ID of the player submitting the question
+     * @param questionText the text of the question
+     * @param correctAnswers the list of correct answers
+     * @param timeLimit the time limit for the question in seconds
+     * @return the created question
+     * @throws IllegalArgumentException if no quiz with the given ID exists, or no player with the given ID exists
+     * @throws IllegalStateException if the quiz has already started
+     */
+    public Question submitParticipantQuestion(String quizId, String playerId, String questionText, List<String> correctAnswers, int timeLimit) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            throw new IllegalArgumentException("No quiz found with ID: " + quizId);
+        }
+
+        if (quiz.isStarted()) {
+            throw new IllegalStateException("Cannot submit questions after the quiz has started");
+        }
+
+        Player player = quiz.getPlayers().stream()
+                .filter(p -> p.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No player found with ID: " + playerId));
+
+        // Find or create a round for participant-submitted questions
+        String participantRoundName = "Participant Questions";
+        Optional<Round> participantRound = quiz.getRounds().stream()
+                .filter(r -> r.getName().equals(participantRoundName))
+                .findFirst();
+
+        Round round;
+        if (participantRound.isPresent()) {
+            round = participantRound.get();
+        } else {
+            round = addRoundToQuiz(quizId, participantRoundName);
+        }
+
+        // Add the question to the round
+        Question question = new Question(questionText, correctAnswers, timeLimit);
+        round.addQuestion(question);
+        return question;
     }
 }

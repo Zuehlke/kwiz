@@ -97,6 +97,12 @@ export class GameActionsComponent {
           console.log('Joined quiz:', response);
           this.errorMessage.set('Joined quiz successfully! Redirecting to waiting room...');
 
+          // Store player data in local storage
+          localStorage.setItem(`player_${response.quizId}`, JSON.stringify({
+            playerId: response.playerId,
+            playerName: response.playerName
+          }));
+
           // Navigate to the waiting room using the redirectUrl from the response
           if (response.redirectUrl) {
             this.router.navigateByUrl(response.redirectUrl);
