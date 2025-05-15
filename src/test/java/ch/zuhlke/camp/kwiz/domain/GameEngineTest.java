@@ -158,12 +158,15 @@ class GameEngineTest {
         Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
         Player player = gameEngine.addPlayerToQuiz(quizId, "Player A");
 
+        // Create a round for participant questions
+        Round round = gameEngine.addRoundToQuiz(quizId, "My Round");
+
         String questionText = "What is the capital of France?";
         List<String> correctAnswers = Arrays.asList("Paris");
         int timeLimit = 30;
 
         // When
-        Question question = gameEngine.submitParticipantQuestion(quizId, player.getId(), questionText, correctAnswers, timeLimit);
+        Question question = gameEngine.submitParticipantQuestion(quizId, player.getId(), round.getId(), questionText, correctAnswers, timeLimit);
 
         // Then
         assertNotNull(question);
@@ -171,11 +174,11 @@ class GameEngineTest {
         assertEquals(correctAnswers, question.getCorrectAnswers());
         assertEquals(timeLimit, question.getTimeLimit());
 
-        // Verify that the question was added to a round
+        // Verify that the question was added to the specified round
         boolean questionFound = false;
-        for (Round round : quiz.getRounds()) {
-            if (round.getName().equals("Participant Questions")) {
-                for (Question q : round.getQuestions()) {
+        for (Round r : quiz.getRounds()) {
+            if (r.getId().equals(round.getId())) {
+                for (Question q : r.getQuestions()) {
                     if (q.getId().equals(question.getId())) {
                         questionFound = true;
                         break;
@@ -183,7 +186,7 @@ class GameEngineTest {
                 }
             }
         }
-        assertTrue(questionFound, "Question should be added to the 'Participant Questions' round");
+        assertTrue(questionFound, "Question should be added to the specified round");
     }
 
     @Test
@@ -198,6 +201,9 @@ class GameEngineTest {
         // Add a round to the quiz so it can be started
         Round round = gameEngine.addRoundToQuiz(quizId, "Round 1");
 
+        // Create another round for participant questions
+        Round participantRound = gameEngine.addRoundToQuiz(quizId, "My Round");
+
         // Start the quiz
         gameEngine.startQuiz(quizId);
 
@@ -207,7 +213,30 @@ class GameEngineTest {
 
         // When/Then
         assertThrows(IllegalStateException.class, () -> {
-            gameEngine.submitParticipantQuestion(quizId, player.getId(), questionText, correctAnswers, timeLimit);
+            gameEngine.submitParticipantQuestion(quizId, player.getId(), participantRound.getId(), questionText, correctAnswers, timeLimit);
         });
+    }
+
+    @Test
+    void shouldNotSubmitParticipantQuestionWhenRoundDoesNotExist() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
+        Player player = gameEngine.addPlayerToQuiz(quizId, "Player A");
+
+        String questionText = "What is the capital of France?";
+        List<String> correctAnswers = Arrays.asList("Paris");
+        int timeLimit = 30;
+        String nonExistentRoundId = "non-existent-round-id";
+
+        // When/Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.submitParticipantQuestion(quizId, player.getId(), nonExistentRoundId, questionText, correctAnswers, timeLimit);
+        });
+
+        // Verify the exception message
+        assertTrue(exception.getMessage().contains("No round found with ID"));
     }
 }

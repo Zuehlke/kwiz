@@ -18,6 +18,62 @@
 
     <!-- Question submission form -->
     @if (!quizDetails.started) {
+      <!-- Round creation section -->
+      <div class="round-creation">
+        <h3>Create a Round</h3>
+        <p>Create rounds to organize your questions!</p>
+
+        @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+        }
+
+        @if (roundCreated) {
+          <div class="success-message">Round created successfully!</div>
+        }
+
+        <form (ngSubmit)="createRound()">
+          <div class="form-group">
+            <label for="roundName">Round Name:</label>
+            <input 
+              type="text" 
+              id="roundName" 
+              name="roundName" 
+              [(ngModel)]="newRound.roundName" 
+              required
+              placeholder="Enter round name"
+            >
+          </div>
+
+          <button type="submit" [disabled]="creatingRound">
+            {{ creatingRound ? 'Creating...' : 'Create Round' }}
+          </button>
+        </form>
+
+        <!-- Display rounds -->
+        <div class="rounds-list">
+          <h3>Available Rounds</h3>
+
+          @if (loadingRounds) {
+            <p>Loading rounds...</p>
+          } @else if (rounds.length === 0) {
+            <p>No rounds created yet.</p>
+          } @else {
+            <ul class="rounds-list">
+              @for (round of rounds; track round.roundId) {
+                <li class="round-item">
+                  <div class="round-name">{{ round.roundName }}</div>
+                  <div class="round-details">
+                    <div class="question-count">
+                      <strong>Questions:</strong> {{ round.questionCount }}
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
       <div class="question-submission">
         <h3>Submit Your Own Question</h3>
         <p>While waiting, you can create and submit your own questions for the quiz!</p>
@@ -75,12 +131,26 @@
             >
           </div>
 
+          <div class="form-group">
+            <label for="roundId">Round:</label>
+            <select 
+              id="roundId" 
+              name="roundId" 
+              [(ngModel)]="selectedRoundId"
+            >
+              <option [value]="">-- Select a round --</option>
+              @for (round of rounds; track round.roundId) {
+                <option [value]="round.roundId">{{ round.roundName }}</option>
+              }
+            </select>
+          </div>
+
           <button type="submit" [disabled]="submittingQuestion">
             {{ submittingQuestion ? 'Submitting...' : 'Submit Question' }}
           </button>
         </form>
 
-        <!-- Display submitted questions -->
+        <!-- Display submitted questions grouped by round -->
         <div class="submitted-questions">
           <h3>Your Submitted Questions</h3>
 
@@ -89,22 +159,27 @@
           } @else if (submittedQuestions.length === 0) {
             <p>You haven't submitted any questions yet.</p>
           } @else {
-            <ul class="questions-list">
-              @for (question of submittedQuestions; track question.questionId) {
-                <li class="question-item">
-                  <div class="question-text">{{ question.questionText }}</div>
-                  <div class="question-details">
-                    <div class="correct-answers">
-                      <strong>Correct Answers:</strong>
-                      <span>{{ question.correctAnswers.join(', ') }}</span>
-                    </div>
-                    <div class="time-limit">
-                      <strong>Time Limit:</strong> {{ question.timeLimit }} seconds
-                    </div>
-                  </div>
-                </li>
-              }
-            </ul>
+            @for (roundName of getRoundNames(); track roundName) {
+              <div class="round-group">
+                <h4 class="round-name">{{ roundName }}</h4>
+                <ul class="questions-list">
+                  @for (question of groupedQuestions[roundName]; track question.questionId) {
+                    <li class="question-item">
+                      <div class="question-text">{{ question.questionText }}</div>
+                      <div class="question-details">
+                        <div class="correct-answers">
+                          <strong>Correct Answers:</strong>
+                          <span>{{ question.correctAnswers.join(', ') }}</span>
+                        </div>
+                        <div class="time-limit">
+                          <strong>Time Limit:</strong> {{ question.timeLimit }} seconds
+                        </div>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
           }
         </div>
       </div>

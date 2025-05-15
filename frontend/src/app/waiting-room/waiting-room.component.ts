@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { WebSocketService, WebSocketMessage } from '../services/websocket.service';
 import { FormsModule } from '@angular/forms';
-import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion } from '../services/quiz.service';
+import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion, Round, CreateRoundRequest } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -34,7 +34,23 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
   // Properties for submitted questions
   submittedQuestions: PlayerQuestion[] = [];
+  groupedQuestions: { [roundName: string]: PlayerQuestion[] } = {};
   loadingQuestions = false;
+
+  // Helper method to get round names (keys of groupedQuestions)
+  getRoundNames(): string[] {
+    return Object.keys(this.groupedQuestions);
+  }
+
+  // Properties for rounds
+  rounds: Round[] = [];
+  loadingRounds = false;
+  newRound: CreateRoundRequest = {
+    roundName: ''
+  };
+  creatingRound = false;
+  roundCreated = false;
+  selectedRoundId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -51,9 +67,12 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       // Initial fetch of quiz details
       this.fetchQuizDetails();
 
-        if (this.playerId) {
-            this.fetchSubmittedQuestions();
-        }
+      if (this.playerId) {
+        this.fetchSubmittedQuestions();
+      }
+
+      // Fetch rounds
+      this.fetchRounds();
 
       // Connect to WebSocket
       this.webSocketService.connect();
@@ -161,11 +180,82 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     this.quizService.getPlayerSubmittedQuestions(this.quizId, this.playerId).subscribe(
       (questions) => {
         this.submittedQuestions = questions;
+
+        // Group questions by round name
+        this.groupedQuestions = {};
+        for (const question of questions) {
+          if (!this.groupedQuestions[question.roundName]) {
+            this.groupedQuestions[question.roundName] = [];
+          }
+          this.groupedQuestions[question.roundName].push(question);
+        }
+
         this.loadingQuestions = false;
       },
       (error) => {
         console.error('Error fetching submitted questions:', error);
         this.loadingQuestions = false;
+      }
+    );
+  }
+
+  // Fetch rounds
+  fetchRounds(): void {
+    if (!this.quizId) {
+      return;
+    }
+
+    this.loadingRounds = true;
+    this.quizService.getRounds(this.quizId).subscribe(
+      (rounds) => {
+        this.rounds = rounds;
+        this.loadingRounds = false;
+      },
+      (error) => {
+        console.error('Error fetching rounds:', error);
+        this.loadingRounds = false;
+      }
+    );
+  }
+
+  // Create a new round
+  createRound(): void {
+    if (!this.quizId) {
+      this.errorMessage = 'Quiz ID not found.';
+      return;
+    }
+
+    if (!this.newRound.roundName.trim()) {
+      this.errorMessage = 'Please provide a round name.';
+      return;
+    }
+
+    this.creatingRound = true;
+    this.errorMessage = '';
+
+    this.quizService.createRound(this.quizId, this.newRound).subscribe(
+      (round) => {
+        this.creatingRound = false;
+        this.roundCreated = true;
+        // Reset the form
+        this.newRound = {
+          roundName: ''
+        };
+        // Fetch the updated list of rounds
+        this.fetchRounds();
+        // Hide the success message after 3 seconds
+        setTimeout(() => {
+          this.roundCreated = false;
+        }, 3000);
+      },
+      (error) => {
+        this.creatingRound = false;
+        if (error.status === 409) {
+          this.errorMessage = 'Cannot create rounds after the quiz has started.';
+        } else {
+          this.errorMessage = 'Error creating round. Please try again.';
+        }
+        console.error('Error creating round:', error);
       }
     );
   }
@@ -206,6 +296,16 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Require a round selection
+    if (!this.selectedRoundId) {
+      this.errorMessage = 'Please select a round for your question.';
+      this.submittingQuestion = false;
+      return;
+    }
+
+    // Add the selected round ID to the question
+    filteredQuestion.roundId = this.selectedRoundId;
+
     this.quizService.submitQuestion(this.quizId, this.playerId, filteredQuestion).subscribe(
       (response) => {
         this.submittingQuestion = false;
@@ -216,6 +316,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
           correctAnswers: [''],
           timeLimit: 30
         };
+        // Don't reset the selected round to allow submitting multiple questions to the same round
         // Fetch the updated list of submitted questions
         this.fetchSubmittedQuestions();
         // Hide the success message after 3 seconds

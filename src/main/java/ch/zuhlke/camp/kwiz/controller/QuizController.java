@@ -4,6 +4,7 @@ import ch.zuhlke.camp.kwiz.domain.GameEngine;
 import ch.zuhlke.camp.kwiz.domain.Player;
 import ch.zuhlke.camp.kwiz.domain.Question;
 import ch.zuhlke.camp.kwiz.domain.Quiz;
+import ch.zuhlke.camp.kwiz.domain.Round;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -166,6 +167,81 @@ public class QuizController {
     }
 
     /**
+     * Creates a new round in a quiz.
+     *
+     * @param quizId the ID of the quiz to add the round to
+     * @param request the request containing round details
+     * @return the created round
+     */
+    @Operation(
+            summary = "Create a new round",
+            description = "Creates a new round in the quiz with the specified ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Round created successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found"),
+                    @ApiResponse(responseCode = "409", description = "Quiz has already started")
+            }
+    )
+    @PostMapping("/{quizId}/rounds")
+    public ResponseEntity<Map<String, Object>> createRound(
+            @PathVariable String quizId,
+            @RequestBody CreateRoundRequest request) {
+        try {
+            Round round = gameEngine.addRoundToQuiz(quizId, request.getRoundName());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("roundId", round.getId());
+            response.put("roundName", round.getName());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Gets all rounds in a quiz.
+     *
+     * @param quizId the ID of the quiz
+     * @return a list of rounds in the quiz
+     */
+    @Operation(
+            summary = "Get all rounds in a quiz",
+            description = "Returns all rounds in the quiz with the specified ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Rounds retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found")
+            }
+    )
+    @GetMapping("/{quizId}/rounds")
+    public ResponseEntity<List<Map<String, Object>>> getRounds(@PathVariable String quizId) {
+        try {
+            Quiz quiz = gameEngine.getQuizById(quizId);
+            if (quiz == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            List<Map<String, Object>> response = quiz.getRounds().stream()
+                    .map(round -> {
+                        Map<String, Object> roundMap = new HashMap<>();
+                        roundMap.put("roundId", round.getId());
+                        roundMap.put("roundName", round.getName());
+                        roundMap.put("active", round.isActive());
+                        roundMap.put("completed", round.isCompleted());
+                        roundMap.put("questionCount", round.getQuestions().size());
+                        return roundMap;
+                    })
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
      * Request object for creating a quiz.
      */
     public static class CreateQuizRequest {
@@ -214,6 +290,21 @@ public class QuizController {
     }
 
     /**
+     * Request object for creating a round.
+     */
+    public static class CreateRoundRequest {
+        private String roundName;
+
+        public String getRoundName() {
+            return roundName;
+        }
+
+        public void setRoundName(String roundName) {
+            this.roundName = roundName;
+        }
+    }
+
+    /**
      * Allows a participant to submit a question to a quiz.
      *
      * @param quizId the ID of the quiz to add the question to
@@ -236,9 +327,15 @@ public class QuizController {
             @PathVariable String playerId,
             @RequestBody SubmitQuestionRequest request) {
         try {
+            // A round ID is required for submitting a question
+            if (request.getRoundId() == null || request.getRoundId().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "A round ID is required for submitting a question"));
+            }
+
             Question question = gameEngine.submitParticipantQuestion(
                     quizId,
                     playerId,
+                    request.getRoundId(),
                     request.getQuestionText(),
                     request.getCorrectAnswers(),
                     request.getTimeLimit()
@@ -249,6 +346,9 @@ public class QuizController {
             response.put("questionText", question.getText());
             response.put("correctAnswers", question.getCorrectAnswers());
             response.put("timeLimit", question.getTimeLimit());
+            if (request.getRoundId() != null) {
+                response.put("roundId", request.getRoundId());
+            }
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -263,11 +363,11 @@ public class QuizController {
      *
      * @param quizId the ID of the quiz
      * @param playerId the ID of the player
-     * @return a list of questions submitted by the player
+     * @return a list of questions submitted by the player, grouped by round
      */
     @Operation(
             summary = "Get player's submitted questions",
-            description = "Retrieves all questions submitted by a specific player in a quiz.",
+            description = "Retrieves all questions submitted by a specific player in a quiz, including round information.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Questions retrieved successfully"),
                     @ApiResponse(responseCode = "404", description = "Quiz or player not found")
@@ -278,15 +378,18 @@ public class QuizController {
             @PathVariable String quizId,
             @PathVariable String playerId) {
         try {
-            List<Question> questions = gameEngine.getQuestionsSubmittedByPlayer(quizId, playerId);
+            List<GameEngine.QuestionWithRound> questionsWithRounds = gameEngine.getQuestionsSubmittedByPlayer(quizId, playerId);
 
-            List<Map<String, Object>> response = questions.stream()
-                    .map(question -> {
+            List<Map<String, Object>> response = questionsWithRounds.stream()
+                    .map(questionWithRound -> {
+                        Question question = questionWithRound.getQuestion();
                         Map<String, Object> questionMap = new HashMap<>();
                         questionMap.put("questionId", question.getId());
                         questionMap.put("questionText", question.getText());
                         questionMap.put("correctAnswers", question.getCorrectAnswers());
                         questionMap.put("timeLimit", question.getTimeLimit());
+                        questionMap.put("roundId", questionWithRound.getRoundId());
+                        questionMap.put("roundName", questionWithRound.getRoundName());
                         return questionMap;
                     })
                     .toList();
@@ -304,6 +407,7 @@ public class QuizController {
         private String questionText;
         private List<String> correctAnswers;
         private int timeLimit;
+        private String roundId;
 
         public String getQuestionText() {
             return questionText;
@@ -327,6 +431,14 @@ public class QuizController {
 
         public void setTimeLimit(int timeLimit) {
             this.timeLimit = timeLimit;
+        }
+
+        public String getRoundId() {
+            return roundId;
+        }
+
+        public void setRoundId(String roundId) {
+            this.roundId = roundId;
         }
     }
 }
