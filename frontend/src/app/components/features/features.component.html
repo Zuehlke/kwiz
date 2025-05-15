@@ -1,0 +1,16 @@
+<section class="features-section">
+  <div class="section-header">
+    <h2>Key Features</h2>
+    <p class="section-description">Discover what makes KwiZ the perfect platform for your pub quiz experience</p>
+  </div>
+  
+  <div class="features-grid">
+    <div class="feature-card" *ngFor="let feature of features">
+      <div class="feature-icon">
+        <span class="material-icons">{{ feature.icon }}</span>
+      </div>
+      <h3 class="feature-title">{{ feature.title }}</h3>
+      <p class="feature-description">{{ feature.description }}</p>
+    </div>
+  </div>
+</section>
