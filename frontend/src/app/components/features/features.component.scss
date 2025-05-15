@@ -1,0 +1,103 @@
+// Variables
+$primary-color: #3f51b5;
+$secondary-color: #ff4081;
+$text-color: #333;
+$light-color: #fff;
+$background-color: #f9f9f9;
+$card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+$transition-speed: 0.3s;
+
+.features-section {
+  padding: 3rem 0;
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin-bottom: 1rem;
+    }
+    
+    .section-description {
+      font-size: 1.2rem;
+      color: $text-color;
+      opacity: 0.8;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+  }
+  
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    
+    .feature-card {
+      background-color: $light-color;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: $card-shadow;
+      transition: transform $transition-speed ease, box-shadow $transition-speed ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      }
+      
+      .feature-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background-color: rgba($primary-color, 0.1);
+        border-radius: 50%;
+        margin-bottom: 1.5rem;
+        
+        .material-icons {
+          font-size: 28px;
+          color: $primary-color;
+        }
+      }
+      
+      .feature-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: $text-color;
+        margin-bottom: 1rem;
+      }
+      
+      .feature-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: $text-color;
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// Media queries for responsive design
+@media (max-width: 768px) {
+  .features-section {
+    padding: 2rem 1rem;
+    
+    .section-header {
+      h2 {
+        font-size: 2rem;
+      }
+      
+      .section-description {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+}
