@@ -1,7 +1,7 @@
 package ch.zuhlke.camp.kwiz.controller;
 
 import ch.zuhlke.camp.kwiz.domain.GameEngine;
-import ch.zuhlke.camp.kwiz.domain.Participant;
+import ch.zuhlke.camp.kwiz.domain.Player;
 import ch.zuhlke.camp.kwiz.domain.Quiz;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,20 +34,20 @@ public class QuizController {
      */
     @Operation(
             summary = "Create a new quiz",
-            description = "Creates a new quiz with the specified name and maximum number of participants",
+            description = "Creates a new quiz with the specified name and maximum number of players",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Quiz created successfully")
             }
     )
     @PostMapping
     public ResponseEntity<Map<String, Object>> createQuiz(@RequestBody CreateQuizRequest request) {
-        Quiz quiz = gameEngine.createQuiz(request.getQuizId(), request.getQuizName(), request.getMaxParticipants());
-
+        Quiz quiz = gameEngine.createQuiz(request.getQuizId(), request.getQuizName(), request.getMaxPlayers());
+        
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
-        response.put("maxParticipants", quiz.getMaxParticipants());
-
+        response.put("maxPlayers", quiz.getMaxPlayers());
+        
         return ResponseEntity.ok(response);
     }
 
@@ -76,42 +76,42 @@ public class QuizController {
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
-        response.put("maxParticipants", quiz.getMaxParticipants());
+        response.put("maxPlayers", quiz.getMaxPlayers());
         response.put("started", quiz.isStarted());
         response.put("ended", quiz.isEnded());
-        response.put("participantCount", quiz.getParticipants().size());
-
+        response.put("playerCount", quiz.getPlayers().size());
+        
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Adds a participant to a quiz.
+     * Adds a player to a quiz.
      *
-     * @param quizId the ID of the quiz to add the participant to
-     * @param request the request containing participant details
-     * @return the added participant
+     * @param quizId the ID of the quiz to add the player to
+     * @param request the request containing player details
+     * @return the added player
      */
     @Operation(
             summary = "Join a quiz",
-            description = "Adds a participant to the quiz with the specified ID",
+            description = "Adds a player to the quiz with the specified ID",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Participant added successfully"),
+                    @ApiResponse(responseCode = "200", description = "Player added successfully"),
                     @ApiResponse(responseCode = "404", description = "Quiz not found"),
                     @ApiResponse(responseCode = "400", description = "Invalid request"),
-                    @ApiResponse(responseCode = "409", description = "Quiz has already started or maximum number of participants reached")
+                    @ApiResponse(responseCode = "409", description = "Quiz has already started or maximum number of players reached")
             }
     )
-    @PostMapping("/{quizId}/participants")
+    @PostMapping("/{quizId}/players")
     public ResponseEntity<Map<String, Object>> joinQuiz(
             @PathVariable String quizId,
             @RequestBody JoinQuizRequest request) {
         try {
-            Participant participant = gameEngine.addParticipantToQuiz(quizId, request.getParticipantName());
-
+            Player player = gameEngine.addPlayerToQuiz(quizId, request.getPlayerName());
+            
             Map<String, Object> response = new HashMap<>();
             response.put("quizId", quizId);
-            response.put("participantId", participant.getId());
-            response.put("participantName", participant.getName());
+            response.put("playerId", player.getId());
+            response.put("playerName", player.getName());
             response.put("redirectUrl", "/waiting-room/" + quizId);
 
             return ResponseEntity.ok(response);
@@ -128,7 +128,7 @@ public class QuizController {
     public static class CreateQuizRequest {
         private String quizId;
         private String quizName;
-        private int maxParticipants;
+        private int maxPlayers;
 
         public String getQuizId() {
             return quizId;
@@ -146,12 +146,12 @@ public class QuizController {
             this.quizName = quizName;
         }
 
-        public int getMaxParticipants() {
-            return maxParticipants;
+        public int getMaxPlayers() {
+            return maxPlayers;
         }
 
-        public void setMaxParticipants(int maxParticipants) {
-            this.maxParticipants = maxParticipants;
+        public void setMaxPlayers(int maxPlayers) {
+            this.maxPlayers = maxPlayers;
         }
     }
 
@@ -159,14 +159,14 @@ public class QuizController {
      * Request object for joining a quiz.
      */
     public static class JoinQuizRequest {
-        private String participantName;
+        private String playerName;
 
-        public String getParticipantName() {
-            return participantName;
+        public String getPlayerName() {
+            return playerName;
         }
 
-        public void setParticipantName(String participantName) {
-            this.participantName = participantName;
+        public void setPlayerName(String playerName) {
+            this.playerName = playerName;
         }
     }
 }
