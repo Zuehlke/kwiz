@@ -68,11 +68,11 @@ public class QuizController {
     @GetMapping("/{quizId}")
     public ResponseEntity<Map<String, Object>> getQuiz(@PathVariable String quizId) {
         Quiz quiz = gameEngine.getQuizById(quizId);
-        
+
         if (quiz == null) {
             return ResponseEntity.notFound().build();
         }
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
@@ -112,7 +112,8 @@ public class QuizController {
             response.put("quizId", quizId);
             response.put("playerId", player.getId());
             response.put("playerName", player.getName());
-            
+            response.put("redirectUrl", "/waiting-room/" + quizId);
+
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

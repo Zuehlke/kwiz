@@ -27,5 +27,9 @@ export const routes: Routes = [
       }
     },
     redirectTo: '/home'
+  },
+  { 
+    path: 'waiting-room/:quizId', 
+    loadComponent: () => import('./waiting-room/waiting-room.component').then(m => m.WaitingRoomComponent)
   }
 ];

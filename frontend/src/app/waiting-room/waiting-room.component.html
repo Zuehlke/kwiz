@@ -1,0 +1,23 @@
+<div class="waiting-room-container">
+  <h1>Waiting Room</h1>
+
+  @if (quizDetails) {
+    <div class="quiz-info">
+      <h2>{{ quizDetails.quizName }}</h2>
+      <p>Quiz ID: {{ quizId }}</p>
+      <p>Waiting for the quiz to start...</p>
+      <p>Participants: {{ quizDetails.participantCount }} / {{ quizDetails.maxParticipants }}</p>
+    </div>
+
+    <div class="status-info">
+      <div class="status-indicator" [class.active]="!quizDetails.started">
+        <span class="status-dot"></span>
+        <span class="status-text">Waiting for quiz master to start the quiz</span>
+      </div>
+    </div>
+  } @else {
+    <div class="loading">
+      <p>Loading quiz details...</p>
+    </div>
+  }
+</div>
