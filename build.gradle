@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'com.github.node-gradle.node' version '7.0.1'
 }
 
 group = 'ch.zuhlke.camp'
@@ -23,3 +24,84 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Configure the node plugin
+node {
+    // Version of node to use
+    version = '20.11.1'
+    // Version of npm to use
+    npmVersion = '10.2.4'
+    // Base URL for fetching node distributions (defaults to https://nodejs.org/dist/)
+    distBaseUrl = 'https://nodejs.org/dist'
+    // If true, it will download node using above parameters
+    download = true
+    // Set the work directory for npm - this is where node will be installed
+    // Using gradle's user home ensures it's not deleted during clean
+    workDir = file("${project.projectDir}/frontend/node_modules")
+    // Set the work directory for node - this is the directory containing package.json
+    nodeProjectDir = file("${project.projectDir}/frontend")
+}
+
+// Task to install all frontend dependencies
+task installDependencies(type: NpmTask) {
+    description = 'Install npm dependencies'
+    args = ['install']
+
+}
+
+// Task to build the frontend
+task buildFrontend(type: NpmTask) {
+    description = 'Build the frontend'
+    args = ['run', 'build']
+    dependsOn installDependencies
+}
+
+// Task to copy the built frontend to the Spring Boot static resources directory
+task copyFrontendToBuild(type: Copy) {
+    description = 'Copy the built frontend to the Spring Boot static resources directory'
+    from "${project.projectDir}/frontend/dist/kwiz-frontend"
+    into "${project.buildDir}/resources/main/web"
+    dependsOn buildFrontend
+
+    // Explicitly declare the outputs of this task
+    outputs.dir "${project.buildDir}/resources/main/web"
+}
+
+// Make sure the frontend is built and copied before the Spring Boot jar is created
+compileTestJava {
+    dependsOn copyFrontendToBuild
+}
+
+// Ensure resolveMainClassName runs after copyFrontendToBuild
+tasks.named('resolveMainClassName') {
+    mustRunAfter copyFrontendToBuild
+}
+
+// Make sure processResources depends on copyFrontendToBuild
+processResources {
+    dependsOn copyFrontendToBuild
+}
+
+// Task to copy the produced JAR file to the release directory
+task copyJarToRelease(type: Copy) {
+    description = 'Copy the produced JAR file to the release directory'
+    from "${project.buildDir}/libs"
+    into "${project.buildDir}/release"
+    dependsOn bootJar
+
+    // Include only the JAR file without "Plain" in the name
+    include "*-${version}.jar"
+    exclude "*plain*.jar"
+
+    // Rename the JAR file to remove the version number
+    rename { String fileName ->
+        fileName.replace("-${version}", "")
+    }
+
+    dependsOn bootJar
+}
+
+tasks.named('build') {
+    dependsOn copyJarToRelease
+}
+
