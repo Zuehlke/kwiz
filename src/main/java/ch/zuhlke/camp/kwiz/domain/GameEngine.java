@@ -248,9 +248,46 @@ public class GameEngine {
             round = addRoundToQuiz(quizId, participantRoundName);
         }
 
-        // Add the question to the round
-        Question question = new Question(questionText, correctAnswers, timeLimit);
+        // Add the question to the round with the player ID as the submitter
+        Question question = new Question(questionText, correctAnswers, timeLimit, playerId);
         round.addQuestion(question);
         return question;
+    }
+
+    /**
+     * Retrieves all questions submitted by a specific player in a quiz.
+     *
+     * @param quizId the ID of the quiz
+     * @param playerId the ID of the player
+     * @return a list of questions submitted by the player
+     * @throws IllegalArgumentException if no quiz with the given ID exists, or no player with the given ID exists
+     */
+    public List<Question> getQuestionsSubmittedByPlayer(String quizId, String playerId) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            throw new IllegalArgumentException("No quiz found with ID: " + quizId);
+        }
+
+        // Verify the player exists in the quiz
+        boolean playerExists = quiz.getPlayers().stream()
+                .anyMatch(p -> p.getId().equals(playerId));
+        if (!playerExists) {
+            throw new IllegalArgumentException("No player found with ID: " + playerId);
+        }
+
+        // Find the participant questions round
+        String participantRoundName = "Participant Questions";
+        Optional<Round> participantRound = quiz.getRounds().stream()
+                .filter(r -> r.getName().equals(participantRoundName))
+                .findFirst();
+
+        if (participantRound.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Filter questions by submitter ID
+        return participantRound.get().getQuestions().stream()
+                .filter(q -> playerId.equals(q.getSubmitterId()))
+                .toList();
     }
 }

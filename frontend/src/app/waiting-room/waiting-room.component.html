@@ -79,6 +79,34 @@
             {{ submittingQuestion ? 'Submitting...' : 'Submit Question' }}
           </button>
         </form>
+
+        <!-- Display submitted questions -->
+        <div class="submitted-questions">
+          <h3>Your Submitted Questions</h3>
+
+          @if (loadingQuestions) {
+            <p>Loading your questions...</p>
+          } @else if (submittedQuestions.length === 0) {
+            <p>You haven't submitted any questions yet.</p>
+          } @else {
+            <ul class="questions-list">
+              @for (question of submittedQuestions; track question.questionId) {
+                <li class="question-item">
+                  <div class="question-text">{{ question.questionText }}</div>
+                  <div class="question-details">
+                    <div class="correct-answers">
+                      <strong>Correct Answers:</strong>
+                      <span>{{ question.correctAnswers.join(', ') }}</span>
+                    </div>
+                    <div class="time-limit">
+                      <strong>Time Limit:</strong> {{ question.timeLimit }} seconds
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
       </div>
     }
   } @else {

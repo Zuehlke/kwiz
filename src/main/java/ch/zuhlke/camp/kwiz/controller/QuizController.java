@@ -218,6 +218,45 @@ public class QuizController {
     }
 
     /**
+     * Gets all questions submitted by a specific player in a quiz.
+     *
+     * @param quizId the ID of the quiz
+     * @param playerId the ID of the player
+     * @return a list of questions submitted by the player
+     */
+    @Operation(
+            summary = "Get player's submitted questions",
+            description = "Retrieves all questions submitted by a specific player in a quiz.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Questions retrieved successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz or player not found")
+            }
+    )
+    @GetMapping("/{quizId}/players/{playerId}/questions")
+    public ResponseEntity<List<Map<String, Object>>> getPlayerSubmittedQuestions(
+            @PathVariable String quizId,
+            @PathVariable String playerId) {
+        try {
+            List<Question> questions = gameEngine.getQuestionsSubmittedByPlayer(quizId, playerId);
+
+            List<Map<String, Object>> response = questions.stream()
+                    .map(question -> {
+                        Map<String, Object> questionMap = new HashMap<>();
+                        questionMap.put("questionId", question.getId());
+                        questionMap.put("questionText", question.getText());
+                        questionMap.put("correctAnswers", question.getCorrectAnswers());
+                        questionMap.put("timeLimit", question.getTimeLimit());
+                        return questionMap;
+                    })
+                    .toList();
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
      * Request object for submitting a question.
      */
     public static class SubmitQuestionRequest {

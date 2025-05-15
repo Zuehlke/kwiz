@@ -47,6 +47,13 @@ export interface SubmitQuestionResponse {
   timeLimit: number;
 }
 
+export interface PlayerQuestion {
+  questionId: string;
+  questionText: string;
+  correctAnswers: string[];
+  timeLimit: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -96,5 +103,16 @@ export class QuizService {
    */
   submitQuestion(quizId: string, playerId: string, request: SubmitQuestionRequest): Observable<SubmitQuestionResponse> {
     return this.http.post<SubmitQuestionResponse>(`${this.apiUrl}/${quizId}/players/${playerId}/questions`, request);
+  }
+
+  /**
+   * Gets all questions submitted by a player in a quiz.
+   * 
+   * @param quizId The ID of the quiz
+   * @param playerId The ID of the player
+   * @returns An observable of the player's submitted questions
+   */
+  getPlayerSubmittedQuestions(quizId: string, playerId: string): Observable<PlayerQuestion[]> {
+    return this.http.get<PlayerQuestion[]>(`${this.apiUrl}/${quizId}/players/${playerId}/questions`);
   }
 }

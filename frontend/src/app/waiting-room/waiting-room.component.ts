@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { QuizService, QuizDetails, SubmitQuestionRequest } from '../services/quiz.service';
+import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -30,6 +30,10 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
   questionSubmitted = false;
   errorMessage = '';
 
+  // Properties for submitted questions
+  submittedQuestions: PlayerQuestion[] = [];
+  loadingQuestions = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -38,10 +42,16 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.quizId = this.route.snapshot.paramMap.get('quizId');
+    this.playerId = this.getPlayerId();
 
     if (this.quizId) {
       // Initial fetch of quiz details
       this.fetchQuizDetails();
+
+      // Fetch player's submitted questions if player ID is available
+      if (this.playerId) {
+        this.fetchSubmittedQuestions();
+      }
 
       // Poll for updates every 5 seconds
       this.pollingSubscription = interval(5000)
@@ -115,6 +125,25 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Fetch submitted questions
+  fetchSubmittedQuestions(): void {
+    if (!this.quizId || !this.playerId) {
+      return;
+    }
+
+    this.loadingQuestions = true;
+    this.quizService.getPlayerSubmittedQuestions(this.quizId, this.playerId).subscribe(
+      (questions) => {
+        this.submittedQuestions = questions;
+        this.loadingQuestions = false;
+      },
+      (error) => {
+        console.error('Error fetching submitted questions:', error);
+        this.loadingQuestions = false;
+      }
+    );
+  }
+
   // Submit the question
   submitQuestion(): void {
     this.errorMessage = '';
@@ -161,6 +190,8 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
           correctAnswers: [''],
           timeLimit: 30
         };
+        // Fetch the updated list of submitted questions
+        this.fetchSubmittedQuestions();
         // Hide the success message after 3 seconds
         setTimeout(() => {
           this.questionSubmitted = false;
