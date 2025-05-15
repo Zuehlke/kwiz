@@ -1,4 +1,4 @@
-# QwiZ - The Zühlke Pub Quiz
+# KwiZ - The Zühlke Pub Quiz
 
 ## Introduction
 A pub quiz is a quiz held in a pub or bar. These quizzes are popular social events that combine knowledge testing with a fun, relaxed atmosphere. This document outlines the basic rules for running and participating in a pub quiz.
