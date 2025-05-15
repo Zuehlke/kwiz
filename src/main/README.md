@@ -53,4 +53,49 @@ The application configuration is defined in `src/main/resources/application.prop
 
 ## API Documentation
 
-The API documentation will be available at http://localhost:8080/swagger-ui.html when the application is running (if Swagger is configured).
+The API documentation is available through Swagger UI when the application is running. Swagger UI provides an interactive interface to explore and test the API endpoints.
+
+### Accessing Swagger UI
+
+1. Start the backend application as described in the "Getting Started" section
+2. Open your browser and navigate to: http://localhost:8080/swagger-ui.html
+
+### Using Swagger UI
+
+Swagger UI provides the following features:
+
+- **API Overview**: View all available endpoints grouped by controller/tag
+- **Request Details**: For each endpoint, you can see:
+  - HTTP method (GET, POST, PUT, DELETE, etc.)
+  - URL path
+  - Description
+  - Request parameters
+  - Request body schema (for POST/PUT requests)
+  - Response body schema
+  - Authorization requirements (if applicable)
+
+### Testing Endpoints
+
+To test an API endpoint:
+
+1. Click on the endpoint you want to test
+2. Click the "Try it out" button
+3. Fill in any required parameters or request body
+4. Click "Execute"
+5. View the response, including:
+   - Status code
+   - Response headers
+   - Response body
+
+### API Documentation Configuration
+
+The Swagger/OpenAPI configuration is defined in `src/main/resources/application.properties`:
+
+```properties
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.swagger-ui.tagsSorter=alpha
+```
+
+You can also access the raw OpenAPI specification at: http://localhost:8080/api-docs

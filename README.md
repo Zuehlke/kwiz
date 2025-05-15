@@ -51,6 +51,7 @@ Remember, the main goal of a pub quiz is to have fun while testing your knowledg
    ./gradlew bootRun
    ```
 3. The backend will start on http://localhost:8080
+4. Access the API documentation at http://localhost:8080/swagger-ui.html
 
 ### Starting the Frontend
 1. Navigate to the frontend directory:
@@ -68,3 +69,21 @@ Remember, the main goal of a pub quiz is to have fun while testing your knowledg
 4. The frontend will be available at http://localhost:4200
 
 The frontend is configured with a proxy to the backend, so API calls will be automatically forwarded to the backend server.
+
+## API Documentation
+
+The KwiZ application uses Swagger UI for API documentation. Swagger UI provides an interactive interface to explore and test the API endpoints.
+
+### Accessing Swagger UI
+
+1. Start the backend application as described in the "Starting the Backend" section
+2. Open your browser and navigate to: http://localhost:8080/swagger-ui.html
+
+### Benefits of Swagger UI
+
+- **Interactive Documentation**: Explore API endpoints with an interactive UI
+- **Request Testing**: Test API requests directly from the browser
+- **Response Visualization**: See the structure of API responses
+- **Parameter Information**: Understand required and optional parameters for each endpoint
+
+This is particularly useful for both backend and frontend developers to understand the available services and how to interact with them.

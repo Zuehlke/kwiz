@@ -33,6 +33,21 @@ This is the frontend application for the KwiZ pub quiz system built with Angular
 
 The application is configured with a proxy to forward API requests to the backend server. This configuration is defined in `proxy.conf.json`.
 
+## API Documentation
+
+The backend API is documented using Swagger UI. When the backend is running, you can access the API documentation at:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+This interactive documentation allows you to:
+- View all available API endpoints
+- Understand request and response formats
+- Test API endpoints directly from the browser
+
+This is particularly useful for frontend developers to understand the available backend services.
+
 ## Project Structure
 
 - `src/app` - Application source code

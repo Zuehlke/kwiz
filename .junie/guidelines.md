@@ -1,7 +1,7 @@
 1. Tech Stack
 * Backend: Java 21+ with Spring Boot 
-* Frontend: Angular 19 with TypeScript 
-* Prefer Angular Signals over traditional state management when applicable.
+* Frontend: Angular 19 with TypeScript and Scss
+* Prefer Angular Signals over traditional state management when applicable, separate template from component.
 
 2. Communication Between Frontend & Backend 
 * Use WebSockets for real-time or frequent interactions. 
