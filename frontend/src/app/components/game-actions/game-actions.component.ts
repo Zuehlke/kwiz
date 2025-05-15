@@ -76,7 +76,7 @@ export class GameActionsComponent {
     }
 
     if (!this.playerName()) {
-      this.errorMessage.set('Please enter a player name');
+      this.errorMessage.set('Please enter a team name');
       return;
     }
 
