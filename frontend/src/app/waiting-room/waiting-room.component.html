@@ -150,7 +150,7 @@
           </button>
         </form>
 
-        <!-- Display submitted questions -->
+        <!-- Display submitted questions grouped by round -->
         <div class="submitted-questions">
           <h3>Your Submitted Questions</h3>
 
@@ -159,22 +159,27 @@
           } @else if (submittedQuestions.length === 0) {
             <p>You haven't submitted any questions yet.</p>
           } @else {
-            <ul class="questions-list">
-              @for (question of submittedQuestions; track question.questionId) {
-                <li class="question-item">
-                  <div class="question-text">{{ question.questionText }}</div>
-                  <div class="question-details">
-                    <div class="correct-answers">
-                      <strong>Correct Answers:</strong>
-                      <span>{{ question.correctAnswers.join(', ') }}</span>
-                    </div>
-                    <div class="time-limit">
-                      <strong>Time Limit:</strong> {{ question.timeLimit }} seconds
-                    </div>
-                  </div>
-                </li>
-              }
-            </ul>
+            @for (roundName of getRoundNames(); track roundName) {
+              <div class="round-group">
+                <h4 class="round-name">{{ roundName }}</h4>
+                <ul class="questions-list">
+                  @for (question of groupedQuestions[roundName]; track question.questionId) {
+                    <li class="question-item">
+                      <div class="question-text">{{ question.questionText }}</div>
+                      <div class="question-details">
+                        <div class="correct-answers">
+                          <strong>Correct Answers:</strong>
+                          <span>{{ question.correctAnswers.join(', ') }}</span>
+                        </div>
+                        <div class="time-limit">
+                          <strong>Time Limit:</strong> {{ question.timeLimit }} seconds
+                        </div>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
           }
         </div>
       </div>

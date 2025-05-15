@@ -363,11 +363,11 @@ public class QuizController {
      *
      * @param quizId the ID of the quiz
      * @param playerId the ID of the player
-     * @return a list of questions submitted by the player
+     * @return a list of questions submitted by the player, grouped by round
      */
     @Operation(
             summary = "Get player's submitted questions",
-            description = "Retrieves all questions submitted by a specific player in a quiz.",
+            description = "Retrieves all questions submitted by a specific player in a quiz, including round information.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Questions retrieved successfully"),
                     @ApiResponse(responseCode = "404", description = "Quiz or player not found")
@@ -378,15 +378,18 @@ public class QuizController {
             @PathVariable String quizId,
             @PathVariable String playerId) {
         try {
-            List<Question> questions = gameEngine.getQuestionsSubmittedByPlayer(quizId, playerId);
+            List<GameEngine.QuestionWithRound> questionsWithRounds = gameEngine.getQuestionsSubmittedByPlayer(quizId, playerId);
 
-            List<Map<String, Object>> response = questions.stream()
-                    .map(question -> {
+            List<Map<String, Object>> response = questionsWithRounds.stream()
+                    .map(questionWithRound -> {
+                        Question question = questionWithRound.getQuestion();
                         Map<String, Object> questionMap = new HashMap<>();
                         questionMap.put("questionId", question.getId());
                         questionMap.put("questionText", question.getText());
                         questionMap.put("correctAnswers", question.getCorrectAnswers());
                         questionMap.put("timeLimit", question.getTimeLimit());
+                        questionMap.put("roundId", questionWithRound.getRoundId());
+                        questionMap.put("roundName", questionWithRound.getRoundName());
                         return questionMap;
                     })
                     .toList();

@@ -34,7 +34,13 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
   // Properties for submitted questions
   submittedQuestions: PlayerQuestion[] = [];
+  groupedQuestions: { [roundName: string]: PlayerQuestion[] } = {};
   loadingQuestions = false;
+
+  // Helper method to get round names (keys of groupedQuestions)
+  getRoundNames(): string[] {
+    return Object.keys(this.groupedQuestions);
+  }
 
   // Properties for rounds
   rounds: Round[] = [];
@@ -174,6 +180,16 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     this.quizService.getPlayerSubmittedQuestions(this.quizId, this.playerId).subscribe(
       (questions) => {
         this.submittedQuestions = questions;
+
+        // Group questions by round name
+        this.groupedQuestions = {};
+        for (const question of questions) {
+          if (!this.groupedQuestions[question.roundName]) {
+            this.groupedQuestions[question.roundName] = [];
+          }
+          this.groupedQuestions[question.roundName].push(question);
+        }
+
         this.loadingQuestions = false;
       },
       (error) => {

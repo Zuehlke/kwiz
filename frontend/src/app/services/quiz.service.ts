@@ -66,7 +66,8 @@ export interface PlayerQuestion {
   questionText: string;
   correctAnswers: string[];
   timeLimit: number;
-  roundId?: string;
+  roundId: string;
+  roundName: string;
 }
 
 @Injectable({

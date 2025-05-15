@@ -259,14 +259,41 @@ public class GameEngine {
     }
 
     /**
+     * Represents a question with its associated round information.
+     */
+    public static class QuestionWithRound {
+        private final Question question;
+        private final String roundId;
+        private final String roundName;
+
+        public QuestionWithRound(Question question, String roundId, String roundName) {
+            this.question = question;
+            this.roundId = roundId;
+            this.roundName = roundName;
+        }
+
+        public Question getQuestion() {
+            return question;
+        }
+
+        public String getRoundId() {
+            return roundId;
+        }
+
+        public String getRoundName() {
+            return roundName;
+        }
+    }
+
+    /**
      * Retrieves all questions submitted by a specific player in a quiz.
      *
      * @param quizId the ID of the quiz
      * @param playerId the ID of the player
-     * @return a list of questions submitted by the player
+     * @return a list of questions with their associated round information submitted by the player
      * @throws IllegalArgumentException if no quiz with the given ID exists, or no player with the given ID exists
      */
-    public List<Question> getQuestionsSubmittedByPlayer(String quizId, String playerId) {
+    public List<QuestionWithRound> getQuestionsSubmittedByPlayer(String quizId, String playerId) {
         Quiz quiz = getQuizById(quizId);
         if (quiz == null) {
             throw new IllegalArgumentException("No quiz found with ID: " + quizId);
@@ -279,10 +306,15 @@ public class GameEngine {
             throw new IllegalArgumentException("No player found with ID: " + playerId);
         }
 
-        // Find all questions submitted by the player across all rounds
-        return quiz.getRounds().stream()
-                .flatMap(round -> round.getQuestions().stream())
-                .filter(q -> playerId.equals(q.getSubmitterId()))
-                .toList();
+        // Find all questions submitted by the player across all rounds, including round information
+        List<QuestionWithRound> questionsWithRounds = new ArrayList<>();
+        for (Round round : quiz.getRounds()) {
+            for (Question question : round.getQuestions()) {
+                if (playerId.equals(question.getSubmitterId())) {
+                    questionsWithRounds.add(new QuestionWithRound(question, round.getId(), round.getName()));
+                }
+            }
+        }
+        return questionsWithRounds;
     }
 }
