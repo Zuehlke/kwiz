@@ -95,7 +95,7 @@ export class QuizService {
 
   /**
    * Submits a participant question to a quiz.
-   * 
+   *
    * @param quizId The ID of the quiz
    * @param playerId The ID of the player submitting the question
    * @param request The question submission request
@@ -107,12 +107,22 @@ export class QuizService {
 
   /**
    * Gets all questions submitted by a player in a quiz.
-   * 
+   *
    * @param quizId The ID of the quiz
    * @param playerId The ID of the player
    * @returns An observable of the player's submitted questions
    */
   getPlayerSubmittedQuestions(quizId: string, playerId: string): Observable<PlayerQuestion[]> {
     return this.http.get<PlayerQuestion[]>(`${this.apiUrl}/${quizId}/players/${playerId}/questions`);
+  }
+
+  /**
+   * Starts a quiz.
+   *
+   * @param quizId The ID of the quiz to start
+   * @returns An observable of the quiz details
+   */
+  startQuiz(quizId: string): Observable<QuizDetails> {
+    return this.http.post<QuizDetails>(`${this.apiUrl}/${quizId}/start`, {});
   }
 }

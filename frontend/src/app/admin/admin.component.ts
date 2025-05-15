@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { WebSocketService, WebSocketMessage } from '../services/websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin',
@@ -15,12 +15,14 @@ import { switchMap } from 'rxjs/operators';
 export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
-  private pollingSubscription: Subscription | null = null;
+  private playerCountSubscription: Subscription | null = null;
+  private wsConnectionSubscription: Subscription | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private quizService: QuizService
+    private quizService: QuizService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -30,27 +32,50 @@ export class AdminComponent implements OnInit, OnDestroy {
       // Initial fetch of quiz details
       this.fetchQuizDetails();
 
-      // Poll for updates every 5 seconds
-      this.pollingSubscription = interval(5000)
-        .pipe(
-          switchMap(() => this.quizService.getQuiz(this.quizId!))
-        )
-        .subscribe(
-          (quizDetails) => {
-            this.quizDetails = quizDetails;
-          },
-          (error) => {
-            console.error('Error fetching quiz details:', error);
+      // Connect to WebSocket
+      this.webSocketService.connect();
+
+      // Subscribe to WebSocket connection status
+      this.wsConnectionSubscription = this.webSocketService.getConnectionStatus().subscribe(
+        (connected) => {
+          console.log('WebSocket connection status:', connected);
+        }
+      );
+
+      // Subscribe to quiz updates
+      // The WebSocketService will handle waiting for the connection to be established
+      this.playerCountSubscription = this.webSocketService.getQuizUpdates(this.quizId).subscribe({
+        next: (message) => {
+          console.log('Received quiz update:', message);
+          if (this.quizDetails) {
+            // Update quiz details with WebSocket data
+            this.quizDetails = {
+              ...this.quizDetails,
+              playerCount: message.playerCount,
+              maxPlayers: message.maxPlayers,
+              started: message.started ?? false
+            };
           }
-        );
+        },
+        error: (error) => {
+          console.error('Error receiving quiz updates:', error);
+        }
+      });
     }
   }
 
   ngOnDestroy(): void {
-    // Clean up the polling subscription when the component is destroyed
-    if (this.pollingSubscription) {
-      this.pollingSubscription.unsubscribe();
+    // Clean up subscriptions when the component is destroyed
+    if (this.playerCountSubscription) {
+      this.playerCountSubscription.unsubscribe();
     }
+
+    if (this.wsConnectionSubscription) {
+      this.wsConnectionSubscription.unsubscribe();
+    }
+
+    // Disconnect from WebSocket
+    this.webSocketService.disconnect();
   }
 
   private fetchQuizDetails(): void {
@@ -66,10 +91,19 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Method to start the quiz (to be implemented)
+  // Method to start the quiz
   startQuiz(): void {
-    // This would typically call a backend API to start the quiz
-    console.log('Starting quiz:', this.quizId);
-    // For now, just log the action
+    if (this.quizId) {
+      console.log('Starting quiz:', this.quizId);
+      this.quizService.startQuiz(this.quizId).subscribe(
+        (quizDetails) => {
+          console.log('Quiz started successfully:', quizDetails);
+          this.quizDetails = quizDetails;
+        },
+        (error) => {
+          console.error('Error starting quiz:', error);
+        }
+      );
+    }
   }
 }

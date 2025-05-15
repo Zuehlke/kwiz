@@ -125,6 +125,47 @@ public class QuizController {
     }
 
     /**
+     * Starts a quiz.
+     *
+     * @param quizId the ID of the quiz to start
+     * @return the started quiz
+     */
+    @Operation(
+            summary = "Start a quiz",
+            description = "Starts the quiz with the specified ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Quiz started successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    @PostMapping("/{quizId}/start")
+    public ResponseEntity<Map<String, Object>> startQuiz(@PathVariable String quizId) {
+        try {
+            gameEngine.startQuiz(quizId);
+
+            Quiz quiz = gameEngine.getQuizById(quizId);
+            if (quiz == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("quizId", quiz.getId());
+            response.put("quizName", quiz.getName());
+            response.put("maxPlayers", quiz.getMaxPlayers());
+            response.put("started", quiz.isStarted());
+            response.put("ended", quiz.isEnded());
+            response.put("playerCount", quiz.getPlayers().size());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
      * Request object for creating a quiz.
      */
     public static class CreateQuizRequest {
