@@ -1,11 +1,13 @@
 package ch.zuhlke.camp.kwiz.domain;
 
+import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,9 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class GameEngine {
     private final Map<String, Quiz> quizzes;
+    private final WebSocketController webSocketController;
 
-    public GameEngine() {
+    public GameEngine(WebSocketController webSocketController) {
         this.quizzes = new ConcurrentHashMap<>();
+        this.webSocketController = webSocketController;
     }
 
     /**
@@ -75,6 +79,10 @@ public class GameEngine {
 
         Player player = new Player(playerName);
         quiz.addPlayer(player);
+
+        // Send WebSocket message with updated quiz information
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
+
         return player;
     }
 
@@ -91,6 +99,9 @@ public class GameEngine {
         }
 
         quiz.start();
+
+        // Send WebSocket message with updated quiz information
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
     }
 
     /**
@@ -203,5 +214,107 @@ public class GameEngine {
             Answer answer = player.getAnswerForQuestion(questionId);
             answer.markAsCorrect();
         }
+    }
+
+    /**
+     * Allows a participant to submit a question to a quiz.
+     * The question will be added to the specified round.
+     * This is only allowed if the quiz has not started yet.
+     *
+     * @param quizId the ID of the quiz to add the question to
+     * @param playerId the ID of the player submitting the question
+     * @param roundId the ID of the round to add the question to
+     * @param questionText the text of the question
+     * @param correctAnswers the list of correct answers
+     * @param timeLimit the time limit for the question in seconds
+     * @return the created question
+     * @throws IllegalArgumentException if no quiz with the given ID exists, no player with the given ID exists, or no round with the given ID exists
+     * @throws IllegalStateException if the quiz has already started
+     */
+    public Question submitParticipantQuestion(String quizId, String playerId, String roundId, String questionText, List<String> correctAnswers, int timeLimit) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            throw new IllegalArgumentException("No quiz found with ID: " + quizId);
+        }
+
+        if (quiz.isStarted()) {
+            throw new IllegalStateException("Cannot submit questions after the quiz has started");
+        }
+
+        Player player = quiz.getPlayers().stream()
+                .filter(p -> p.getId().equals(playerId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No player found with ID: " + playerId));
+
+        // Find the specified round
+        Round round = quiz.getRounds().stream()
+                .filter(r -> r.getId().equals(roundId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No round found with ID: " + roundId));
+
+        // Add the question to the round with the player ID as the submitter
+        Question question = new Question(questionText, correctAnswers, timeLimit, playerId);
+        round.addQuestion(question);
+        return question;
+    }
+
+    /**
+     * Represents a question with its associated round information.
+     */
+    public static class QuestionWithRound {
+        private final Question question;
+        private final String roundId;
+        private final String roundName;
+
+        public QuestionWithRound(Question question, String roundId, String roundName) {
+            this.question = question;
+            this.roundId = roundId;
+            this.roundName = roundName;
+        }
+
+        public Question getQuestion() {
+            return question;
+        }
+
+        public String getRoundId() {
+            return roundId;
+        }
+
+        public String getRoundName() {
+            return roundName;
+        }
+    }
+
+    /**
+     * Retrieves all questions submitted by a specific player in a quiz.
+     *
+     * @param quizId the ID of the quiz
+     * @param playerId the ID of the player
+     * @return a list of questions with their associated round information submitted by the player
+     * @throws IllegalArgumentException if no quiz with the given ID exists, or no player with the given ID exists
+     */
+    public List<QuestionWithRound> getQuestionsSubmittedByPlayer(String quizId, String playerId) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            throw new IllegalArgumentException("No quiz found with ID: " + quizId);
+        }
+
+        // Verify the player exists in the quiz
+        boolean playerExists = quiz.getPlayers().stream()
+                .anyMatch(p -> p.getId().equals(playerId));
+        if (!playerExists) {
+            throw new IllegalArgumentException("No player found with ID: " + playerId);
+        }
+
+        // Find all questions submitted by the player across all rounds, including round information
+        List<QuestionWithRound> questionsWithRounds = new ArrayList<>();
+        for (Round round : quiz.getRounds()) {
+            for (Question question : round.getQuestions()) {
+                if (playerId.equals(question.getSubmitterId())) {
+                    questionsWithRounds.add(new QuestionWithRound(question, round.getId(), round.getName()));
+                }
+            }
+        }
+        return questionsWithRounds;
     }
 }

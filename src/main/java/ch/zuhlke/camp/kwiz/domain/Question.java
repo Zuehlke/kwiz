@@ -14,12 +14,21 @@ public class Question {
     private final String text;
     private final List<String> correctAnswers;
     private final int timeLimit; // in seconds
+    private String submitterId; // ID of the player who submitted this question
 
     public Question(String text, List<String> correctAnswers, int timeLimit) {
         this.id = UUID.randomUUID().toString();
         this.text = text;
         this.correctAnswers = new ArrayList<>(correctAnswers);
         this.timeLimit = timeLimit;
+    }
+
+    public Question(String text, List<String> correctAnswers, int timeLimit, String submitterId) {
+        this.id = UUID.randomUUID().toString();
+        this.text = text;
+        this.correctAnswers = new ArrayList<>(correctAnswers);
+        this.timeLimit = timeLimit;
+        this.submitterId = submitterId;
     }
 
     public String getId() {
@@ -36,6 +45,10 @@ public class Question {
 
     public int getTimeLimit() {
         return timeLimit;
+    }
+
+    public String getSubmitterId() {
+        return submitterId;
     }
 
     public boolean isCorrectAnswer(String answer) {
