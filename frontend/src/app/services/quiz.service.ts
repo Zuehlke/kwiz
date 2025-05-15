@@ -34,10 +34,23 @@ export interface QuizDetails {
   playerCount: number;
 }
 
+export interface CreateRoundRequest {
+  roundName: string;
+}
+
+export interface Round {
+  roundId: string;
+  roundName: string;
+  active: boolean;
+  completed: boolean;
+  questionCount: number;
+}
+
 export interface SubmitQuestionRequest {
   questionText: string;
   correctAnswers: string[];
   timeLimit: number;
+  roundId?: string;
 }
 
 export interface SubmitQuestionResponse {
@@ -45,6 +58,7 @@ export interface SubmitQuestionResponse {
   questionText: string;
   correctAnswers: string[];
   timeLimit: number;
+  roundId?: string;
 }
 
 export interface PlayerQuestion {
@@ -52,6 +66,7 @@ export interface PlayerQuestion {
   questionText: string;
   correctAnswers: string[];
   timeLimit: number;
+  roundId?: string;
 }
 
 @Injectable({
@@ -124,5 +139,26 @@ export class QuizService {
    */
   startQuiz(quizId: string): Observable<QuizDetails> {
     return this.http.post<QuizDetails>(`${this.apiUrl}/${quizId}/start`, {});
+  }
+
+  /**
+   * Creates a new round in a quiz.
+   *
+   * @param quizId The ID of the quiz
+   * @param request The round creation request
+   * @returns An observable of the created round
+   */
+  createRound(quizId: string, request: CreateRoundRequest): Observable<Round> {
+    return this.http.post<Round>(`${this.apiUrl}/${quizId}/rounds`, request);
+  }
+
+  /**
+   * Gets all rounds in a quiz.
+   *
+   * @param quizId The ID of the quiz
+   * @returns An observable of the rounds in the quiz
+   */
+  getRounds(quizId: string): Observable<Round[]> {
+    return this.http.get<Round[]>(`${this.apiUrl}/${quizId}/rounds`);
   }
 }
