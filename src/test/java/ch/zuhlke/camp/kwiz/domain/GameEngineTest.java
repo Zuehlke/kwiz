@@ -19,16 +19,16 @@ class GameEngineTest {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
+        int maxParticipants = 5;
 
         // When
-        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxTeams);
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxParticipants);
 
         // Then
         assertNotNull(quiz);
         assertEquals(quizId, quiz.getId());
         assertEquals(quizName, quiz.getName());
-        assertEquals(maxTeams, quiz.getMaxTeams());
+        assertEquals(maxParticipants, quiz.getMaxParticipants());
         assertTrue(gameEngine.getQuizzes().contains(quiz));
     }
 
@@ -37,8 +37,8 @@ class GameEngineTest {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
-        gameEngine.createQuiz(quizId, quizName, maxTeams);
+        int maxParticipants = 5;
+        gameEngine.createQuiz(quizId, quizName, maxParticipants);
 
         // When
         Quiz quiz = gameEngine.getQuizById(quizId);
@@ -58,48 +58,48 @@ class GameEngineTest {
     }
 
     @Test
-    void shouldAddTeamToQuiz() {
+    void shouldAddParticipantToQuiz() {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
-        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxTeams);
-        String teamName = "Team A";
+        int maxParticipants = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxParticipants);
+        String participantName = "Participant A";
 
         // When
-        Team team = gameEngine.addTeamToQuiz(quizId, teamName);
+        Participant participant = gameEngine.addParticipantToQuiz(quizId, participantName);
 
         // Then
-        assertNotNull(team);
-        assertEquals(teamName, team.getName());
-        assertTrue(quiz.getTeams().contains(team));
+        assertNotNull(participant);
+        assertEquals(participantName, participant.getName());
+        assertTrue(quiz.getParticipants().contains(participant));
     }
 
     @Test
-    void shouldNotAddTeamWhenQuizDoesNotExist() {
+    void shouldNotAddParticipantWhenQuizDoesNotExist() {
         // When/Then
         assertThrows(IllegalArgumentException.class, () -> {
-            gameEngine.addTeamToQuiz("nonexistent", "Team A");
+            gameEngine.addParticipantToQuiz("nonexistent", "Participant A");
         });
     }
 
     @Test
-    void shouldNotAddTeamWhenQuizHasStarted() {
+    void shouldNotAddParticipantWhenQuizHasStarted() {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
-        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxTeams);
+        int maxParticipants = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxParticipants);
 
-        // Add a round and a team to the quiz
+        // Add a round and a participant to the quiz
         Round round = gameEngine.addRoundToQuiz(quizId, "Round 1");
-        gameEngine.addTeamToQuiz(quizId, "Team A");
+        gameEngine.addParticipantToQuiz(quizId, "Participant A");
 
         gameEngine.startQuiz(quizId);
 
         // When/Then
         assertThrows(IllegalStateException.class, () -> {
-            gameEngine.addTeamToQuiz(quizId, "Team B");
+            gameEngine.addParticipantToQuiz(quizId, "Participant B");
         });
     }
 
@@ -108,12 +108,12 @@ class GameEngineTest {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
-        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxTeams);
+        int maxParticipants = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxParticipants);
 
-        // Add a round and a team to the quiz
+        // Add a round and a participant to the quiz
         Round round = gameEngine.addRoundToQuiz(quizId, "Round 1");
-        gameEngine.addTeamToQuiz(quizId, "Team A");
+        gameEngine.addParticipantToQuiz(quizId, "Participant A");
 
         // When
         gameEngine.startQuiz(quizId);
@@ -127,12 +127,12 @@ class GameEngineTest {
         // Given
         String quizId = "quiz123";
         String quizName = "Test Quiz";
-        int maxTeams = 5;
-        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxTeams);
+        int maxParticipants = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxParticipants);
 
-        // Add a round and a team to the quiz
+        // Add a round and a participant to the quiz
         Round round = gameEngine.addRoundToQuiz(quizId, "Round 1");
-        gameEngine.addTeamToQuiz(quizId, "Team A");
+        gameEngine.addParticipantToQuiz(quizId, "Participant A");
 
         gameEngine.startQuiz(quizId);
 

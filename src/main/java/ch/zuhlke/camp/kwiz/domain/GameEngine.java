@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * GameEngine is the main class that manages the game state.
- * It is responsible for creating and retrieving quizzes, adding teams to quizzes,
+ * It is responsible for creating and retrieving quizzes, adding participants to quizzes,
  * and managing the quiz lifecycle.
  */
 @Component
@@ -22,15 +22,15 @@ public class GameEngine {
     }
 
     /**
-     * Creates a new quiz with the given ID, name, and maximum number of teams.
+     * Creates a new quiz with the given ID, name, and maximum number of participants.
      *
-     * @param quizId    the unique ID of the quiz
-     * @param quizName  the name of the quiz
-     * @param maxTeams  the maximum number of teams allowed in the quiz
+     * @param quizId          the unique ID of the quiz
+     * @param quizName        the name of the quiz
+     * @param maxParticipants the maximum number of participants allowed in the quiz
      * @return the created quiz
      */
-    public Quiz createQuiz(String quizId, String quizName, int maxTeams) {
-        Quiz quiz = new Quiz(quizId, quizName, maxTeams);
+    public Quiz createQuiz(String quizId, String quizName, int maxParticipants) {
+        Quiz quiz = new Quiz(quizId, quizName, maxParticipants);
         quizzes.put(quizId, quiz);
         return quiz;
     }
@@ -55,27 +55,27 @@ public class GameEngine {
     }
 
     /**
-     * Adds a team to a quiz.
+     * Adds a participant to a quiz.
      *
-     * @param quizId   the ID of the quiz to add the team to
-     * @param teamName the name of the team to add
-     * @return the created team
+     * @param quizId          the ID of the quiz to add the participant to
+     * @param participantName the name of the participant to add
+     * @return the created participant
      * @throws IllegalArgumentException if no quiz with the given ID exists
      * @throws IllegalStateException    if the quiz has already started
      */
-    public Team addTeamToQuiz(String quizId, String teamName) {
+    public Participant addParticipantToQuiz(String quizId, String participantName) {
         Quiz quiz = getQuizById(quizId);
         if (quiz == null) {
             throw new IllegalArgumentException("No quiz found with ID: " + quizId);
         }
 
         if (quiz.isStarted()) {
-            throw new IllegalStateException("Cannot add team to a quiz that has already started");
+            throw new IllegalStateException("Cannot add participant to a quiz that has already started");
         }
 
-        Team team = new Team(teamName);
-        quiz.addTeam(team);
-        return team;
+        Participant participant = new Participant(participantName);
+        quiz.addParticipant(participant);
+        return participant;
     }
 
     /**
@@ -165,16 +165,16 @@ public class GameEngine {
     }
 
     /**
-     * Submits an answer for a team.
+     * Submits an answer for a participant.
      *
-     * @param quizId     the ID of the quiz
-     * @param teamId     the ID of the team submitting the answer
-     * @param questionId the ID of the question being answered
-     * @param answerText the text of the answer
-     * @throws IllegalArgumentException if no quiz with the given ID exists, no team with the given ID exists, or no question with the given ID exists
+     * @param quizId        the ID of the quiz
+     * @param participantId the ID of the participant submitting the answer
+     * @param questionId    the ID of the question being answered
+     * @param answerText    the text of the answer
+     * @throws IllegalArgumentException if no quiz with the given ID exists, no participant with the given ID exists, or no question with the given ID exists
      * @throws IllegalStateException    if the quiz has not started or has ended
      */
-    public void submitAnswer(String quizId, String teamId, String questionId, String answerText) {
+    public void submitAnswer(String quizId, String participantId, String questionId, String answerText) {
         Quiz quiz = getQuizById(quizId);
         if (quiz == null) {
             throw new IllegalArgumentException("No quiz found with ID: " + quizId);
@@ -184,10 +184,10 @@ public class GameEngine {
             throw new IllegalStateException("Cannot submit answer to a quiz that has not started or has ended");
         }
 
-        Team team = quiz.getTeams().stream()
-                .filter(t -> t.getId().equals(teamId))
+        Participant participant = quiz.getParticipants().stream()
+                .filter(p -> p.getId().equals(participantId))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No team found with ID: " + teamId));
+                .orElseThrow(() -> new IllegalArgumentException("No participant found with ID: " + participantId));
 
         // Find the question to check if the answer is correct
         Question question = quiz.getRounds().stream()
@@ -196,11 +196,11 @@ public class GameEngine {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No question found with ID: " + questionId));
 
-        team.submitAnswer(questionId, answerText);
-        
+        participant.submitAnswer(questionId, answerText);
+
         // Mark the answer as correct if it matches any of the correct answers
         if (question.isCorrectAnswer(answerText)) {
-            Answer answer = team.getAnswerForQuestion(questionId);
+            Answer answer = participant.getAnswerForQuestion(questionId);
             answer.markAsCorrect();
         }
     }

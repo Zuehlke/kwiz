@@ -6,15 +6,15 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Team is an entity that represents a team participating in a quiz.
- * It contains the team's name and their answers to questions.
+ * Participant is an entity that represents a participant in a quiz.
+ * It contains the participant's name and their answers to questions.
  */
-public class Team {
+public class Participant {
     private final String id;
     private final String name;
     private final Map<String, Answer> answers; // questionId -> Answer
 
-    public Team(String name) {
+    public Participant(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.answers = new HashMap<>();
@@ -51,8 +51,8 @@ public class Team {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Team team = (Team) o;
-        return Objects.equals(id, team.id);
+        Participant participant = (Participant) o;
+        return Objects.equals(id, participant.id);
     }
 
     @Override
