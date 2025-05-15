@@ -51,7 +51,7 @@ public class WebConfig implements WebMvcConfigurer {
                         }
                         
                         // Forward to index.html for Angular routing
-                        return new ClassPathResource("/static/index.html");
+                        return new ClassPathResource("/web/index.html");
                     }
                 });
     }
