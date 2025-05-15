@@ -138,7 +138,7 @@
               name="roundId" 
               [(ngModel)]="selectedRoundId"
             >
-              <option [value]="null">Default (Participant Questions)</option>
+              <option [value]="">-- Select a round --</option>
               @for (round of rounds; track round.roundId) {
                 <option [value]="round.roundId">{{ round.roundName }}</option>
               }

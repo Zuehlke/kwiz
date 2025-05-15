@@ -280,10 +280,15 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Add the selected round ID to the question if one is selected
-    if (this.selectedRoundId) {
-      filteredQuestion.roundId = this.selectedRoundId;
+    // Require a round selection
+    if (!this.selectedRoundId) {
+      this.errorMessage = 'Please select a round for your question.';
+      this.submittingQuestion = false;
+      return;
     }
+
+    // Add the selected round ID to the question
+    filteredQuestion.roundId = this.selectedRoundId;
 
     this.quizService.submitQuestion(this.quizId, this.playerId, filteredQuestion).subscribe(
       (response) => {
