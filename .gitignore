@@ -35,3 +35,26 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Node.js ###
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+.npm/
+package-lock.json
+
+### Frontend build files ###
+# Track frontend directory but ignore specific files/folders
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+frontend/tmp/
+frontend/.cache/
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+testem.log
+typings/
