@@ -37,7 +37,6 @@
 7. AI-Specific Instructions
 * Think step-by-step. 
 * If generating multiple classes, start with domain models first. 
-* Explain your design decisions briefly in comments (e.g., // using signal here for reactivity and performance). 
 * Avoid premature optimization. 
 * Always assume junior developer mode: clarify edge cases, document assumptions, and focus on correctness over brevity.
 
