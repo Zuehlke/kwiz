@@ -27,31 +27,50 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // First, handle API requests - these are handled by controllers, not resource handlers
-        
+
+        // Handle root URL without any slash
+        registry.addResourceHandler("")
+                .addResourceLocations("classpath:/web/")
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver() {
+                    @Override
+                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                        // For root URL, always return index.html
+                        return new ClassPathResource("/web/index.html");
+                    }
+                });
+
         // Then, serve static resources directly
-        registry.addResourceHandler("/**")
+        registry.addResourceHandler("/**", "", ".")
                 .addResourceLocations("classpath:/web/")
                 .resourceChain(true)
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
                         Resource resource = location.createRelative(resourcePath);
-                        
+
                         // If the resource exists and is readable, serve it directly
                         if (resource.exists() && resource.isReadable()) {
                             return resource;
                         }
-                        
+
                         // If the resource doesn't exist, it might be an Angular route
                         // Forward to index.html for Angular's router to handle
+
+                        // Handle API requests, files with extensions, and direct requests to index.html
                         if (resourcePath.startsWith("api/") || 
                             resourcePath.contains(".") || 
                             resourcePath.equals("index.html")) {
                             return null; // Let the next resource handler handle it
                         }
-                        
-                        // Forward to index.html for Angular routing
-                        return new ClassPathResource("/web/index.html");
+
+                        // Explicitly handle root URL without trailing slash (empty resourcePath)
+                        // as well as other Angular routes
+                        if (resourcePath.isEmpty() || !resourcePath.contains(".")) {
+                            return new ClassPathResource("/web/index.html");
+                        }
+
+                        return null;
                     }
                 });
     }
