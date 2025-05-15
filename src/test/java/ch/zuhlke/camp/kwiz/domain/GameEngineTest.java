@@ -1,7 +1,9 @@
 package ch.zuhlke.camp.kwiz.domain;
 
+import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +16,8 @@ class GameEngineTest {
 
     @BeforeEach
     void setUp() {
-        gameEngine = new GameEngine();
+        WebSocketController mockWebSocketController = Mockito.mock(WebSocketController.class);
+        gameEngine = new GameEngine(mockWebSocketController);
     }
 
     @Test
