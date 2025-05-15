@@ -40,3 +40,38 @@ describe('HomeComponent', () => {
     expect(gameActionsComponent).toBeTruthy();
   });
 });
+
+  it('should have a form for creating a quiz with required fields', () => {
+    component.showCreateQuizForm = true;
+    fixture.detectChanges();
+
+    const createForm = fixture.debugElement.query(By.css('form.create-quiz-form'));
+    expect(createForm).toBeTruthy();
+
+    const quizNameInput = createForm.query(By.css('input[formControlName="quizName"]'));
+    expect(quizNameInput).toBeTruthy();
+
+    const maxPlayersInput = createForm.query(By.css('input[formControlName="maxPlayers"]'));
+    expect(maxPlayersInput).toBeTruthy();
+
+    const submitButton = createForm.query(By.css('button[type="submit"]'));
+    expect(submitButton).toBeTruthy();
+  });
+
+  it('should have a form for joining a quiz with required fields', () => {
+    component.showJoinQuizForm = true;
+    fixture.detectChanges();
+
+    const joinForm = fixture.debugElement.query(By.css('form.join-quiz-form'));
+    expect(joinForm).toBeTruthy();
+
+    const quizIdInput = joinForm.query(By.css('input[formControlName="quizId"]'));
+    expect(quizIdInput).toBeTruthy();
+
+    const playerNameInput = joinForm.query(By.css('input[formControlName="playerName"]'));
+    expect(playerNameInput).toBeTruthy();
+
+    const submitButton = joinForm.query(By.css('button[type="submit"]'));
+    expect(submitButton).toBeTruthy();
+  });
+});
