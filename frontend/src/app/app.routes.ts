@@ -18,11 +18,11 @@ export const routes: Routes = [
     redirectTo: '/home'
   },
   { 
-    path: 'participant/:quizId', 
-    // This is a temporary redirect until the participant component is created
+    path: 'player/:quizId', 
+    // This is a temporary redirect until the player component is created
     resolve: {
       redirect: () => {
-        alert('Participant page not implemented yet. Redirecting to home page.');
+        alert('Player page not implemented yet. Redirecting to home page.');
         return true;
       }
     },
