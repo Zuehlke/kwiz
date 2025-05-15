@@ -21,8 +21,14 @@
 
     <div class="player-list">
       <h3>Players ({{ quizDetails.playerCount }})</h3>
-      @if (quizDetails.playerCount > 0) {
-        <p>Player list will be displayed here when implemented.</p>
+      @if (players.length > 0) {
+        <ul class="players">
+          @for (player of players; track player.id) {
+            <li class="player-item">
+              <span class="player-name">{{ player.name }}</span>
+            </li>
+          }
+        </ul>
       } @else {
         <p>No players have joined yet.</p>
       }

@@ -80,6 +80,27 @@
       font-size: 1.1rem;
       margin: 0.5rem 0;
     }
+
+    .players {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+
+      .player-item {
+        background-color: white;
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+
+        .player-name {
+          font-size: 1.1rem;
+          font-weight: 500;
+        }
+      }
+    }
   }
 
   .loading {

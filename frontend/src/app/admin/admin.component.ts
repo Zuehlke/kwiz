@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
-import { WebSocketService, WebSocketMessage } from '../services/websocket.service';
+import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
+  players: PlayerInfo[] = [];
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
 
@@ -55,6 +56,11 @@ export class AdminComponent implements OnInit, OnDestroy {
               maxPlayers: message.maxPlayers,
               started: message.started ?? false
             };
+
+            // Update players list if available
+            if (message.players) {
+              this.players = message.players;
+            }
           }
         },
         error: (error) => {

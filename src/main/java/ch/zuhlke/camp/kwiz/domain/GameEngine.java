@@ -81,7 +81,7 @@ public class GameEngine {
         quiz.addPlayer(player);
 
         // Send WebSocket message with updated quiz information
-        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted());
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
 
         return player;
     }
@@ -101,7 +101,7 @@ public class GameEngine {
         quiz.start();
 
         // Send WebSocket message with updated quiz information
-        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted());
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
     }
 
     /**

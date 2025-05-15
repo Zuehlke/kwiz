@@ -4,11 +4,17 @@ import { filter, map } from 'rxjs/operators';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
+export interface PlayerInfo {
+  id: string;
+  name: string;
+}
+
 export interface WebSocketMessage {
   quizId: string;
   playerCount: number;
   maxPlayers: number;
   started?: boolean;
+  players?: PlayerInfo[];
 }
 
 @Injectable({
@@ -147,7 +153,8 @@ export class WebSocketService {
               quizId: data.quizId,
               playerCount: data.playerCount,
               maxPlayers: data.maxPlayers,
-              started: data.started
+              started: data.started,
+              players: data.players
             });
           } catch (error) {
             console.error('Error parsing message body:', error);
