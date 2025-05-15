@@ -4,8 +4,8 @@
     <h2 class="hero-subtitle">{{ subtitle }}</h2>
     <p class="hero-description">{{ description }}</p>
     <div class="hero-actions">
-      <a routerLink="/home" fragment="create" class="btn btn-primary">Create Quiz</a>
-      <a routerLink="/home" fragment="join" class="btn btn-secondary">Join Quiz</a>
+      <a href="#game-actions" (click)="scrollToGameActions('create')" class="btn btn-primary">Create Quiz</a>
+      <a href="#game-actions" (click)="scrollToGameActions('join')" class="btn btn-secondary">Join Quiz</a>
     </div>
   </div>
   <div class="hero-image">
