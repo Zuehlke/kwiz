@@ -18,7 +18,7 @@ This is the frontend application for the KwiZ pub quiz system built with Angular
    ```
    npm start
    ```
-   This will start the Angular development server with the proxy configuration that forwards API requests to the backend.
+   This will start the Angular development server with the proxy configuration that forwards API requests to the backend. A browser window will automatically open to the application.
 
 3. The application will be available at http://localhost:4200
 
