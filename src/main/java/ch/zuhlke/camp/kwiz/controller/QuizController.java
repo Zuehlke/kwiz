@@ -42,12 +42,12 @@ public class QuizController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createQuiz(@RequestBody CreateQuizRequest request) {
         Quiz quiz = gameEngine.createQuiz(request.getQuizId(), request.getQuizName(), request.getMaxParticipants());
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
         response.put("maxParticipants", quiz.getMaxParticipants());
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -68,11 +68,11 @@ public class QuizController {
     @GetMapping("/{quizId}")
     public ResponseEntity<Map<String, Object>> getQuiz(@PathVariable String quizId) {
         Quiz quiz = gameEngine.getQuizById(quizId);
-        
+
         if (quiz == null) {
             return ResponseEntity.notFound().build();
         }
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("quizId", quiz.getId());
         response.put("quizName", quiz.getName());
@@ -80,7 +80,7 @@ public class QuizController {
         response.put("started", quiz.isStarted());
         response.put("ended", quiz.isEnded());
         response.put("participantCount", quiz.getParticipants().size());
-        
+
         return ResponseEntity.ok(response);
     }
 
@@ -107,12 +107,13 @@ public class QuizController {
             @RequestBody JoinQuizRequest request) {
         try {
             Participant participant = gameEngine.addParticipantToQuiz(quizId, request.getParticipantName());
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("quizId", quizId);
             response.put("participantId", participant.getId());
             response.put("participantName", participant.getName());
-            
+            response.put("redirectUrl", "/waiting-room/" + quizId);
+
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

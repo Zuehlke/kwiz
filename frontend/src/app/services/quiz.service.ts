@@ -22,6 +22,7 @@ export interface JoinQuizResponse {
   quizId: string;
   participantId: string;
   participantName: string;
+  redirectUrl: string;
 }
 
 export interface QuizDetails {

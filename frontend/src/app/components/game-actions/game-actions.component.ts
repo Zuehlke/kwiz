@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { QuizService, CreateQuizRequest, JoinQuizRequest } from '../../services/quiz.service';
 import { catchError, of } from 'rxjs';
 
@@ -21,7 +22,10 @@ export class GameActionsComponent {
   quizId = signal('');
   errorMessage = signal('');
 
-  constructor(private quizService: QuizService) {}
+  constructor(
+    private quizService: QuizService,
+    private router: Router
+  ) {}
 
   // Set active tab
   setActiveTab(tab: string): void {
@@ -88,7 +92,15 @@ export class GameActionsComponent {
       .subscribe(response => {
         if (response) {
           console.log('Joined quiz:', response);
-          this.errorMessage.set('Joined quiz successfully! Participant ID: ' + response.participantId);
+          this.errorMessage.set('Joined quiz successfully! Redirecting to waiting room...');
+
+          // Navigate to the waiting room using the redirectUrl from the response
+          if (response.redirectUrl) {
+            this.router.navigateByUrl(response.redirectUrl);
+          } else {
+            // Fallback in case redirectUrl is not provided
+            this.router.navigate(['/waiting-room', response.quizId]);
+          }
         }
       });
   }
