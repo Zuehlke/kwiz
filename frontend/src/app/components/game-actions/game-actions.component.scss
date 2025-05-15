@@ -1,0 +1,185 @@
+// Variables
+$primary-color: #3f51b5;
+$secondary-color: #ff4081;
+$text-color: #333;
+$light-color: #fff;
+$background-color: #f9f9f9;
+$border-color: #e0e0e0;
+$error-color: #f44336;
+$success-color: #4caf50;
+$transition-speed: 0.3s;
+
+.game-actions-section {
+  padding: 3rem 0;
+  background-color: $background-color;
+  border-radius: 12px;
+  margin: 3rem 0;
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin-bottom: 1rem;
+    }
+    
+    .section-description {
+      font-size: 1.2rem;
+      color: $text-color;
+      opacity: 0.8;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    
+    .tab-button {
+      padding: 0.8rem 1.5rem;
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid $border-color;
+      color: $text-color;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all $transition-speed ease;
+      margin: 0 1rem;
+      
+      &:hover {
+        color: $primary-color;
+      }
+      
+      &.active {
+        color: $primary-color;
+        border-bottom: 2px solid $primary-color;
+      }
+    }
+  }
+  
+  .tab-content {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: $light-color;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    .tab-pane {
+      form {
+        .form-group {
+          margin-bottom: 1.5rem;
+          
+          label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: $text-color;
+          }
+          
+          .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid $border-color;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color $transition-speed ease;
+            
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+              box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+            }
+            
+            &::placeholder {
+              color: rgba($text-color, 0.5);
+            }
+          }
+        }
+        
+        .message {
+          margin-bottom: 1.5rem;
+          
+          p {
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            
+            &.error {
+              background-color: rgba($error-color, 0.1);
+              color: $error-color;
+              border: 1px solid rgba($error-color, 0.2);
+            }
+            
+            &.success {
+              background-color: rgba($success-color, 0.1);
+              color: $success-color;
+              border: 1px solid rgba($success-color, 0.2);
+            }
+          }
+        }
+        
+        .btn {
+          display: inline-block;
+          padding: 0.8rem 1.5rem;
+          border-radius: 30px;
+          font-weight: 600;
+          text-decoration: none;
+          text-align: center;
+          transition: all $transition-speed ease;
+          cursor: pointer;
+          border: none;
+          width: 100%;
+          
+          &.btn-primary {
+            background-color: $primary-color;
+            color: $light-color;
+            box-shadow: 0 4px 6px rgba($primary-color, 0.25);
+            
+            &:hover {
+              background-color: darken($primary-color, 10%);
+              transform: translateY(-2px);
+              box-shadow: 0 6px 8px rgba($primary-color, 0.3);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Media queries for responsive design
+@media (max-width: 768px) {
+  .game-actions-section {
+    padding: 2rem 1rem;
+    margin: 2rem 0;
+    
+    .section-header {
+      h2 {
+        font-size: 2rem;
+      }
+      
+      .section-description {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .tabs {
+      .tab-button {
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+        margin: 0 0.5rem;
+      }
+    }
+    
+    .tab-content {
+      padding: 1.5rem;
+    }
+  }
+}

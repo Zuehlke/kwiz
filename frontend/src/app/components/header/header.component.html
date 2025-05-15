@@ -1,0 +1,15 @@
+<header class="header">
+  <div class="header-container">
+    <div class="logo">
+      <h1>KwiZ</h1>
+      <span class="tagline">The Zühlke Pub Quiz</span>
+    </div>
+    <nav class="navigation">
+      <ul>
+        <li *ngFor="let link of navLinks">
+          <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
