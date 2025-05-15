@@ -7,7 +7,7 @@ A pub quiz is a quiz held in a pub or bar. These quizzes are popular social even
 1. **Teams**: Participants form teams
 2. **No Cheating**: The Online research or asking people not part of the team is not allowed.
 3. **Quiet During Questions**: Teams should remain quiet while questions are being read.
-4**Time Limit**: Each round typically has a set time limit for answering questions.
+4. **Time Limit**: Each round typically has a set time limit for answering questions.
 
 ## Team Formation
 1. Choose a creative team name.
@@ -36,3 +36,35 @@ A typical pub quiz consists of several rounds, which may include:
 4. Have fun! The primary purpose of a pub quiz is entertainment.
 
 Remember, the main goal of a pub quiz is to have fun while testing your knowledge in a social setting!
+
+## Development Setup
+
+### Prerequisites
+- Java 21 or higher
+- Node.js and npm
+- Angular CLI (`npm install -g @angular/cli`)
+
+### Starting the Backend
+1. Navigate to the project root directory
+2. Run the Spring Boot application:
+   ```
+   ./gradlew bootRun
+   ```
+3. The backend will start on http://localhost:8080
+
+### Starting the Frontend
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+2. Install dependencies (first time only):
+   ```
+   npm install
+   ```
+3. Start the Angular development server:
+   ```
+   npm start
+   ```
+4. The frontend will be available at http://localhost:4200
+
+The frontend is configured with a proxy to the backend, so API calls will be automatically forwarded to the backend server.
