@@ -88,3 +88,48 @@ The KwiZ application uses Swagger UI for API documentation. Swagger UI provides 
 - **Parameter Information**: Understand required and optional parameters for each endpoint
 
 This is particularly useful for both backend and frontend developers to understand the available services and how to interact with them.
+
+## Release and Deployment Process
+
+The KwiZ application follows a streamlined release and deployment process that ensures consistent delivery from development to production.
+
+### Frontend Integration
+
+- The frontend is built and served by the Spring Boot JAR as a static resource
+- During the build process, the Angular frontend is compiled and then copied into the Spring Boot static resources directory
+- This integration is handled by Gradle tasks:
+  - `buildFrontend`: Builds the Angular application
+  - `copyFrontendToBuild`: Copies the built frontend into `build/resources/main/web`
+  - These tasks run automatically as part of the main build process
+
+### Continuous Deployment
+
+- A GitHub Action automatically deploys the application to Azure Cloud on every commit to the main branch
+- The workflow is defined in `.github/workflows/main_kwiz.yml`
+- The deployment process:
+  1. Builds the application using Gradle
+  2. Copies the JAR file to `build/release/kwiz.jar` (without version number)
+  3. Uploads the JAR as an artifact
+  4. Deploys the JAR to Azure Web App in the Production slot
+
+### Local Testing
+
+- The "Test Release Jar" run configuration can be used to test the release JAR locally
+- This configuration:
+  - Uses the JAR file from `build/release/kwiz.jar`
+  - Sets the working directory to the project root
+  - Uses Azul JDK 21 as the runtime environment
+- To use this configuration:
+  1. Build the project with `./gradlew build` to generate the release JAR
+  2. Run the "Test Release Jar" configuration from your IDE
+
+### Production Environment
+
+- The application is deployed and accessible at: https://kwiz-brgkdec7cphbcbb2.westeurope-01.azurewebsites.net/home
+- This URL is the production environment where users can access the application
+- The deployment is automatically updated whenever changes are pushed to the main branch
+- The application is hosted on Azure Web App service in the West Europe region
+
+### Known Issues
+
+Somehow the pure URL without any trainling path seems notto work yet - which is a bug in current WebConfig that our most valued developer IntelliJ Junie was not yet able to fix.
