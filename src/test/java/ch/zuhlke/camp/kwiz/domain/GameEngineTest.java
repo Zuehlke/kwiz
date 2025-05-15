@@ -3,6 +3,9 @@ package ch.zuhlke.camp.kwiz.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameEngineTest {
@@ -141,5 +144,67 @@ class GameEngineTest {
 
         // Then
         assertTrue(quiz.isEnded());
+    }
+
+    @Test
+    void shouldSubmitParticipantQuestion() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
+        Player player = gameEngine.addPlayerToQuiz(quizId, "Player A");
+
+        String questionText = "What is the capital of France?";
+        List<String> correctAnswers = Arrays.asList("Paris");
+        int timeLimit = 30;
+
+        // When
+        Question question = gameEngine.submitParticipantQuestion(quizId, player.getId(), questionText, correctAnswers, timeLimit);
+
+        // Then
+        assertNotNull(question);
+        assertEquals(questionText, question.getText());
+        assertEquals(correctAnswers, question.getCorrectAnswers());
+        assertEquals(timeLimit, question.getTimeLimit());
+
+        // Verify that the question was added to a round
+        boolean questionFound = false;
+        for (Round round : quiz.getRounds()) {
+            if (round.getName().equals("Participant Questions")) {
+                for (Question q : round.getQuestions()) {
+                    if (q.getId().equals(question.getId())) {
+                        questionFound = true;
+                        break;
+                    }
+                }
+            }
+        }
+        assertTrue(questionFound, "Question should be added to the 'Participant Questions' round");
+    }
+
+    @Test
+    void shouldNotSubmitParticipantQuestionWhenQuizHasStarted() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
+        Player player = gameEngine.addPlayerToQuiz(quizId, "Player A");
+
+        // Add a round to the quiz so it can be started
+        Round round = gameEngine.addRoundToQuiz(quizId, "Round 1");
+
+        // Start the quiz
+        gameEngine.startQuiz(quizId);
+
+        String questionText = "What is the capital of France?";
+        List<String> correctAnswers = Arrays.asList("Paris");
+        int timeLimit = 30;
+
+        // When/Then
+        assertThrows(IllegalStateException.class, () -> {
+            gameEngine.submitParticipantQuestion(quizId, player.getId(), questionText, correctAnswers, timeLimit);
+        });
     }
 }

@@ -34,6 +34,26 @@ export interface QuizDetails {
   playerCount: number;
 }
 
+export interface SubmitQuestionRequest {
+  questionText: string;
+  correctAnswers: string[];
+  timeLimit: number;
+}
+
+export interface SubmitQuestionResponse {
+  questionId: string;
+  questionText: string;
+  correctAnswers: string[];
+  timeLimit: number;
+}
+
+export interface PlayerQuestion {
+  questionId: string;
+  questionText: string;
+  correctAnswers: string[];
+  timeLimit: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -71,5 +91,28 @@ export class QuizService {
    */
   joinQuiz(quizId: string, request: JoinQuizRequest): Observable<JoinQuizResponse> {
     return this.http.post<JoinQuizResponse>(`${this.apiUrl}/${quizId}/players`, request);
+  }
+
+  /**
+   * Submits a participant question to a quiz.
+   * 
+   * @param quizId The ID of the quiz
+   * @param playerId The ID of the player submitting the question
+   * @param request The question submission request
+   * @returns An observable of the submitted question
+   */
+  submitQuestion(quizId: string, playerId: string, request: SubmitQuestionRequest): Observable<SubmitQuestionResponse> {
+    return this.http.post<SubmitQuestionResponse>(`${this.apiUrl}/${quizId}/players/${playerId}/questions`, request);
+  }
+
+  /**
+   * Gets all questions submitted by a player in a quiz.
+   * 
+   * @param quizId The ID of the quiz
+   * @param playerId The ID of the player
+   * @returns An observable of the player's submitted questions
+   */
+  getPlayerSubmittedQuestions(quizId: string, playerId: string): Observable<PlayerQuestion[]> {
+    return this.http.get<PlayerQuestion[]>(`${this.apiUrl}/${quizId}/players/${playerId}/questions`);
   }
 }
