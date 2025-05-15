@@ -60,7 +60,10 @@ export class GameActionsComponent {
       .subscribe(response => {
         if (response) {
           console.log('Quiz created:', response);
-          this.errorMessage.set('Quiz created successfully! Quiz ID: ' + response.quizId);
+          this.errorMessage.set('Quiz created successfully! Redirecting to admin page...');
+
+          // Navigate to the quiz-master page (admin page) with the quiz ID
+          this.router.navigate(['/quiz-master', response.quizId]);
         }
       });
   }

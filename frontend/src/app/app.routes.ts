@@ -8,14 +8,7 @@ export const routes: Routes = [
   // These are placeholder routes - the actual components will need to be created
   { 
     path: 'quiz-master/:quizId', 
-    // This is a temporary redirect until the quiz-master component is created
-    resolve: {
-      redirect: () => {
-        alert('Quiz Master page not implemented yet. Redirecting to home page.');
-        return true;
-      }
-    },
-    redirectTo: '/home'
+    loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
   },
   { 
     path: 'player/:quizId', 

@@ -1,0 +1,35 @@
+<div class="admin-container">
+  <h1>Quiz Master Dashboard</h1>
+
+  @if (quizDetails) {
+    <div class="quiz-info">
+      <h2>{{ quizDetails.quizName }}</h2>
+      <p>Quiz ID: {{ quizId }}</p>
+      <p>Players: {{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</p>
+      <p>Status: {{ quizDetails.started ? 'Started' : 'Not Started' }}</p>
+    </div>
+
+    <div class="admin-controls">
+      <h3>Quiz Controls</h3>
+      @if (!quizDetails.started) {
+        <button class="start-button" (click)="startQuiz()">Start Quiz</button>
+        <p class="help-text">Once you start the quiz, all players in the waiting room will be moved to the game.</p>
+      } @else {
+        <p class="status-text">Quiz is in progress</p>
+      }
+    </div>
+
+    <div class="player-list">
+      <h3>Players ({{ quizDetails.playerCount }})</h3>
+      @if (quizDetails.playerCount > 0) {
+        <p>Player list will be displayed here when implemented.</p>
+      } @else {
+        <p>No players have joined yet.</p>
+      }
+    </div>
+  } @else {
+    <div class="loading">
+      <p>Loading quiz details...</p>
+    </div>
+  }
+</div>
