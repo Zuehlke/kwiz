@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Variables
 $primary-color: #3f51b5;
 $secondary-color: #ff4081;
@@ -14,18 +16,18 @@ $transition-speed: 0.3s;
   background-color: $background-color;
   border-radius: 12px;
   margin: 3rem 0;
-  
+
   .section-header {
     text-align: center;
     margin-bottom: 2rem;
-    
+
     h2 {
       font-size: 2.5rem;
       font-weight: 700;
       color: $primary-color;
       margin-bottom: 1rem;
     }
-    
+
     .section-description {
       font-size: 1.2rem;
       color: $text-color;
@@ -34,12 +36,12 @@ $transition-speed: 0.3s;
       margin: 0 auto;
     }
   }
-  
+
   .tabs {
     display: flex;
     justify-content: center;
     margin-bottom: 2rem;
-    
+
     .tab-button {
       padding: 0.8rem 1.5rem;
       background-color: transparent;
@@ -51,18 +53,18 @@ $transition-speed: 0.3s;
       cursor: pointer;
       transition: all $transition-speed ease;
       margin: 0 1rem;
-      
+
       &:hover {
         color: $primary-color;
       }
-      
+
       &.active {
         color: $primary-color;
         border-bottom: 2px solid $primary-color;
       }
     }
   }
-  
+
   .tab-content {
     max-width: 500px;
     margin: 0 auto;
@@ -70,19 +72,19 @@ $transition-speed: 0.3s;
     background-color: $light-color;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
+
     .tab-pane {
       form {
         .form-group {
           margin-bottom: 1.5rem;
-          
+
           label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
             color: $text-color;
           }
-          
+
           .form-control {
             width: 100%;
             padding: 0.8rem 1rem;
@@ -90,33 +92,33 @@ $transition-speed: 0.3s;
             border-radius: 5px;
             font-size: 1rem;
             transition: border-color $transition-speed ease;
-            
+
             &:focus {
               outline: none;
               border-color: $primary-color;
               box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
             }
-            
+
             &::placeholder {
               color: rgba($text-color, 0.5);
             }
           }
         }
-        
+
         .message {
           margin-bottom: 1.5rem;
-          
+
           p {
             padding: 0.8rem 1rem;
             border-radius: 5px;
             font-size: 0.9rem;
-            
+
             &.error {
               background-color: rgba($error-color, 0.1);
               color: $error-color;
               border: 1px solid rgba($error-color, 0.2);
             }
-            
+
             &.success {
               background-color: rgba($success-color, 0.1);
               color: $success-color;
@@ -124,7 +126,7 @@ $transition-speed: 0.3s;
             }
           }
         }
-        
+
         .btn {
           display: inline-block;
           padding: 0.8rem 1.5rem;
@@ -136,14 +138,14 @@ $transition-speed: 0.3s;
           cursor: pointer;
           border: none;
           width: 100%;
-          
+
           &.btn-primary {
             background-color: $primary-color;
             color: $light-color;
             box-shadow: 0 4px 6px rgba($primary-color, 0.25);
-            
+
             &:hover {
-              background-color: darken($primary-color, 10%);
+              background-color: color.adjust($primary-color, $lightness: -10%);
               transform: translateY(-2px);
               box-shadow: 0 6px 8px rgba($primary-color, 0.3);
             }
@@ -159,17 +161,17 @@ $transition-speed: 0.3s;
   .game-actions-section {
     padding: 2rem 1rem;
     margin: 2rem 0;
-    
+
     .section-header {
       h2 {
         font-size: 2rem;
       }
-      
+
       .section-description {
         font-size: 1.1rem;
       }
     }
-    
+
     .tabs {
       .tab-button {
         padding: 0.6rem 1rem;
@@ -177,7 +179,7 @@ $transition-speed: 0.3s;
         margin: 0 0.5rem;
       }
     }
-    
+
     .tab-content {
       padding: 1.5rem;
     }
