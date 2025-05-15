@@ -15,7 +15,7 @@ import { switchMap } from 'rxjs/operators';
 export class WaitingRoomComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
-  participants: any[] = [];
+  players: any[] = [];
   private pollingSubscription: Subscription | null = null;
 
   constructor(
@@ -40,9 +40,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
           (quizDetails) => {
             this.quizDetails = quizDetails;
 
-            // If the quiz has started, navigate to the participant page
+            // If the quiz has started, navigate to the player page
             if (quizDetails.started) {
-              this.router.navigate(['/participant', this.quizId]);
+              this.router.navigate(['/player', this.quizId]);
             }
           },
           (error) => {
@@ -65,9 +65,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
         (quizDetails) => {
           this.quizDetails = quizDetails;
 
-          // If the quiz has started, navigate to the participant page
+          // If the quiz has started, navigate to the player page
           if (quizDetails.started) {
-            this.router.navigate(['/participant', this.quizId]);
+            this.router.navigate(['/player', this.quizId]);
           }
         },
         (error) => {
