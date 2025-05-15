@@ -5,33 +5,33 @@ import { Observable } from 'rxjs';
 export interface CreateQuizRequest {
   quizId: string;
   quizName: string;
-  maxParticipants: number;
+  maxPlayers: number;
 }
 
 export interface CreateQuizResponse {
   quizId: string;
   quizName: string;
-  maxParticipants: number;
+  maxPlayers: number;
 }
 
 export interface JoinQuizRequest {
-  participantName: string;
+  playerName: string;
 }
 
 export interface JoinQuizResponse {
   quizId: string;
-  participantId: string;
-  participantName: string;
+  playerId: string;
+  playerName: string;
   redirectUrl: string;
 }
 
 export interface QuizDetails {
   quizId: string;
   quizName: string;
-  maxParticipants: number;
+  maxPlayers: number;
   started: boolean;
   ended: boolean;
-  participantCount: number;
+  playerCount: number;
 }
 
 @Injectable({
@@ -70,6 +70,6 @@ export class QuizService {
    * @returns An observable of the join response
    */
   joinQuiz(quizId: string, request: JoinQuizRequest): Observable<JoinQuizResponse> {
-    return this.http.post<JoinQuizResponse>(`${this.apiUrl}/${quizId}/participants`, request);
+    return this.http.post<JoinQuizResponse>(`${this.apiUrl}/${quizId}/players`, request);
   }
 }

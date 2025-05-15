@@ -46,7 +46,7 @@ export class GameActionsComponent {
     const request: CreateQuizRequest = {
       quizId: randomQuizId,
       quizName: this.quizName(),
-      maxParticipants: 10 // Default value
+      maxPlayers: 10 // Default value
     };
 
     this.quizService.createQuiz(request)
@@ -73,12 +73,12 @@ export class GameActionsComponent {
     }
 
     if (!this.playerName()) {
-      this.errorMessage.set('Please enter a team name');
+      this.errorMessage.set('Please enter a player name');
       return;
     }
 
     const request: JoinQuizRequest = {
-      participantName: this.playerName()
+      playerName: this.playerName()
     };
 
     this.quizService.joinQuiz(this.quizId(), request)
