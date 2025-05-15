@@ -131,7 +131,7 @@ describe('GameActionsComponent', () => {
 
   it('should call createQuiz service when form is submitted', () => {
     component.quizName.set('Test Quiz');
-    quizService.createQuiz.and.returnValue(of({ quizId: 'quiz123', quizName: 'Test Quiz', maxParticipants: 10 }));
+    quizService.createQuiz.and.returnValue(of({ quizId: 'quiz123', quizName: 'Test Quiz', maxPlayers: 10 }));
 
     const createForm = fixture.debugElement.query(By.css('#create form'));
     const submitButton = createForm.query(By.css('button[type="submit"]'));
@@ -147,13 +147,13 @@ describe('GameActionsComponent', () => {
 
     component.quizId.set('quiz123');
     component.playerName.set('Player 1');
-    quizService.joinQuiz.and.returnValue(of({ quizId: 'quiz123', participantId: 'player123', participantName: 'Player 1', redirectUrl: '/quiz/quiz123' }));
+    quizService.joinQuiz.and.returnValue(of({ quizId: 'quiz123', playerId: 'player123', playerName: 'Player 1', redirectUrl: '/quiz/quiz123' }));
 
     const joinForm = fixture.debugElement.query(By.css('#join form'));
     const submitButton = joinForm.query(By.css('button[type="submit"]'));
     submitButton.nativeElement.click();
 
-    expect(quizService.joinQuiz).toHaveBeenCalledWith('quiz123', { participantName: 'Player 1' });
+    expect(quizService.joinQuiz).toHaveBeenCalledWith('quiz123', { playerName: 'Player 1' });
     expect(component.errorMessage()).toContain('Joined quiz successfully');
   });
 });
