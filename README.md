@@ -66,7 +66,8 @@ Remember, the main goal of a pub quiz is to have fun while testing your knowledg
    ```
    npm start
    ```
-4. The frontend will be available at http://localhost:4200
+4. A browser window will automatically open to the application
+5. The frontend will be available at http://localhost:4200
 
 The frontend is configured with a proxy to the backend, so API calls will be automatically forwarded to the backend server.
 
