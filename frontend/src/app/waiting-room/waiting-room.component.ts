@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage } from '../services/websocket.service';
-import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
