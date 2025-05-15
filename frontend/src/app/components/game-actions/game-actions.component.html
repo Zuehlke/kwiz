@@ -3,7 +3,7 @@
     <h2>Start Playing</h2>
     <p class="section-description">Create a new quiz or join an existing one</p>
   </div>
-  
+
   <div class="tabs">
     <button 
       class="tab-button" 
@@ -18,7 +18,7 @@
       Join Quiz
     </button>
   </div>
-  
+
   <div class="tab-content">
     <!-- Create Quiz Tab -->
     <div class="tab-pane" *ngIf="activeTab() === 'create'" id="create">
@@ -34,17 +34,17 @@
             placeholder="Enter a name for your quiz"
             class="form-control">
         </div>
-        
+
         <div class="message" *ngIf="errorMessage()">
           <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
             {{ errorMessage() }}
           </p>
         </div>
-        
+
         <button type="submit" class="btn btn-primary">Create Quiz</button>
       </form>
     </div>
-    
+
     <!-- Join Quiz Tab -->
     <div class="tab-pane" *ngIf="activeTab() === 'join'" id="join">
       <form (submit)="$event.preventDefault(); joinQuiz()">
@@ -59,25 +59,25 @@
             placeholder="Enter the quiz ID"
             class="form-control">
         </div>
-        
+
         <div class="form-group">
-          <label for="teamName">Team Name</label>
+          <label for="playerName">Player Name</label>
           <input 
             type="text" 
-            id="teamName" 
-            [ngModel]="teamName()" 
-            (ngModelChange)="teamName.set($event)" 
-            name="teamName" 
-            placeholder="Enter your team name"
+            id="playerName" 
+            [ngModel]="playerName()" 
+            (ngModelChange)="playerName.set($event)" 
+            name="playerName" 
+            placeholder="Enter your player name"
             class="form-control">
         </div>
-        
+
         <div class="message" *ngIf="errorMessage()">
           <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
             {{ errorMessage() }}
           </p>
         </div>
-        
+
         <button type="submit" class="btn btn-primary">Join Quiz</button>
       </form>
     </div>
