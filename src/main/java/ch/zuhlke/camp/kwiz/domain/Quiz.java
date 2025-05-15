@@ -7,22 +7,22 @@ import java.util.Objects;
 
 /**
  * Quiz is an aggregate root in our domain model.
- * It represents a quiz with its questions, rounds, and participating participants.
+ * It represents a quiz with its questions, rounds, and participating players.
  */
 public class Quiz {
     private final String id;
     private final String name;
-    private final int maxParticipants;
-    private final List<Participant> participants;
+    private final int maxPlayers;
+    private final List<Player> players;
     private final List<Round> rounds;
     private boolean started;
     private boolean ended;
 
-    public Quiz(String id, String name, int maxParticipants) {
+    public Quiz(String id, String name, int maxPlayers) {
         this.id = id;
         this.name = name;
-        this.maxParticipants = maxParticipants;
-        this.participants = new ArrayList<>();
+        this.maxPlayers = maxPlayers;
+        this.players = new ArrayList<>();
         this.rounds = new ArrayList<>();
         this.started = false;
         this.ended = false;
@@ -36,12 +36,12 @@ public class Quiz {
         return name;
     }
 
-    public int getMaxParticipants() {
-        return maxParticipants;
+    public int getMaxPlayers() {
+        return maxPlayers;
     }
 
-    public List<Participant> getParticipants() {
-        return Collections.unmodifiableList(participants);
+    public List<Player> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
     public List<Round> getRounds() {
@@ -56,20 +56,20 @@ public class Quiz {
         return ended;
     }
 
-    public void addParticipant(Participant participant) {
+    public void addPlayer(Player player) {
         if (isStarted()) {
-            throw new IllegalStateException("Cannot add participant after quiz has started");
+            throw new IllegalStateException("Cannot add player after quiz has started");
         }
 
-        if (participants.size() >= maxParticipants) {
-            throw new IllegalStateException("Maximum number of participants reached");
+        if (players.size() >= maxPlayers) {
+            throw new IllegalStateException("Maximum number of players reached");
         }
 
-        if (participants.stream().anyMatch(p -> p.getName().equals(participant.getName()))) {
-            throw new IllegalArgumentException("Participant name must be unique");
+        if (players.stream().anyMatch(p -> p.getName().equals(player.getName()))) {
+            throw new IllegalArgumentException("Player name must be unique");
         }
 
-        participants.add(participant);
+        players.add(player);
     }
 
     public void addRound(Round round) {
@@ -84,8 +84,8 @@ public class Quiz {
             throw new IllegalStateException("Cannot start quiz without rounds");
         }
 
-        if (participants.isEmpty()) {
-            throw new IllegalStateException("Cannot start quiz without participants");
+        if (players.isEmpty()) {
+            throw new IllegalStateException("Cannot start quiz without players");
         }
 
         this.started = true;
