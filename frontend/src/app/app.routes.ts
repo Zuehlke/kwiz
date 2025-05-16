@@ -11,7 +11,7 @@ export const routes: Routes = [
     loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
   },
   { 
-    path: 'player/:quizId', 
+    path: 'player/:quizId/:gameId',
     loadComponent: () => import('./player/game-play-area/game-play-area.component').then(m => m.GamePlayAreaComponent)
   },
   { 

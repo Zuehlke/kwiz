@@ -31,12 +31,13 @@ public class WebSocketController {
      * @param started whether the quiz has started
      * @param players the list of players in the quiz
      */
-    public void sendQuizUpdate(String quizId, int playerCount, int maxPlayers, boolean started, List<Player> players) {
+    public void sendQuizUpdate(String quizId, int playerCount, int maxPlayers, boolean started, List<Player> players, String gameId) {
         Map<String, Object> message = new HashMap<>();
         message.put("quizId", quizId);
         message.put("playerCount", playerCount);
         message.put("maxPlayers", maxPlayers);
         message.put("started", started);
+        message.put("currentGameId", gameId);
 
         // Convert players to a list of maps with id and name
         List<Map<String, String>> playersList = players.stream()
