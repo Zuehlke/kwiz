@@ -32,6 +32,7 @@ export interface QuizDetails {
   started: boolean;
   ended: boolean;
   playerCount: number;
+  currentGameId: string | null;
 }
 
 export interface CreateRoundRequest {
