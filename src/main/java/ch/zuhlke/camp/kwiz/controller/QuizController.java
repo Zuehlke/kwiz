@@ -119,6 +119,9 @@ public class QuizController {
 
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Player name cannot be empty")) {
+                return ResponseEntity.badRequest().body(Map.of("error", e.getMessage(), "needsPlayerName", true, "quizId", quizId));
+            }
             return ResponseEntity.notFound().build();
         } catch (IllegalStateException e) {
             return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));

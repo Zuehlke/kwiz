@@ -77,6 +77,10 @@ public class GameEngine {
             throw new IllegalStateException("Cannot add player to a quiz that has already started");
         }
 
+        if (playerName == null || playerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Player name cannot be empty");
+        }
+
         Player player = new Player(playerName);
         quiz.addPlayer(player);
 
