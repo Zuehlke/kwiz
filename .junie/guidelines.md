@@ -42,3 +42,7 @@
 
 8. Architecture
 * The game state is only held in memory without persistency
+
+9. UI Design
+* The UI should be responsive and adapt to different screen sizes.
+* All new UI components should be styled as other existing components in the project.
