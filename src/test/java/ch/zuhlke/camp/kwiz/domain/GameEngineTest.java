@@ -36,6 +36,11 @@ class GameEngineTest {
         assertEquals(quizName, quiz.getName());
         assertEquals(maxPlayers, quiz.getMaxPlayers());
         assertTrue(gameEngine.getQuizzes().contains(quiz));
+
+        // Verify that a default round was created
+        assertFalse(quiz.getRounds().isEmpty(), "Quiz should have at least one round");
+        assertEquals(1, quiz.getRounds().size(), "Quiz should have exactly one round");
+        assertEquals("Default Round", quiz.getRounds().get(0).getName(), "The round should be named 'Default Round'");
     }
 
     @Test

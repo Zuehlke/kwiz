@@ -27,6 +27,7 @@ public class GameEngine {
 
     /**
      * Creates a new quiz with the given ID, name, and maximum number of players.
+     * Also creates a default round for the quiz.
      *
      * @param quizId          the unique ID of the quiz
      * @param quizName        the name of the quiz
@@ -36,6 +37,11 @@ public class GameEngine {
     public Quiz createQuiz(String quizId, String quizName, int maxPlayers) {
         Quiz quiz = new Quiz(quizId, quizName, maxPlayers);
         quizzes.put(quizId, quiz);
+
+        // Create a default round for the quiz
+        Round defaultRound = new Round("Default Round");
+        quiz.addRound(defaultRound);
+
         return quiz;
     }
 

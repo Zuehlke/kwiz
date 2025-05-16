@@ -213,6 +213,20 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       (rounds) => {
         this.rounds = rounds;
         this.loadingRounds = false;
+
+        // If there are rounds and no round is currently selected,
+        // pre-select the default round (which should be the first one)
+        if (rounds.length > 0 && !this.selectedRoundId) {
+          // Find the default round (named "Default Round")
+          const defaultRound = rounds.find(round => round.roundName === "Default Round");
+
+          // If found, select it; otherwise select the first round
+          if (defaultRound) {
+            this.selectedRoundId = defaultRound.roundId;
+          } else if (rounds.length > 0) {
+            this.selectedRoundId = rounds[0].roundId;
+          }
+        }
       },
       (error) => {
         console.error('Error fetching rounds:', error);
