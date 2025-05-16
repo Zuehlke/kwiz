@@ -35,15 +35,15 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     // Get quiz ID from route params
     this.route.paramMap.subscribe(params => {
       this.quizId = params.get('quizId');
-      
+
       if (this.quizId) {
         // Check if player data exists in local storage
         const playerData = localStorage.getItem(`player_${this.quizId}`);
-        
+
         if (playerData) {
           // Initialize game with player role
           this.gameService.initializeGame(this.quizId, false);
-          
+
           // Subscribe to game state updates
           this.gameStateSubscription = this.gameService.getGameStateUpdates().subscribe({
             next: (gameState: GameState) => {
@@ -66,7 +66,7 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     if (this.gameStateSubscription) {
       this.gameStateSubscription.unsubscribe();
     }
-    
+
     // End game and clean up resources
     this.gameService.endGame();
   }
@@ -78,7 +78,7 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
    */
   onAnswerSelected(answer: any): void {
     const questionId = this.gameService.currentQuestion()?.id;
-    
+
     if (questionId) {
       this.gameService.submitAnswer(questionId, answer);
     }
@@ -89,5 +89,19 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
    */
   onNextQuestionRequested(): void {
     this.gameService.adminRequestNextQuestion();
+  }
+
+  /**
+   * Handles start game request from AdminControlsComponent
+   */
+  onStartGameRequested(): void {
+    this.gameService.startGame();
+  }
+
+  /**
+   * Handles send question request from AdminControlsComponent
+   */
+  onSendQuestionRequested(): void {
+    this.gameService.sendQuestionToPlayers();
   }
 }

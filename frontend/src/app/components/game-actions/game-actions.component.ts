@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QuizService, CreateQuizRequest, JoinQuizRequest } from '../../services/quiz.service';
+import { GameService } from '../../services/game.service';
 import { catchError, of } from 'rxjs';
 
 @Component({
@@ -24,6 +25,7 @@ export class GameActionsComponent {
 
   constructor(
     private quizService: QuizService,
+    private gameService: GameService,
     private router: Router
   ) {}
 
@@ -61,6 +63,9 @@ export class GameActionsComponent {
         if (response) {
           console.log('Quiz created:', response);
           this.errorMessage.set('Quiz created successfully! Redirecting to admin page...');
+
+          // Initialize game service with admin role
+          this.gameService.initializeGame(response.quizId, true);
 
           // Navigate to the quiz-master page (admin page) with the quiz ID
           this.router.navigate(['/quiz-master', response.quizId]);
@@ -110,6 +115,9 @@ export class GameActionsComponent {
             playerId: response.playerId,
             playerName: response.playerName
           }));
+
+          // Initialize game service with player role
+          this.gameService.initializeGame(response.quizId, false);
 
           // Navigate to the waiting room using the redirectUrl from the response
           if (response.redirectUrl) {

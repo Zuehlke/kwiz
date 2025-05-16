@@ -15,6 +15,7 @@ export interface WebSocketMessage {
   maxPlayers: number;
   started?: boolean;
   players?: PlayerInfo[];
+  gameState?: any; // Game state updates
 }
 
 @Injectable({
@@ -154,7 +155,8 @@ export class WebSocketService {
               playerCount: data.playerCount,
               maxPlayers: data.maxPlayers,
               started: data.started,
-              players: data.players
+              players: data.players,
+              gameState: data.gameState
             });
           } catch (error) {
             console.error('Error parsing message body:', error);

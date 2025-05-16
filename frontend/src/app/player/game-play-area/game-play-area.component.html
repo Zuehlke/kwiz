@@ -22,7 +22,12 @@
       </div>
     } @else {
       <div class="waiting-message">
-        <p>Waiting for the next question...</p>
+        <!-- Show different waiting messages based on game state -->
+        @if (!gameService.isGameStarted()) {
+          <p>Waiting for the game to start...</p>
+        } @else {
+          <p>Waiting for the next question...</p>
+        }
       </div>
     }
 
@@ -31,7 +36,10 @@
       <div class="admin-controls-container">
         <app-admin-controls 
           [isQuestionFinished]="gameService.isCurrentQuestionFinished()"
-          (nextQuestionRequested)="onNextQuestionRequested()">
+          [isGameStarted]="gameService.isGameStarted()"
+          (nextQuestionRequested)="onNextQuestionRequested()"
+          (startGameRequested)="onStartGameRequested()"
+          (sendQuestionRequested)="onSendQuestionRequested()">
         </app-admin-controls>
       </div>
     }

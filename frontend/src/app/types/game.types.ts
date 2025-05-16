@@ -36,4 +36,5 @@ export interface GameState {
   playerScore: number;
   leaderboard: PlayerScore[];
   isAdmin: boolean;
+  isGameStarted: boolean;
 }
