@@ -21,10 +21,6 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 // Configure the node plugin
 node {
     // Version of node to use
