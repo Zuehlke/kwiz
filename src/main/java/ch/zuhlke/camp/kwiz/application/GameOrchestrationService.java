@@ -4,19 +4,16 @@ import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import ch.zuhlke.camp.kwiz.domain.Game;
 import ch.zuhlke.camp.kwiz.domain.GameEngine;
 import ch.zuhlke.camp.kwiz.domain.GameStatus;
-import ch.zuhlke.camp.kwiz.domain.PlayerInGame;
-import ch.zuhlke.camp.kwiz.domain.PlayerSubmission;
 import ch.zuhlke.camp.kwiz.domain.Question;
 import ch.zuhlke.camp.kwiz.domain.Quiz;
 import ch.zuhlke.camp.kwiz.domain.Round;
+import ch.zuhlke.camp.kwiz.events.TimerElapsedEvent;
 import ch.zuhlke.camp.kwiz.infrastructure.GameTimerScheduler;
 import ch.zuhlke.camp.kwiz.infrastructure.InMemoryGameRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
 
 /**
  * GameOrchestrationService is an application service that orchestrates the game lifecycle
@@ -175,8 +172,18 @@ public class GameOrchestrationService {
     }
 
     /**
+     * Handles a timer elapsed event.
+     *
+     * @param event the timer elapsed event
+     */
+    @EventListener
+    public void handleTimerElapsed(TimerElapsedEvent event) {
+        handleGameTick(event.getGameId());
+    }
+
+    /**
      * Handles a game tick, decrementing the question timer and updating the game state if necessary.
-     * This method should be called periodically by a scheduler.
+     * This method is called when a timer elapsed event is received.
      *
      * @param gameId the ID of the game
      */

@@ -1,8 +1,9 @@
 package ch.zuhlke.camp.kwiz.infrastructure;
 
-import ch.zuhlke.camp.kwiz.application.GameOrchestrationService;
 import ch.zuhlke.camp.kwiz.domain.Game;
 import ch.zuhlke.camp.kwiz.domain.GameStatus;
+import ch.zuhlke.camp.kwiz.events.TimerElapsedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,20 +14,19 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * GameTimerScheduler is responsible for managing the timers for active games.
- * It periodically calls the handleGameTick method in the GameOrchestrationService
- * for each active game.
+ * It periodically publishes TimerElapsedEvent for each active game.
  */
 @Component
 @EnableScheduling
 public class GameTimerScheduler {
-    private final GameOrchestrationService gameOrchestrationService;
+    private final ApplicationEventPublisher eventPublisher;
     private final InMemoryGameRepository gameRepository;
-    
+
     // Map to track which games have active timers
     private final ConcurrentMap<String, Boolean> activeGameTimers = new ConcurrentHashMap<>();
 
-    public GameTimerScheduler(GameOrchestrationService gameOrchestrationService, InMemoryGameRepository gameRepository) {
-        this.gameOrchestrationService = gameOrchestrationService;
+    public GameTimerScheduler(ApplicationEventPublisher eventPublisher, InMemoryGameRepository gameRepository) {
+        this.eventPublisher = eventPublisher;
         this.gameRepository = gameRepository;
     }
 
@@ -61,9 +61,9 @@ public class GameTimerScheduler {
                 gameRepository.findById(gameId).ifPresent(game -> {
                     // Only process games with active questions
                     if (game.getStatus() == GameStatus.QUESTION_ACTIVE) {
-                        // Call the handleGameTick method in the GameOrchestrationService
-                        gameOrchestrationService.handleGameTick(gameId);
-                        
+                        // Publish a TimerElapsedEvent instead of directly calling GameOrchestrationService
+                        eventPublisher.publishEvent(new TimerElapsedEvent(this, gameId, gameId));
+
                         // If the game is no longer active, unregister it
                         if (game.getStatus() == GameStatus.GAME_OVER) {
                             unregisterGame(gameId);
@@ -76,7 +76,7 @@ public class GameTimerScheduler {
             }
         }
     }
-    
+
     /**
      * Scans the repository for active games and registers them for timer updates.
      * This method can be called during application startup to ensure that all active games
