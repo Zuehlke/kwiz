@@ -97,5 +97,5 @@ task releaseBootJar(type: Copy) {
 }
 
 task release {
-    dependsOn clean, build, releaseBootJar
+    dependsOn build, releaseBootJar
 }
