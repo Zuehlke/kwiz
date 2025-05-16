@@ -23,6 +23,7 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
 
   // Properties for question submission
   playerId: string | null = null;
+  playerName: string | null = null;
   newQuestion: SubmitQuestionRequest = {
     questionText: '',
     correctAnswers: [''],
@@ -144,12 +145,14 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Get the player ID from local storage
+  // Get the player data from local storage
   private getPlayerId(): string | null {
     const playerData = localStorage.getItem(`player_${this.quizId}`);
     if (playerData) {
       try {
         const data = JSON.parse(playerData);
+        // Also set the player name
+        this.playerName = data.playerName;
         return data.playerId;
       } catch (e) {
         console.error('Error parsing player data:', e);
