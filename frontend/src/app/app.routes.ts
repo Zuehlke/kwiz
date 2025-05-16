@@ -11,8 +11,14 @@ export const routes: Routes = [
     loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
   },
   { 
+    path: 'join-quizz/:quizId', 
+    loadComponent: () => import('./join-quizz/join-quizz.component').then(m => m.JoinQuizzComponent)
+  },
+  // Redirect from old player route to new join-quizz route for backward compatibility
+  { 
     path: 'player/:quizId', 
-    loadComponent: () => import('./player-name/player-name.component').then(m => m.PlayerNameComponent)
+    redirectTo: 'join-quizz/:quizId', 
+    pathMatch: 'full' 
   },
   { 
     path: 'waiting-room/:quizId', 

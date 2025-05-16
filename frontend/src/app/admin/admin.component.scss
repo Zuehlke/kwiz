@@ -1,96 +1,271 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+// Variables
+$primary-color: #3f51b5;
+$secondary-color: #ff4081;
+$text-color: #333;
+$light-color: #fff;
+$background-color: #f9f9f9;
+$transition-speed: 0.3s;
+$border-radius: 12px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 .admin-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
+  font-family: 'Roboto', sans-serif;
 
-  h1 {
-    text-align: center;
+  .admin-hero {
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 2rem;
+    background-color: $background-color;
+    border-radius: $border-radius;
     margin-bottom: 2rem;
-  }
+    overflow: hidden;
+    position: relative;
+    box-shadow: $box-shadow;
 
-  .quiz-info {
-    background-color: #f5f5f5;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-
-    h2 {
-      margin-top: 0;
-      color: #333;
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background-color: rgba($primary-color, 0.05);
+      border-radius: 50%;
+      z-index: 0;
     }
 
-    p {
-      font-size: 1.2rem;
-      margin: 0.5rem 0;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: -30px;
+      width: 150px;
+      height: 150px;
+      background-color: rgba($secondary-color, 0.05);
+      border-radius: 50%;
+      z-index: 0;
+    }
+
+    .admin-hero-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-    }
+      margin-bottom: 2rem;
+      z-index: 1;
 
-    .copy-button {
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      padding: 0.3rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
+      .title-section {
+        flex: 1;
 
-      .material-icons {
-        font-size: 18px;
+        .hero-title {
+          font-size: 3.5rem;
+          font-weight: 700;
+          margin: 0 0 1rem;
+          color: $primary-color;
+          line-height: 1.2;
+        }
+
+        .hero-subtitle {
+          font-size: 2.5rem;
+          font-weight: 500;
+          margin: 0;
+          color: $text-color;
+          opacity: 0.9;
+        }
       }
 
-      &:hover {
-        background-color: #0b7dda;
+      .quiz-status-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background-color: $light-color;
+        border-radius: 50%;
+        width: 140px;
+        height: 140px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all $transition-speed;
+        margin-left: 2rem;
+
+        .material-icons {
+          font-size: 3rem;
+          color: $primary-color;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+          font-weight: 500;
+          text-align: center;
+          color: $text-color;
+        }
+
+        &.started {
+          background-color: rgba($secondary-color, 0.1);
+
+          .material-icons {
+            color: $secondary-color;
+          }
+        }
+      }
+    }
+
+    .admin-hero-content {
+      z-index: 1;
+
+      .join-section {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        gap: 2rem;
+
+        .join-code {
+          flex: 1;
+
+          .join-code-label {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: $text-color;
+          }
+
+          .code-display {
+            display: flex;
+            align-items: center;
+            background-color: $light-color;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            border: 2px solid $primary-color;
+            box-shadow: 0 2px 4px rgba($primary-color, 0.2);
+            margin-bottom: 1rem;
+
+            .code-text {
+              font-size: 2.2rem;
+              font-weight: 700;
+              color: $primary-color;
+              letter-spacing: 2px;
+              margin-right: 1rem;
+            }
+
+            .copy-button {
+              background-color: $primary-color;
+              color: $light-color;
+              border: none;
+              padding: 0.5rem;
+              border-radius: 50%;
+              cursor: pointer;
+              transition: all $transition-speed;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 40px;
+              height: 40px;
+              box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+
+              .material-icons {
+                font-size: 20px;
+              }
+
+              &:hover {
+                background-color: darken($primary-color, 10%);
+                transform: translateY(-2px);
+              }
+
+              &.copied {
+                background-color: #4CAF50;
+              }
+            }
+          }
+
+          .join-link {
+            display: flex;
+            align-items: center;
+            color: $primary-color;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.5rem 0;
+            transition: all $transition-speed;
+
+            .material-icons {
+              font-size: 1.2rem;
+              margin-right: 0.5rem;
+            }
+
+            &:hover {
+              color: darken($primary-color, 10%);
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .qr-code-section {
+          background-color: $light-color;
+          padding: 1.2rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          width: 100%;
+          max-width: 260px;
+
+          h3 {
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: $primary-color;
+            font-weight: 600;
+          }
+
+          .help-text {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 0.8rem;
+          }
+
+          .qr-code {
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba($primary-color, 0.2);
+          }
+        }
       }
 
-      &.copied {
-        background-color: #4CAF50;
+      .player-counter {
+        display: flex;
+        align-items: center;
+        font-size: 1.8rem;
+        color: $text-color;
+
+        .material-icons {
+          font-size: 2.2rem;
+          margin-right: 1rem;
+          color: $primary-color;
+        }
+
+        .counter-text {
+          font-weight: 500;
+        }
       }
     }
-  }
 
-  .qr-code-container {
-    background-color: #f5f5f5;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-
-    h3 {
-      margin-top: 0;
-      color: #333;
-    }
-
-    .help-text {
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .qr-code {
-      display: flex;
-      justify-content: center;
-      background-color: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      max-width: 250px;
-      margin: 0 auto;
-    }
+    // Removed admin-hero-image as it's no longer needed
   }
 
   .admin-controls {
-    background-color: #f5f5f5;
-    padding: 1.5rem;
-    border-radius: 8px;
+    background-color: $background-color;
+    padding: 2rem;
+    border-radius: $border-radius;
     margin-bottom: 2rem;
 
     h3 {
@@ -98,68 +273,98 @@
       color: #333;
     }
 
-    .start-button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      font-size: 1.1rem;
-      border-radius: 4px;
+    .btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: all $transition-speed ease;
       cursor: pointer;
-      margin: 1rem 0;
-      transition: background-color 0.3s;
+      font-size: 1.2rem;
 
-      &:hover {
-        background-color: #45a049;
+      &.btn-primary {
+        background-color: $primary-color;
+        color: $light-color;
+        box-shadow: 0 4px 6px rgba($primary-color, 0.25);
+        border: none;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 8px rgba($primary-color, 0.3);
+        }
       }
     }
 
     .help-text {
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      color: rgba($text-color, 0.7);
+      margin-top: 1rem;
     }
 
     .status-text {
-      font-size: 1.1rem;
-      color: #4CAF50;
+      font-size: 1.4rem;
+      color: $secondary-color;
       font-weight: bold;
     }
   }
 
   .player-list {
-    background-color: #f5f5f5;
-    padding: 1.5rem;
-    border-radius: 8px;
+    background-color: $background-color;
+    padding: 2rem;
+    border-radius: $border-radius;
     margin-bottom: 2rem;
+    box-shadow: $box-shadow;
 
     h3 {
+      font-size: 1.8rem;
       margin-top: 0;
-      color: #333;
+      margin-bottom: 1.5rem;
+      color: $text-color;
+      font-weight: 600;
     }
 
-    p {
-      font-size: 1.1rem;
-      margin: 0.5rem 0;
+    .no-players {
+      font-size: 1.2rem;
+      color: rgba($text-color, 0.7);
+      text-align: center;
+      padding: 2rem 0;
     }
 
     .players {
       list-style: none;
       padding: 0;
       margin: 1rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
 
       .player-item {
-        background-color: white;
-        border-radius: 4px;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        background-color: $light-color;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
+        transition: transform $transition-speed;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .material-icons {
+          font-size: 1.8rem;
+          color: $primary-color;
+          margin-right: 1rem;
+        }
 
         .player-name {
-          font-size: 1.1rem;
+          font-size: 1.2rem;
           font-weight: 500;
+          color: $text-color;
         }
       }
     }
@@ -167,10 +372,131 @@
 
   .loading {
     text-align: center;
-    padding: 2rem;
+    padding: 4rem 2rem;
 
     p {
-      font-size: 1.2rem;
+      font-size: 1.5rem;
+      color: $text-color;
+    }
+  }
+}
+
+// Media queries for responsive design
+@media (max-width: 992px) {
+  .admin-container {
+    padding: 1.5rem;
+
+    .admin-hero {
+      padding: 2.5rem 1.5rem;
+
+      .admin-hero-header {
+        .title-section {
+          .hero-title {
+            font-size: 3rem;
+          }
+
+          .hero-subtitle {
+            font-size: 2rem;
+          }
+        }
+
+        .quiz-status-indicator {
+          width: 120px;
+          height: 120px;
+          margin-left: 1.5rem;
+
+          .material-icons {
+            font-size: 2.5rem;
+          }
+
+          p {
+            font-size: 0.8rem;
+          }
+        }
+      }
+
+      .admin-hero-content {
+        .join-section {
+          gap: 1.5rem;
+
+          .join-code {
+            .code-display {
+              .code-text {
+                font-size: 2rem;
+              }
+            }
+          }
+
+          .qr-code-section {
+            max-width: 240px;
+
+            h3 {
+              font-size: 1.3rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+
+    .admin-hero {
+      padding: 2rem 1rem;
+
+      .admin-hero-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+
+        .title-section {
+          .hero-title {
+            font-size: 2.5rem;
+          }
+
+          .hero-subtitle {
+            font-size: 1.8rem;
+          }
+        }
+
+        .quiz-status-indicator {
+          margin: 0 auto;
+          width: 130px;
+          height: 130px;
+        }
+      }
+
+      .admin-hero-content {
+        padding-right: 0;
+
+        .join-section {
+          flex-direction: column;
+          align-items: center;
+
+          .join-code {
+            margin-bottom: 2rem;
+
+            .code-display {
+              justify-content: center;
+            }
+
+            .join-link {
+              justify-content: center;
+            }
+          }
+
+          .qr-code-section {
+            max-width: 280px;
+          }
+        }
+
+        .player-counter {
+          justify-content: center;
+        }
+      }
     }
   }
 }

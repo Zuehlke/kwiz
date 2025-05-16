@@ -145,9 +145,9 @@ export class AdminComponent implements OnInit, OnDestroy {
       // Get the base URL from the current location
       const baseUrl = this.document.location.origin;
 
-      // Create the join URL that points to the home page
-      // We'll use a simpler URL format that's more likely to work with QR code scanning
-      this.joinUrl = `${baseUrl}/home?join=${this.quizId}`;
+      // Create the join URL that points to the join-quizz page
+      // Using the URL pattern join-quizz/:quizId as specified
+      this.joinUrl = `${baseUrl}/join-quizz/${this.quizId}`;
 
       console.log('Generated join URL for QR code:', this.joinUrl);
     }
