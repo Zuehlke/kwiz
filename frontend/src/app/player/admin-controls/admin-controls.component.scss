@@ -3,7 +3,7 @@
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   h3 {
     margin-top: 0;
     margin-bottom: 1rem;
@@ -12,13 +12,13 @@
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 0.5rem;
   }
-  
+
   .controls-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    
-    .next-question-button {
+
+    .next-question-button, .send-question-button {
       padding: 0.75rem 1.5rem;
       background-color: #007bff;
       color: white;
@@ -28,17 +28,30 @@
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.2s ease;
-      
+      margin-bottom: 0.5rem;
+
       &:hover:not(:disabled) {
         background-color: #0069d9;
       }
-      
+
       &:disabled {
         background-color: #b8daff;
         cursor: not-allowed;
       }
     }
-    
+
+    .send-question-button {
+      background-color: #28a745;
+
+      &:hover:not(:disabled) {
+        background-color: #218838;
+      }
+
+      &:disabled {
+        background-color: #a3d7af;
+      }
+    }
+
     .status-message {
       padding: 0.5rem;
       background-color: #fff3cd;
@@ -46,7 +59,7 @@
       border-radius: 4px;
       font-size: 0.9rem;
       text-align: center;
-      
+
       &.ready {
         background-color: #d4edda;
         color: #155724;
@@ -59,13 +72,13 @@
 @media (max-width: 768px) {
   .admin-controls {
     padding: 1rem;
-    
+
     h3 {
       font-size: 1.2rem;
     }
-    
+
     .controls-container {
-      .next-question-button {
+      .next-question-button, .send-question-button {
         padding: 0.6rem 1.2rem;
         font-size: 0.9rem;
       }

@@ -100,6 +100,11 @@ export class AdminComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.error('Error fetching quiz details:', error);
+          // Redirect to home page with error message if quiz doesn't exist
+          if (error.status === 404) {
+            alert('Quiz not found. Please create a quiz first.');
+            this.router.navigate(['/home']);
+          }
         }
       );
     }

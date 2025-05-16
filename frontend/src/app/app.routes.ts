@@ -12,14 +12,7 @@ export const routes: Routes = [
   },
   { 
     path: 'player/:quizId', 
-    // This is a temporary redirect until the player component is created
-    resolve: {
-      redirect: () => {
-        alert('Player page not implemented yet. Redirecting to home page.');
-        return true;
-      }
-    },
-    redirectTo: '/home'
+    loadComponent: () => import('./player/game-play-area/game-play-area.component').then(m => m.GamePlayAreaComponent)
   },
   { 
     path: 'waiting-room/:quizId', 

@@ -10,7 +10,10 @@ import { CommonModule } from '@angular/common';
 })
 export class AdminControlsComponent {
   @Input() isQuestionFinished: boolean = false;
+  @Input() isGameStarted: boolean = false;
   @Output() nextQuestionRequested = new EventEmitter<void>();
+  @Output() startGameRequested = new EventEmitter<void>();
+  @Output() sendQuestionRequested = new EventEmitter<void>();
 
   /**
    * Requests the next question
@@ -19,5 +22,21 @@ export class AdminControlsComponent {
     if (this.isQuestionFinished) {
       this.nextQuestionRequested.emit();
     }
+  }
+
+  /**
+   * Requests to start the game
+   */
+  requestStartGame(): void {
+    if (!this.isGameStarted) {
+      this.startGameRequested.emit();
+    }
+  }
+
+  /**
+   * Sends the current question to all players
+   */
+  sendQuestionToPlayers(): void {
+    this.sendQuestionRequested.emit();
   }
 }
