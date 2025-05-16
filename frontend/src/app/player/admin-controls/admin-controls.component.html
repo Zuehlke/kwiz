@@ -1,0 +1,20 @@
+<div class="admin-controls">
+  <h3>Admin Controls</h3>
+  
+  <div class="controls-container">
+    <button 
+      class="next-question-button" 
+      [disabled]="!isQuestionFinished"
+      (click)="requestNextQuestion()">
+      Start Next Question
+    </button>
+    
+    <div class="status-message" *ngIf="!isQuestionFinished">
+      Waiting for current question to finish...
+    </div>
+    
+    <div class="status-message ready" *ngIf="isQuestionFinished">
+      Ready for next question
+    </div>
+  </div>
+</div>
