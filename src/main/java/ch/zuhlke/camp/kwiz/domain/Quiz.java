@@ -28,6 +28,10 @@ public class Quiz {
         this.started = false;
         this.ended = false;
         this.currentGameId = null;
+
+        Round round = new Round("Round 1");
+        round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
+        this.addRound(round);
     }
 
     public String getId() {

@@ -80,47 +80,9 @@ export class GameService {
    * @param gameId The ID of the game
    */
   fetchGameState(gameId: string): void {
-    this.quizService.getQuiz(gameId)
-      .pipe(
-        catchError(error => {
-          console.error('Error fetching game state:', error);
-          return of(null);
-        })
-      )
-      .subscribe(quizDetails => {
-        if (quizDetails) {
-          console.log('Fetched game state:', quizDetails);
+    // todo fetch game state from backend
 
-          // Update game started status
-          this._isGameStarted.set(quizDetails.started);
-
-          // Fetch rounds information
-          this.quizService.getRounds(gameId)
-            .pipe(
-              catchError(error => {
-                console.error('Error fetching rounds:', error);
-                return of([]);
-              })
-            )
-            .subscribe(rounds => {
-              if (rounds && rounds.length > 0) {
-                console.log('Fetched rounds:', rounds);
-                this._totalRounds.set(rounds.length);
-
-                // If game has started, set current round to 1
-                if (quizDetails.started) {
-                  this._currentRound.set(1);
-
-                  // If the game has started, request the current question state
-                  this.requestCurrentGameState(gameId);
-                }
-
-                // Emit updated game state
-                this.emitGameState();
-              }
-            });
-        }
-      });
+    this.emitGameState();
   }
 
   /**

@@ -83,6 +83,7 @@ public class QuizController {
         response.put("started", quiz.isStarted());
         response.put("ended", quiz.isEnded());
         response.put("playerCount", quiz.getPlayers().size());
+        response.put("currentGameId", quiz.getCurrentGameId());
 
         return ResponseEntity.ok(response);
     }

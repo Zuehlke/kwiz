@@ -6,6 +6,8 @@ import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
 import { QRCodeComponent } from 'angularx-qrcode';
+import {GameService} from "../services/game.service";
+import {GameState} from "../types/game.types";
 
 @Component({
   selector: 'app-admin',
@@ -17,6 +19,7 @@ import { QRCodeComponent } from 'angularx-qrcode';
 export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
+  gameState: GameState | null = null;
   players: PlayerInfo[] = [];
   copySuccess: boolean = false;
   joinUrl: string = '';
@@ -28,6 +31,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     private router: Router,
     private quizService: QuizService,
     private webSocketService: WebSocketService,
+    private gameService: GameService,
     @Inject(DOCUMENT) private document: Document
   ) {}
 
@@ -97,6 +101,10 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.quizService.getQuiz(this.quizId).subscribe(
         (quizDetails) => {
           this.quizDetails = quizDetails;
+          if (this.quizDetails.currentGameId) {
+              this.gameService.fetchGameState(this.quizDetails.currentGameId);
+              // todo set gamestate
+          }
         },
         (error) => {
           console.error('Error fetching quiz details:', error);
