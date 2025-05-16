@@ -6,11 +6,12 @@ import { FormsModule } from '@angular/forms';
 import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion, Round, CreateRoundRequest } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { JoinQuizInfoComponent } from '../shared/join-quiz-info/join-quiz-info.component';
 
 @Component({
   selector: 'app-waiting-room',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, JoinQuizInfoComponent],
   templateUrl: './waiting-room.component.html',
   styleUrls: ['./waiting-room.component.scss']
 })
@@ -212,6 +213,10 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     this.quizService.getRounds(this.quizId).subscribe(
       (rounds) => {
         this.rounds = rounds;
+        // Automatically select the first round if available and no round is currently selected
+        if (rounds.length > 0 && !this.selectedRoundId) {
+          this.selectedRoundId = rounds[0].roundId;
+        }
         this.loadingRounds = false;
       },
       (error) => {
@@ -240,6 +245,8 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
       (round) => {
         this.creatingRound = false;
         this.roundCreated = true;
+        // Automatically select the newly created round
+        this.selectedRoundId = round.roundId;
         // Reset the form
         this.newRound = {
           roundName: ''

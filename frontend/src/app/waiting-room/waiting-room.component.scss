@@ -69,6 +69,13 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           margin: 0 0 0.5rem;
           color: $primary-color;
           line-height: 1.2;
+
+          .player-name-title {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: $text-color;
+            opacity: 0.9;
+          }
         }
 
         .hero-subtitle {
@@ -120,34 +127,168 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     .waiting-room-content {
       z-index: 1;
 
-      .quiz-info-row {
+      .waiting-room-info-container {
         display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        background-color: $light-color;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        flex-direction: column;
         gap: 1rem;
+        margin-bottom: 1rem;
 
-        .quiz-info-item {
+        .quiz-info-row {
           display: flex;
+          flex-wrap: wrap;
           align-items: center;
-          font-size: 1rem;
-          padding: 0.5rem 1rem;
-          background-color: rgba($primary-color, 0.05);
-          border-radius: 20px;
-          white-space: nowrap;
+          background-color: $light-color;
+          padding: 0.8rem 1.2rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          gap: 0.8rem;
 
-          .material-icons {
-            color: $primary-color;
-            margin-right: 0.5rem;
-            font-size: 1.2rem;
+          .quiz-info-item {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba($primary-color, 0.05);
+            border-radius: 20px;
+            white-space: nowrap;
+
+            .material-icons {
+              color: $primary-color;
+              margin-right: 0.5rem;
+              font-size: 1.2rem;
+            }
+
+            strong {
+              color: $primary-color;
+              font-weight: 600;
+            }
+          }
+        }
+
+        .content-container {
+          display: flex;
+          justify-content: space-between;
+          gap: 1.5rem;
+
+          @media (max-width: 992px) {
+            flex-direction: column;
           }
 
-          strong {
-            color: $primary-color;
-            font-weight: 600;
+          .quiz-content-overview {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: $light-color;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+            .content-title {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: $primary-color;
+              margin-top: 0;
+              margin-bottom: 1rem;
+            }
+
+            .content-stats {
+              display: flex;
+              gap: 1.5rem;
+              margin-bottom: 1rem;
+
+              .stat-item {
+                display: flex;
+                align-items: center;
+                font-size: 1.1rem;
+
+                .material-icons {
+                  color: $primary-color;
+                  margin-right: 0.5rem;
+                  font-size: 1.3rem;
+                }
+
+                strong {
+                  color: $primary-color;
+                  font-weight: 600;
+                  margin-left: 0.3rem;
+                }
+              }
+            }
+
+            .quick-nav-buttons {
+              display: flex;
+              gap: 1rem;
+              flex-wrap: wrap;
+              margin-bottom: 1.5rem;
+
+              .nav-button {
+                display: flex;
+                align-items: center;
+                padding: 0.6rem 1.2rem;
+                background-color: $primary-color;
+                color: $light-color;
+                border-radius: 30px;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all $transition-speed;
+                box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+
+                .material-icons {
+                  margin-right: 0.5rem;
+                  font-size: 1.2rem;
+                }
+
+                &:hover {
+                  background-color: darken($primary-color, 10%);
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 6px rgba($primary-color, 0.4);
+                }
+              }
+            }
+
+            // Styling for quiz-info-row when inside quiz-content-overview
+            .quiz-info-row {
+              margin-top: 1rem;
+              padding: 1rem;
+              background-color: rgba($primary-color, 0.05);
+              border-radius: 8px;
+              display: flex;
+              flex-wrap: wrap;
+              gap: 0.8rem;
+
+              .quiz-info-item {
+                background-color: $light-color;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+              }
+            }
+
+            @media (max-width: 768px) {
+              .content-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+              }
+
+              .quiz-info-row {
+                padding: 0.8rem;
+                flex-direction: column;
+                align-items: flex-start;
+
+                .quiz-info-item {
+                  width: 100%;
+                  margin-bottom: 0.5rem;
+                }
+              }
+            }
+          }
+
+          .join-quiz-container {
+            width: 100%;
+            max-width: 300px;
+            align-self: flex-start;
+
+            @media (max-width: 992px) {
+              max-width: 100%;
+            }
           }
         }
       }

@@ -3,35 +3,70 @@
     <div class="waiting-room-hero">
       <div class="waiting-room-header">
         <div class="title-section">
-          <h1 class="hero-title">{{ quizDetails.quizName }}</h1>
-          <h2 class="hero-subtitle">Get ready for the quiz!</h2>
+          <h1 class="hero-title">{{ quizDetails.quizName }} <span *ngIf="playerName" class="player-name-title">- Welcome, {{ playerName }}!</span></h1>
+          <h2 class="hero-subtitle">Waiting for more Players to join ...</h2>
         </div>
         <div class="quiz-status-indicator" [class.started]="quizDetails.started">
           <span class="material-icons">{{ quizDetails.started ? 'play_circle' : 'hourglass_top' }}</span>
-          <p>{{ quizDetails.started ? 'Quiz in progress' : 'Waiting for quiz master' }}</p>
+          <p>{{ quizDetails.started ? 'Quiz in progress' : 'Waiting for Players' }}</p>
         </div>
       </div>
 
       <div class="waiting-room-content">
-        <div class="quiz-info-row">
-          <div class="quiz-info-item quiz-id">
-            <span class="material-icons">confirmation_number</span>
-            <span>Quiz ID: <strong>{{ quizId }}</strong></span>
-          </div>
+        <div class="waiting-room-info-container">
+          <div class="content-container">
+            <!-- Quiz content overview and quick navigation -->
+            <div class="quiz-content-overview">
+              <h3 class="content-title">Contribute Quizz Questions</h3>
+              <div class="content-stats">
+                <div class="stat-item">
+                  <span class="material-icons">category</span>
+                  <span>Rounds: <strong>{{ rounds.length }}</strong></span>
+                </div>
+                <div class="stat-item">
+                  <span class="material-icons">quiz</span>
+                  <span>Questions: <strong>{{ submittedQuestions.length }}</strong></span>
+                </div>
+              </div>
 
-          <div class="quiz-info-item player-welcome" *ngIf="playerName">
-            <span class="material-icons">person</span>
-            <span>Welcome, <strong>{{ playerName }}</strong>!</span>
-          </div>
+              <div class="quick-nav-buttons">
+                <a href="#add-question-section" class="nav-button">
+                  <span class="material-icons">add_circle</span>
+                  Add Question
+                </a>
+                <a href="#add-round-section" class="nav-button">
+                  <span class="material-icons">playlist_add</span>
+                  Add Round
+                </a>
+              </div>
 
-          <div class="quiz-info-item waiting-message">
-            <span class="material-icons">schedule</span>
-            <span>Waiting for the quiz to start...</span>
-          </div>
+              <!-- Game information row moved to bottom of content section -->
+              <div class="quiz-info-row">
+                <div class="quiz-info-item quiz-id">
+                  <span class="material-icons">confirmation_number</span>
+                  <span>Quiz ID: <strong>{{ quizId }}</strong></span>
+                </div>
 
-          <div class="quiz-info-item player-counter">
-            <span class="material-icons">people</span>
-            <span>Players: <strong>{{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</strong></span>
+                <div class="quiz-info-item player-welcome" *ngIf="playerName">
+                  <span class="material-icons">person</span>
+                  <span>Welcome, <strong>{{ playerName }}</strong>!</span>
+                </div>
+
+                <div class="quiz-info-item waiting-message">
+                  <span class="material-icons">schedule</span>
+                  <span>Waiting for the quiz to start...</span>
+                </div>
+
+                <div class="quiz-info-item player-counter">
+                  <span class="material-icons">people</span>
+                  <span>Players: <strong>{{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="join-quiz-container">
+              <app-join-quiz-info [quizId]="quizId" [compact]="true"></app-join-quiz-info>
+            </div>
           </div>
         </div>
       </div>
@@ -39,63 +74,8 @@
 
     <!-- Question submission form -->
     @if (!quizDetails.started) {
-      <!-- Round creation section -->
-      <div class="round-creation">
-        <h3>Create a Round</h3>
-        <p>Create rounds to organize your questions!</p>
-
-        @if (errorMessage) {
-          <div class="error-message">{{ errorMessage }}</div>
-        }
-
-        @if (roundCreated) {
-          <div class="success-message">Round created successfully!</div>
-        }
-
-        <form (ngSubmit)="createRound()">
-          <div class="form-group">
-            <label for="roundName">Round Name:</label>
-            <input 
-              type="text" 
-              id="roundName" 
-              name="roundName" 
-              [(ngModel)]="newRound.roundName" 
-              required
-              placeholder="Enter round name"
-            >
-          </div>
-
-          <button type="submit" [disabled]="creatingRound">
-            {{ creatingRound ? 'Creating...' : 'Create Round' }}
-          </button>
-        </form>
-
-        <!-- Display rounds -->
-        <div class="rounds-list">
-          <h3>Available Rounds</h3>
-
-          @if (loadingRounds) {
-            <p>Loading rounds...</p>
-          } @else if (rounds.length === 0) {
-            <p>No rounds created yet.</p>
-          } @else {
-            <ul class="rounds-list">
-              @for (round of rounds; track round.roundId) {
-                <li class="round-item">
-                  <div class="round-name">{{ round.roundName }}</div>
-                  <div class="round-details">
-                    <div class="question-count">
-                      <strong>Questions:</strong> {{ round.questionCount }}
-                    </div>
-                  </div>
-                </li>
-              }
-            </ul>
-          }
-        </div>
-      </div>
-
-      <div class="question-submission">
+      <!-- Question submission section -->
+      <div id="add-question-section" class="question-submission">
         <h3>Submit Your Own Question</h3>
         <p>While waiting, you can create and submit your own questions for the quiz!</p>
 
@@ -201,6 +181,62 @@
                 </ul>
               </div>
             }
+          }
+        </div>
+      </div>
+
+      <!-- Round creation section -->
+      <div id="add-round-section" class="round-creation">
+        <h3>Create a Round</h3>
+        <p>Create rounds to organize your questions!</p>
+
+        @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+        }
+
+        @if (roundCreated) {
+          <div class="success-message">Round created successfully!</div>
+        }
+
+        <form (ngSubmit)="createRound()">
+          <div class="form-group">
+            <label for="roundName">Round Name:</label>
+            <input 
+              type="text" 
+              id="roundName" 
+              name="roundName" 
+              [(ngModel)]="newRound.roundName" 
+              required
+              placeholder="Enter round name"
+            >
+          </div>
+
+          <button type="submit" [disabled]="creatingRound">
+            {{ creatingRound ? 'Creating...' : 'Create Round' }}
+          </button>
+        </form>
+
+        <!-- Display rounds -->
+        <div class="rounds-list">
+          <h3>Available Rounds</h3>
+
+          @if (loadingRounds) {
+            <p>Loading rounds...</p>
+          } @else if (rounds.length === 0) {
+            <p>No rounds created yet.</p>
+          } @else {
+            <ul class="rounds-list">
+              @for (round of rounds; track round.roundId) {
+                <li class="round-item">
+                  <div class="round-name">{{ round.roundName }}</div>
+                  <div class="round-details">
+                    <div class="question-count">
+                      <strong>Questions:</strong> {{ round.questionCount }}
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
           }
         </div>
       </div>

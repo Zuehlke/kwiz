@@ -1,16 +1,15 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DOCUMENT } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
-import { QRCodeComponent } from 'angularx-qrcode';
+import { JoinQuizInfoComponent } from '../shared/join-quiz-info/join-quiz-info.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, QRCodeComponent],
+  imports: [CommonModule, JoinQuizInfoComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -18,8 +17,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
   players: PlayerInfo[] = [];
-  copySuccess: boolean = false;
-  joinUrl: string = '';
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
 
@@ -27,17 +24,13 @@ export class AdminComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private quizService: QuizService,
-    private webSocketService: WebSocketService,
-    @Inject(DOCUMENT) private document: Document
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
     this.quizId = this.route.snapshot.paramMap.get('quizId');
 
     if (this.quizId) {
-      // Generate join URL for QR code
-      this.generateJoinUrl();
-
       // Initial fetch of quiz details
       this.fetchQuizDetails();
 
@@ -121,35 +114,4 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Method to copy quiz ID to clipboard
-  copyQuizId(): void {
-    if (this.quizId) {
-      navigator.clipboard.writeText(this.quizId)
-        .then(() => {
-          console.log('Quiz ID copied to clipboard:', this.quizId);
-          this.copySuccess = true;
-          // Reset the success message after 2 seconds
-          setTimeout(() => {
-            this.copySuccess = false;
-          }, 2000);
-        })
-        .catch(err => {
-          console.error('Could not copy quiz ID to clipboard:', err);
-        });
-    }
-  }
-
-  // Generate the join URL for the QR code
-  generateJoinUrl(): void {
-    if (this.quizId) {
-      // Get the base URL from the current location
-      const baseUrl = this.document.location.origin;
-
-      // Create the join URL that points to the join-quizz page
-      // Using the URL pattern join-quizz/:quizId as specified
-      this.joinUrl = `${baseUrl}/join-quizz/${this.quizId}`;
-
-      console.log('Generated join URL for QR code:', this.joinUrl);
-    }
-  }
 }
