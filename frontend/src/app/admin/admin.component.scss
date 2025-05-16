@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 .admin-container {
   max-width: 800px;
   margin: 0 auto;
@@ -22,6 +24,36 @@
     p {
       font-size: 1.2rem;
       margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copy-button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 0.3rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+
+      .material-icons {
+        font-size: 18px;
+      }
+
+      &:hover {
+        background-color: #0b7dda;
+      }
+
+      &.copied {
+        background-color: #4CAF50;
+      }
     }
   }
 

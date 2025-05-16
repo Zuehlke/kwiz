@@ -4,7 +4,12 @@
   @if (quizDetails) {
     <div class="quiz-info">
       <h2>{{ quizDetails.quizName }}</h2>
-      <p>Quiz ID: {{ quizId }}</p>
+      <p>
+        Quiz ID: {{ quizId }} 
+        <button class="copy-button" [class.copied]="copySuccess" (click)="copyQuizId()" title="Copy to clipboard">
+          <span class="material-icons">content_copy</span>
+        </button>
+      </p>
       <p>Players: {{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</p>
       <p>Status: {{ quizDetails.started ? 'Started' : 'Not Started' }}</p>
     </div>
