@@ -13,7 +13,7 @@
   * All business logic must be covered by unit tests. 
 * Use integration tests for system-wide behavior.
 
-4. Design Principles
+4. Software Design Principles
 * Apply Domain-Driven Design (DDD):
   * Define Aggregates, Entities, Value Objects, and Repositories clearly. 
   * Business logic resides only in the domain layer. 
@@ -44,5 +44,8 @@
 * The game state is only held in memory without persistency
 
 9. UI Design
-* The UI should be responsive and adapt to different screen sizes.
+* The UI design should be cool, modern and stylish
+* The UI Design must be consistent, same design as on the landing home page
 * All new UI components should be styled as other existing components in the project.
+* The UI must be responsive and adapt to different screen sizes.
+* The game screens must work well on a mobile screen
