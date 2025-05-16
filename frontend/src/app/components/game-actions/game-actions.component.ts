@@ -75,8 +75,9 @@ export class GameActionsComponent {
       return;
     }
 
+    // If player name is not provided, redirect to the player name page
     if (!this.playerName()) {
-      this.errorMessage.set('Please enter a team name');
+      this.router.navigate(['/player', this.quizId()]);
       return;
     }
 
@@ -88,6 +89,13 @@ export class GameActionsComponent {
       .pipe(
         catchError(error => {
           console.error('Error joining quiz:', error);
+
+          // If the error indicates that a player name is needed, redirect to the player name page
+          if (error.error?.needsPlayerName) {
+            this.router.navigate(['/player', this.quizId()]);
+            return of(null);
+          }
+
           this.errorMessage.set('Failed to join quiz: ' + (error.error?.error || error.message || 'Unknown error'));
           return of(null);
         })

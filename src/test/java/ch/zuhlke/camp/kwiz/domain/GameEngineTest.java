@@ -239,4 +239,37 @@ class GameEngineTest {
         // Verify the exception message
         assertTrue(exception.getMessage().contains("No round found with ID"));
     }
+
+    @Test
+    void shouldNotAddPlayerWithEmptyName() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        gameEngine.createQuiz(quizId, quizName, maxPlayers);
+
+        // When/Then with empty name
+        IllegalArgumentException emptyNameException = assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.addPlayerToQuiz(quizId, "");
+        });
+
+        // Verify the exception message for empty name
+        assertTrue(emptyNameException.getMessage().contains("Player name cannot be empty"));
+
+        // When/Then with null name
+        IllegalArgumentException nullNameException = assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.addPlayerToQuiz(quizId, null);
+        });
+
+        // Verify the exception message for null name
+        assertTrue(nullNameException.getMessage().contains("Player name cannot be empty"));
+
+        // When/Then with whitespace name
+        IllegalArgumentException whitespaceNameException = assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.addPlayerToQuiz(quizId, "   ");
+        });
+
+        // Verify the exception message for whitespace name
+        assertTrue(whitespaceNameException.getMessage().contains("Player name cannot be empty"));
+    }
 }
