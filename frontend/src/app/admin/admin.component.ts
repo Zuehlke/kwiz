@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
   players: PlayerInfo[] = [];
+  copySuccess: boolean = false;
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
 
@@ -110,6 +111,24 @@ export class AdminComponent implements OnInit, OnDestroy {
           console.error('Error starting quiz:', error);
         }
       );
+    }
+  }
+
+  // Method to copy quiz ID to clipboard
+  copyQuizId(): void {
+    if (this.quizId) {
+      navigator.clipboard.writeText(this.quizId)
+        .then(() => {
+          console.log('Quiz ID copied to clipboard:', this.quizId);
+          this.copySuccess = true;
+          // Reset the success message after 2 seconds
+          setTimeout(() => {
+            this.copySuccess = false;
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Could not copy quiz ID to clipboard:', err);
+        });
     }
   }
 }
