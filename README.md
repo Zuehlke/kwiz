@@ -89,6 +89,47 @@ The KwiZ application uses Swagger UI for API documentation. Swagger UI provides 
 
 This is particularly useful for both backend and frontend developers to understand the available services and how to interact with them.
 
+## Actuator Endpoints
+
+Spring Boot Actuator provides production-ready features to help monitor and manage the application. The KwiZ application has the following actuator endpoints enabled:
+
+### Accessing Actuator Endpoints
+
+All actuator endpoints are available under the base path: http://localhost:8080/actuator
+
+### Available Endpoints
+
+- **Health**: http://localhost:8080/actuator/health
+  - Provides information about the application's health
+  - Shows detailed health information including disk space, database status, etc.
+  - Useful for monitoring systems to check if the application is running properly
+
+- **Info**: http://localhost:8080/actuator/info
+  - Provides general information about the application
+  - Shows application metadata like version, description, etc.
+
+- **Game State**: http://localhost:8080/actuator/gamestate
+  - Custom endpoint that provides comprehensive information about the game state
+  - Shows all quizzes, rounds, questions, and players in the system
+  - Useful for debugging and monitoring the application state
+
+### Using Actuator Endpoints
+
+Actuator endpoints return JSON responses that can be viewed in a browser or consumed by monitoring tools. For example:
+
+```bash
+# Get application health information
+curl http://localhost:8080/actuator/health
+
+# Get application information
+curl http://localhost:8080/actuator/info
+
+# Get game state information
+curl http://localhost:8080/actuator/gamestate
+```
+
+These endpoints are particularly useful for operations teams to monitor the application's health and state in production environments.
+
 ## Release and Deployment Process
 
 The KwiZ application follows a streamlined release and deployment process that ensures consistent delivery from development to production.
