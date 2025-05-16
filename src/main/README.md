@@ -99,3 +99,54 @@ springdoc.swagger-ui.tagsSorter=alpha
 ```
 
 You can also access the raw OpenAPI specification at: http://localhost:8080/api-docs
+
+## Actuator Endpoints
+
+Spring Boot Actuator provides production-ready features to help monitor and manage the application. The KwiZ application has the following actuator endpoints enabled:
+
+### Accessing Actuator Endpoints
+
+All actuator endpoints are available under the base path: http://localhost:8080/actuator
+
+### Available Endpoints
+
+- **Health**: http://localhost:8080/actuator/health
+  - Provides information about the application's health
+  - Shows detailed health information including disk space, database status, etc.
+  - Useful for monitoring systems to check if the application is running properly
+
+- **Info**: http://localhost:8080/actuator/info
+  - Provides general information about the application
+  - Shows application metadata like version, description, etc.
+
+- **Game State**: http://localhost:8080/actuator/gamestate
+  - Custom endpoint that provides comprehensive information about the game state
+  - Shows all quizzes, rounds, questions, and players in the system
+  - Useful for debugging and monitoring the application state
+
+### Using Actuator Endpoints
+
+Actuator endpoints return JSON responses that can be viewed in a browser or consumed by monitoring tools. For example:
+
+```bash
+# Get application health information
+curl http://localhost:8080/actuator/health
+
+# Get application information
+curl http://localhost:8080/actuator/info
+
+# Get game state information
+curl http://localhost:8080/actuator/gamestate
+```
+
+### Configuration
+
+The actuator endpoints are configured in `src/main/resources/application.properties`:
+
+```properties
+management.endpoints.web.exposure.include=health,info,gamestate
+management.endpoint.health.show-details=always
+management.endpoints.web.base-path=/actuator
+```
+
+You can modify these settings to enable or disable specific endpoints or change the base path.
