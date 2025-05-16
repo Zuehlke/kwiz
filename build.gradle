@@ -57,7 +57,7 @@ task buildFrontend(type: NpmTask) {
 }
 
 // Task to copy the built frontend to the Spring Boot static resources directory
-task copyFrontendToBuild(type: Copy) {
+task packageFrontendIntoWebapp(type: Copy) {
     description = 'Copy the built frontend to the Spring Boot static resources directory'
     from "${project.projectDir}/frontend/dist/kwiz-frontend"
     into "${project.buildDir}/resources/main/web"
@@ -69,25 +69,24 @@ task copyFrontendToBuild(type: Copy) {
 
 // Make sure the frontend is built and copied before the Spring Boot jar is created
 compileTestJava {
-    dependsOn copyFrontendToBuild
+    mustRunAfter packageFrontendIntoWebapp
 }
 
 // Ensure resolveMainClassName runs after copyFrontendToBuild
 tasks.named('resolveMainClassName') {
-    mustRunAfter copyFrontendToBuild
+    mustRunAfter packageFrontendIntoWebapp
 }
 
 // Make sure processResources depends on copyFrontendToBuild
 processResources {
-    dependsOn copyFrontendToBuild
+    mustRunAfter packageFrontendIntoWebapp
 }
 
 // Task to copy the produced JAR file to the release directory
-task copyJarToRelease(type: Copy) {
+task releaseBootJar(type: Copy) {
     description = 'Copy the produced JAR file to the release directory'
     from "${project.buildDir}/libs"
     into "${project.buildDir}/release"
-    dependsOn bootJar
 
     // Include only the JAR file without "Plain" in the name
     include "*-${version}.jar"
@@ -98,10 +97,9 @@ task copyJarToRelease(type: Copy) {
         fileName.replace("-${version}", "")
     }
 
-    dependsOn bootJar
+    dependsOn build, packageFrontendIntoWebapp
 }
 
-tasks.named('build') {
-    dependsOn copyJarToRelease
+task release {
+    dependsOn clean, build, releaseBootJar
 }
-
