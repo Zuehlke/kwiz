@@ -49,3 +49,18 @@
 * All new UI components should be styled as other existing components in the project.
 * The UI must be responsive and adapt to different screen sizes.
 * The game screens must work well on a mobile screen
+
+10. Glossary
+* **Quiz**: A collection of rounds containing questions that players answer to earn points.
+* **Quizmaster**: The person responsible for creating and managing the quiz, including preparing questions, starting the quiz, and overseeing the gameplay.
+* **Player**: A participant in the quiz who answers questions to earn points.
+* **Round**: A segment of the quiz containing a set of related questions.
+* **Question**: A prompt presented to players that requires an answer.
+* **Answer**: The response provided by a player to a question.
+* **Game**: An instance of a quiz being played, with specific players and a current state.
+* **GameEngine**: The core component that processes game logic, validates answers, and calculates scores.
+* **GameStatus**: The current state of a game (e.g., WAITING, IN_PROGRESS, COMPLETED).
+* **Quiz ID**: A unique identifier for a specific quiz that players use to join.
+* **Leaderboard**: A display showing the ranking of players based on their scores.
+* **Score**: The points accumulated by a player for correct answers.
+* **Timer**: A countdown mechanism that limits the time available to answer questions.
