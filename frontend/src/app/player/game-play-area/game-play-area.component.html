@@ -1,0 +1,47 @@
+<section class="game-play-area">
+  <div class="game-header">
+    <h2>Quiz Game</h2>
+    <div class="game-info">
+      <span class="round-info">Round {{ gameService.currentRound() }} of {{ gameService.totalRounds() }}</span>
+    </div>
+  </div>
+
+  <div class="game-content">
+    <!-- Display current question if available -->
+    @if (gameService.currentQuestion()) {
+      <div class="question-container">
+        <app-question-display 
+          [question]="gameService.currentQuestion()!" 
+          [isSubmissionAllowed]="gameService.isAnswerSubmissionAllowed()"
+          (answerSelected)="onAnswerSelected($event)">
+        </app-question-display>
+      </div>
+
+      <div class="timer-container">
+        <app-timer-display [timeRemaining]="gameService.timeRemaining()"></app-timer-display>
+      </div>
+    } @else {
+      <div class="waiting-message">
+        <p>Waiting for the next question...</p>
+      </div>
+    }
+
+    <!-- Display admin controls if user is admin -->
+    @if (gameService.isAdmin()) {
+      <div class="admin-controls-container">
+        <app-admin-controls 
+          [isQuestionFinished]="gameService.isCurrentQuestionFinished()"
+          (nextQuestionRequested)="onNextQuestionRequested()">
+        </app-admin-controls>
+      </div>
+    }
+
+    <!-- Display score information -->
+    <div class="score-container">
+      <app-score-display 
+        [playerScore]="gameService.playerScore()" 
+        [leaderboard]="gameService.leaderboard()">
+      </app-score-display>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,13 @@
+<div class="timer-display">
+  <div class="timer-progress-container">
+    <div 
+      class="timer-progress-bar" 
+      [style.width.%]="progressPercentage"
+      [style.background-color]="timerColor">
+    </div>
+  </div>
+  
+  <div class="timer-text" [style.color]="timerColor">
+    {{ formatTime() }}
+  </div>
+</div>

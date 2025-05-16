@@ -1,0 +1,27 @@
+<div class="score-display">
+  <div class="player-score-container">
+    <h3>Your Score</h3>
+    <div class="score-value">{{ playerScore }}</div>
+    <div class="rank-info">Rank: #{{ playerRank }}</div>
+  </div>
+  
+  <div class="leaderboard-container">
+    <h3>Leaderboard</h3>
+    
+    @if (leaderboard.length > 0) {
+      <div class="leaderboard-list">
+        @for (player of topPlayers; track player.playerId; let i = $index) {
+          <div class="leaderboard-item">
+            <div class="rank">#{{ i + 1 }}</div>
+            <div class="player-name">{{ player.playerName }}</div>
+            <div class="player-score">{{ player.score }}</div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="no-data-message">
+        No scores available yet
+      </div>
+    }
+  </div>
+</div>
