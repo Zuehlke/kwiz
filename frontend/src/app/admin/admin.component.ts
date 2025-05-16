@@ -1,14 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, QRCodeComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -17,6 +19,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   quizDetails: QuizDetails | null = null;
   players: PlayerInfo[] = [];
   copySuccess: boolean = false;
+  joinUrl: string = '';
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
 
@@ -24,13 +27,17 @@ export class AdminComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private quizService: QuizService,
-    private webSocketService: WebSocketService
+    private webSocketService: WebSocketService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
 
   ngOnInit(): void {
     this.quizId = this.route.snapshot.paramMap.get('quizId');
 
     if (this.quizId) {
+      // Generate join URL for QR code
+      this.generateJoinUrl();
+
       // Initial fetch of quiz details
       this.fetchQuizDetails();
 
@@ -129,6 +136,20 @@ export class AdminComponent implements OnInit, OnDestroy {
         .catch(err => {
           console.error('Could not copy quiz ID to clipboard:', err);
         });
+    }
+  }
+
+  // Generate the join URL for the QR code
+  generateJoinUrl(): void {
+    if (this.quizId) {
+      // Get the base URL from the current location
+      const baseUrl = this.document.location.origin;
+
+      // Create the join URL that points to the home page
+      // We'll use a simpler URL format that's more likely to work with QR code scanning
+      this.joinUrl = `${baseUrl}/home?join=${this.quizId}`;
+
+      console.log('Generated join URL for QR code:', this.joinUrl);
     }
   }
 }
