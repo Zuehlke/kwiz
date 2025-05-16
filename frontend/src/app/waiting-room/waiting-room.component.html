@@ -5,6 +5,7 @@
     <div class="quiz-info">
       <h2>{{ quizDetails.quizName }}</h2>
       <p>Quiz ID: {{ quizId }}</p>
+      <p *ngIf="playerName">Welcome, <strong>{{ playerName }}</strong>!</p>
       <p>Waiting for the quiz to start...</p>
       <p>Players: {{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</p>
     </div>
