@@ -14,6 +14,14 @@
       <p>Status: {{ quizDetails.started ? 'Started' : 'Not Started' }}</p>
     </div>
 
+    <div class="qr-code-container">
+      <h3>Join QR Code</h3>
+      <p class="help-text">Scan this QR code to join the quiz</p>
+      <div class="qr-code">
+        <qrcode [qrdata]="joinUrl" [width]="200" [errorCorrectionLevel]="'M'"></qrcode>
+      </div>
+    </div>
+
     <div class="admin-controls">
       <h3>Quiz Controls</h3>
       @if (!quizDetails.started) {
