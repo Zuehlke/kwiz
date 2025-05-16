@@ -1,44 +1,56 @@
-<div class="container">
-  <div class="card">
-    <div class="card-header">
-      <h2>Join Quiz</h2>
-    </div>
-    <div class="card-body">
+<div class="join-quiz-container">
+  <section class="join-quiz-hero">
+    <div class="join-quiz-content">
+      <h1 class="hero-title">Join Quiz</h1>
+      <h2 class="hero-subtitle">Enter your details to join the game</h2>
+
       <div *ngIf="errorMessage()" class="alert alert-danger">
         {{ errorMessage() }}
       </div>
 
-      <div class="form-group">
-        <label for="quizId">Quiz ID</label>
-        <input 
-          type="text" 
-          id="quizId" 
-          class="form-control" 
-          [value]="quizId()" 
-          disabled
-        >
-      </div>
+      <div class="join-form">
+        <div class="form-group">
+          <label for="quizId">Quiz ID</label>
+          <div class="input-container">
+            <input 
+              type="text" 
+              id="quizId" 
+              class="form-control" 
+              [value]="quizId()" 
+              disabled
+            >
+            <span class="material-icons">confirmation_number</span>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label for="playerName">Your Name</label>
-        <input 
-          type="text" 
-          id="playerName" 
-          class="form-control" 
-          [ngModel]="playerName()" 
-          (ngModelChange)="updatePlayerName($event)"
-          placeholder="Enter your name"
-          [disabled]="isLoading()"
-        >
-      </div>
+        <div class="form-group">
+          <label for="playerName">Your Name</label>
+          <div class="input-container">
+            <input 
+              type="text" 
+              id="playerName" 
+              class="form-control" 
+              [ngModel]="playerName()" 
+              (ngModelChange)="updatePlayerName($event)"
+              placeholder="Enter your name"
+              [disabled]="isLoading()"
+            >
+            <span class="material-icons">person</span>
+          </div>
+        </div>
 
-      <button 
-        class="btn btn-primary" 
-        (click)="joinQuiz()" 
-        [disabled]="isLoading() || !playerName()">
-        <span *ngIf="isLoading()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Join Quiz
-      </button>
+        <button 
+          class="btn btn-primary" 
+          (click)="joinQuiz()" 
+          [disabled]="isLoading() || !playerName()">
+          <span *ngIf="isLoading()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span class="material-icons">login</span>
+          Join Quiz
+        </button>
+      </div>
     </div>
-  </div>
+    <div class="join-quiz-image">
+      <!-- Decorative element similar to the hero component -->
+    </div>
+  </section>
 </div>

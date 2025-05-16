@@ -1,19 +1,39 @@
 <div class="waiting-room-container">
-  <h1>Waiting Room</h1>
-
   @if (quizDetails) {
-    <div class="quiz-info">
-      <h2>{{ quizDetails.quizName }}</h2>
-      <p>Quiz ID: {{ quizId }}</p>
-      <p *ngIf="playerName">Welcome, <strong>{{ playerName }}</strong>!</p>
-      <p>Waiting for the quiz to start...</p>
-      <p>Players: {{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</p>
-    </div>
+    <div class="waiting-room-hero">
+      <div class="waiting-room-header">
+        <div class="title-section">
+          <h1 class="hero-title">{{ quizDetails.quizName }}</h1>
+          <h2 class="hero-subtitle">Get ready for the quiz!</h2>
+        </div>
+        <div class="quiz-status-indicator" [class.started]="quizDetails.started">
+          <span class="material-icons">{{ quizDetails.started ? 'play_circle' : 'hourglass_top' }}</span>
+          <p>{{ quizDetails.started ? 'Quiz in progress' : 'Waiting for quiz master' }}</p>
+        </div>
+      </div>
 
-    <div class="status-info">
-      <div class="status-indicator" [class.active]="!quizDetails.started">
-        <span class="status-dot"></span>
-        <span class="status-text">Waiting for quiz master to start the quiz</span>
+      <div class="waiting-room-content">
+        <div class="quiz-info-row">
+          <div class="quiz-info-item quiz-id">
+            <span class="material-icons">confirmation_number</span>
+            <span>Quiz ID: <strong>{{ quizId }}</strong></span>
+          </div>
+
+          <div class="quiz-info-item player-welcome" *ngIf="playerName">
+            <span class="material-icons">person</span>
+            <span>Welcome, <strong>{{ playerName }}</strong>!</span>
+          </div>
+
+          <div class="quiz-info-item waiting-message">
+            <span class="material-icons">schedule</span>
+            <span>Waiting for the quiz to start...</span>
+          </div>
+
+          <div class="quiz-info-item player-counter">
+            <span class="material-icons">people</span>
+            <span>Players: <strong>{{ quizDetails.playerCount }} / {{ quizDetails.maxPlayers }}</strong></span>
+          </div>
+        </div>
       </div>
     </div>
 
