@@ -51,14 +51,8 @@ export class GameService {
     this._gameId.set(gameId);
     this._isAdmin.set(isAdmin);
 
-    // Set default round to 1 instead of 0
-    this._currentRound.set(1);
-
     // Connect to WebSocket
     this.webSocketService.connect();
-
-    // Fetch initial game state
-    this.fetchGameState(gameId);
 
     // Subscribe to quiz updates
     this.webSocketService.getQuizUpdates(gameId).subscribe({

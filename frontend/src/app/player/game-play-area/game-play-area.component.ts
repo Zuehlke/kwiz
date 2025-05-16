@@ -6,7 +6,6 @@ import { GameService } from '../../services/game.service';
 import { GameState } from '../../types/game.types';
 import { QuestionDisplayComponent } from '../question-display/question-display.component';
 import { TimerDisplayComponent } from '../timer-display/timer-display.component';
-import { AdminControlsComponent } from '../admin-controls/admin-controls.component';
 import { ScoreDisplayComponent } from '../score-display/score-display.component';
 
 @Component({
@@ -16,7 +15,6 @@ import { ScoreDisplayComponent } from '../score-display/score-display.component'
     CommonModule,
     QuestionDisplayComponent,
     TimerDisplayComponent,
-    AdminControlsComponent,
     ScoreDisplayComponent
   ],
   templateUrl: './game-play-area.component.html',
@@ -25,6 +23,7 @@ import { ScoreDisplayComponent } from '../score-display/score-display.component'
 export class GamePlayAreaComponent implements OnInit, OnDestroy {
   private gameStateSubscription: Subscription | null = null;
   private quizId: string | null = null;
+  private gameId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,19 +34,20 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     // Get quiz ID from route params
     this.route.paramMap.subscribe(params => {
       this.quizId = params.get('quizId');
+      this.gameId = params.get('gameId');
+      console.log(this.gameId);
 
       if (this.quizId) {
         // Check if player data exists in local storage
         const playerData = localStorage.getItem(`player_${this.quizId}`);
 
         if (playerData) {
-          // Initialize game with player role
-          this.gameService.initializeGame(this.quizId, false);
 
           // Subscribe to game state updates
           this.gameStateSubscription = this.gameService.getGameStateUpdates().subscribe({
             next: (gameState: GameState) => {
               console.log('Game state updated:', gameState);
+              // todo update the game state
             },
             error: (error) => {
               console.error('Error receiving game state updates:', error);

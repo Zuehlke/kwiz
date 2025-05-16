@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { WebSocketService, WebSocketMessage } from '../services/websocket.service';
 import { FormsModule } from '@angular/forms';
 import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion, Round, CreateRoundRequest } from '../services/quiz.service';
-import { interval, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-waiting-room',
@@ -100,9 +99,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             };
 
             // If the quiz has started, navigate to the player page
-            if (this.quizDetails && this.quizDetails.started) {
+            if (this.quizDetails && this.quizDetails.started && message.currentGameId) {
               console.log('Quiz has started, navigating to player page');
-              this.router.navigate(['/player', this.quizId]);
+              this.router.navigate(['/player', this.quizId, message.currentGameId]);
             }
           }
         },
