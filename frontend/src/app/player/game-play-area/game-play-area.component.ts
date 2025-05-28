@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameService } from '../../services/game.service';
-import { GameState } from '../../types/game.types';
 import { QuestionDisplayComponent } from '../question-display/question-display.component';
 import { TimerDisplayComponent } from '../timer-display/timer-display.component';
 import { ScoreDisplayComponent } from '../score-display/score-display.component';
+import {GameStateDTO} from "../../types/game.types";
+import {WebSocketService} from "../../services/websocket.service";
 
 @Component({
   selector: 'app-game-play-area',
@@ -24,10 +25,12 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
   private gameStateSubscription: Subscription | null = null;
   private quizId: string | null = null;
   private gameId: string | null = null;
+  gameState: GameStateDTO | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    public gameService: GameService
+    public gameService: GameService,
+    private webSocketService: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -41,22 +44,32 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
         // Check if player data exists in local storage
         const playerData = localStorage.getItem(`player_${this.quizId}`);
 
-        if (playerData) {
-
-          // Subscribe to game state updates
-          this.gameStateSubscription = this.gameService.getGameStateUpdates().subscribe({
-            next: (gameState: GameState) => {
-              console.log('Game state updated:', gameState);
-              // todo update the game state
-            },
-            error: (error) => {
-              console.error('Error receiving game state updates:', error);
-            }
-          });
+        if (playerData && this.gameId) {
+          this.subscribeToGameState(this.gameId);
         } else {
           console.error('No player data found for quiz ID:', this.quizId);
           // TODO: Handle error - redirect to join page or show error message
         }
+      }
+    });
+  }
+
+  private subscribeToGameState(gameId: string): void {
+
+    this.webSocketService.connect();
+    // Unsubscribe from previous game state if exists
+    if (this.gameStateSubscription) {
+      this.gameStateSubscription.unsubscribe();
+    }
+
+    // Subscribe to game state updates
+    this.gameStateSubscription = this.webSocketService.getGameStateUpdates(gameId).subscribe({
+      next: (gameState: GameStateDTO) => {
+        console.log('Received game state update:', gameState);
+        this.gameState = gameState;
+      },
+      error: (error: Error) => {
+        console.error('Error receiving game state updates:', error);
       }
     });
   }
@@ -67,41 +80,9 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
       this.gameStateSubscription.unsubscribe();
     }
 
-    // End game and clean up resources
-    this.gameService.endGame();
   }
 
-  /**
-   * Handles answer selection from QuestionDisplayComponent
-   * 
-   * @param answer The selected answer
-   */
   onAnswerSelected(answer: any): void {
-    const questionId = this.gameService.currentQuestion()?.id;
-
-    if (questionId) {
-      this.gameService.submitAnswer(questionId, answer);
-    }
-  }
-
-  /**
-   * Handles next question request from AdminControlsComponent
-   */
-  onNextQuestionRequested(): void {
-    this.gameService.adminRequestNextQuestion();
-  }
-
-  /**
-   * Handles start game request from AdminControlsComponent
-   */
-  onStartGameRequested(): void {
-    this.gameService.startGame();
-  }
-
-  /**
-   * Handles send question request from AdminControlsComponent
-   */
-  onSendQuestionRequested(): void {
-    this.gameService.sendQuestionToPlayers();
+    // todo
   }
 }

@@ -64,9 +64,6 @@ export class GameActionsComponent {
           console.log('Quiz created:', response);
           this.errorMessage.set('Quiz created successfully! Redirecting to admin page...');
 
-          // Initialize game service with admin role
-          this.gameService.initializeGame(response.quizId, true);
-
           // Navigate to the quiz-master page (admin page) with the quiz ID
           this.router.navigate(['/quiz-master', response.quizId]);
         }
@@ -115,9 +112,6 @@ export class GameActionsComponent {
             playerId: response.playerId,
             playerName: response.playerName
           }));
-
-          // Initialize game service with player role
-          this.gameService.initializeGame(response.quizId, false);
 
           // Navigate to the waiting room using the redirectUrl from the response
           if (response.redirectUrl) {

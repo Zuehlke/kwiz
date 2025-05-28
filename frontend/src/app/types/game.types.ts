@@ -23,18 +23,21 @@ export interface PlayerScore {
 }
 
 /**
- * Represents the state of the game
+ * Represents the game state DTO from the backend
  */
-export interface GameState {
-  gameId: string | null;
-  currentRound: number;
-  totalRounds: number;
-  currentQuestion: Question | null;
-  timeRemaining: number;
-  isAnswerSubmissionAllowed: boolean;
-  isCurrentQuestionFinished: boolean;
-  playerScore: number;
-  leaderboard: PlayerScore[];
-  isAdmin: boolean;
-  isGameStarted: boolean;
+export interface GameStateDTO {
+  gameId: string;
+  status: string;
+  currentRoundId?: string;
+  currentRoundName?: string;
+  totalRounds?: number;
+  currentQuestionId?: string;
+  currentQuestionText?: string;
+  remainingSeconds?: number;
+  acceptingAnswers?: boolean;
+  players?: Array<{
+    playerId: string;
+    displayName: string;
+    score: number;
+  }>;
 }

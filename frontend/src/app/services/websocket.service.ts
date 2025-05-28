@@ -3,6 +3,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
+import { GameStateDTO } from '../types/game.types';
 
 export interface PlayerInfo {
   id: string;
@@ -190,5 +191,80 @@ export class WebSocketService {
    */
   getConnectionStatus(): Observable<boolean> {
     return this.connectionStatus.asObservable();
+  }
+
+  /**
+   * Returns an observable that emits game state updates for a specific game
+   * 
+   * @param gameId The ID of the game to get updates for
+   * @returns An observable of game state updates
+   */
+  getGameStateUpdates(gameId: string): Observable<GameStateDTO> {
+    // Create a new subject for this specific game
+    const gameStateSubject = new Subject<GameStateDTO>();
+
+    // Always wait for the connection status to be true before subscribing
+    const subscription = this.connectionStatus.subscribe(connected => {
+      if (connected && this.stompClient) {
+        try {
+          this.subscribeToGameStateTopic(gameId, gameStateSubject);
+        } catch (error) {
+          console.error('Error subscribing to game state topic:', error);
+          // If there's an error, try to reconnect
+          this.connect();
+        }
+        subscription.unsubscribe();
+      }
+    });
+
+    return gameStateSubject.asObservable();
+  }
+
+  /**
+   * Subscribes to a specific game state topic
+   * 
+   * @param gameId The ID of the game to subscribe to
+   * @param subject The subject to push messages to
+   */
+  private subscribeToGameStateTopic(gameId: string, subject: Subject<GameStateDTO>): void {
+    if (!this.stompClient) {
+      console.error('STOMP client is not initialized');
+      return;
+    }
+
+    if (!this.stompClient.active) {
+      console.error('STOMP client is not active');
+      // Try to reconnect
+      this.connect();
+      return;
+    }
+
+    try {
+      const subscription = this.stompClient.subscribe(`/topic/game/${gameId}/state`, message => {
+        if (message.body) {
+          try {
+            const gameState = JSON.parse(message.body);
+            subject.next(gameState);
+          } catch (error) {
+            console.error('Error parsing game state message:', error);
+          }
+        }
+      });
+
+      // Handle unsubscription when the subject is completed
+      subject.subscribe({
+        complete: () => {
+          try {
+            subscription.unsubscribe();
+          } catch (error) {
+            console.error('Error unsubscribing from game state topic:', error);
+          }
+        }
+      });
+    } catch (error) {
+      console.error(`Error subscribing to topic /topic/game/${gameId}/state:`, error);
+      // Try to reconnect
+      this.connect();
+    }
   }
 }

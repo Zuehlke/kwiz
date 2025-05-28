@@ -7,7 +7,7 @@ import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/webs
 import { Subscription } from 'rxjs';
 import { QRCodeComponent } from 'angularx-qrcode';
 import {GameService} from "../services/game.service";
-import {GameState} from "../types/game.types";
+import {GameStateDTO} from "../types/game.types";
 
 @Component({
   selector: 'app-admin',
@@ -19,12 +19,13 @@ import {GameState} from "../types/game.types";
 export class AdminComponent implements OnInit, OnDestroy {
   quizId: string | null = null;
   quizDetails: QuizDetails | null = null;
-  gameState: GameState | null = null;
+  gameState: GameStateDTO | null = null;
   players: PlayerInfo[] = [];
   copySuccess: boolean = false;
   joinUrl: string = '';
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
+  private gameStateSubscription: Subscription | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,6 +74,12 @@ export class AdminComponent implements OnInit, OnDestroy {
             if (message.players) {
               this.players = message.players;
             }
+
+            // If there's a current game ID, subscribe to game state updates
+            if (message.currentGameId) {
+              console.log('subscribing to Current game ID:', message.currentGameId); // Add this line for debug
+              this.subscribeToGameState(message.currentGameId);
+            }
           }
         },
         error: (error) => {
@@ -92,8 +99,30 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.wsConnectionSubscription.unsubscribe();
     }
 
+    if (this.gameStateSubscription) {
+      this.gameStateSubscription.unsubscribe();
+    }
+
     // Disconnect from WebSocket
     this.webSocketService.disconnect();
+  }
+
+  private subscribeToGameState(gameId: string): void {
+    // Unsubscribe from previous game state if exists
+    if (this.gameStateSubscription) {
+      this.gameStateSubscription.unsubscribe();
+    }
+
+    // Subscribe to game state updates
+    this.gameStateSubscription = this.webSocketService.getGameStateUpdates(gameId).subscribe({
+      next: (gameState: GameStateDTO) => {
+        console.log('Received game state update:', gameState);
+        this.gameState = gameState;
+      },
+      error: (error: Error) => {
+        console.error('Error receiving game state updates:', error);
+      }
+    });
   }
 
   private fetchQuizDetails(): void {
@@ -102,8 +131,16 @@ export class AdminComponent implements OnInit, OnDestroy {
         (quizDetails) => {
           this.quizDetails = quizDetails;
           if (this.quizDetails.currentGameId) {
-              this.gameService.fetchGameState(this.quizDetails.currentGameId);
-              // todo set gamestate
+            console.log('fetch current game with ID:', this.quizDetails.currentGameId);
+            this.gameService.fetchGameState(this.quizDetails.currentGameId).subscribe(
+              (gameState) => {
+                console.log('Received initial game state:', gameState);
+                this.gameState = gameState;
+              },
+              (error) => {
+                console.error('Error fetching initial game state:', error);
+              }
+            );
           }
         },
         (error) => {

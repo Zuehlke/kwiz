@@ -31,6 +31,7 @@ public class Quiz {
 
         Round round = new Round("Round 1");
         round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
+        this.addPlayer(new Player("Player 1"));
         this.addRound(round);
     }
 

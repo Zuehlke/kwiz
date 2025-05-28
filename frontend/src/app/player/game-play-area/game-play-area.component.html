@@ -2,41 +2,11 @@
   <div class="game-header">
     <h2>Quiz Game</h2>
     <div class="game-info">
-      <span class="round-info">Round {{ gameService.currentRound() }} of {{ gameService.totalRounds() }}</span>
+      <span class="round-info">here goes the info about the rounds</span>
     </div>
   </div>
 
   <div class="game-content">
-    <!-- Display current question if available -->
-    @if (gameService.currentQuestion()) {
-      <div class="question-container">
-        <app-question-display 
-          [question]="gameService.currentQuestion()!" 
-          [isSubmissionAllowed]="gameService.isAnswerSubmissionAllowed()"
-          (answerSelected)="onAnswerSelected($event)">
-        </app-question-display>
-      </div>
 
-      <div class="timer-container">
-        <app-timer-display [timeRemaining]="gameService.timeRemaining()"></app-timer-display>
-      </div>
-    } @else {
-      <div class="waiting-message">
-        <!-- Show different waiting messages based on game state -->
-        @if (!gameService.isGameStarted()) {
-          <p>Waiting for the game to start...</p>
-        } @else {
-          <p>Waiting for the next question...</p>
-        }
-      </div>
-    }
-
-    <!-- Display score information -->
-    <div class="score-container">
-      <app-score-display 
-        [playerScore]="gameService.playerScore()" 
-        [leaderboard]="gameService.leaderboard()">
-      </app-score-display>
-    </div>
   </div>
 </section>
