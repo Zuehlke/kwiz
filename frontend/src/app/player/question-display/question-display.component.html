@@ -1,0 +1,50 @@
+<div class="question-display">
+  <div class="question-text">
+    <h3>{{ question.text }}</h3>
+  </div>
+
+  <div class="answer-section">
+    <!-- Multiple choice question -->
+    @if (question.type === 'multiple-choice') {
+      <div class="options-list">
+        @for (option of question.options; track option) {
+          <div 
+            class="option" 
+            [class.selected]="selectedOption === option"
+            [class.disabled]="!isSubmissionAllowed || isAnswerSubmitted"
+            (click)="selectOption(option)">
+            <span class="option-text">{{ option }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Text input question -->
+    @if (question.type === 'text-input') {
+      <div class="text-input-container">
+        <input 
+          type="text" 
+          [(ngModel)]="textAnswer" 
+          placeholder="Type your answer here"
+          [disabled]="!isSubmissionAllowed || isAnswerSubmitted"
+          class="text-input">
+      </div>
+    }
+
+    <!-- Submit button -->
+    <div class="submit-container">
+      @if (isAnswerSubmitted) {
+        <div class="answer-submitted-message">
+          <span>Answer submitted!</span>
+        </div>
+      } @else {
+        <button 
+          class="submit-button" 
+          [disabled]="!isSubmissionAllowed || (question.type === 'multiple-choice' && !selectedOption) || (question.type === 'text-input' && !textAnswer.trim())"
+          (click)="submitAnswer()">
+          Submit Answer
+        </button>
+      }
+    </div>
+  </div>
+</div>

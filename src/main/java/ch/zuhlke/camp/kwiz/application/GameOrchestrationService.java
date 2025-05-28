@@ -25,34 +25,29 @@ public class GameOrchestrationService {
     private final InMemoryGameRepository gameRepository;
     private final WebSocketController webSocketController;
     private final GameTimerScheduler gameTimerScheduler;
-    private final GameEngine gameEngine;
 
     public GameOrchestrationService(InMemoryGameRepository gameRepository, 
                                    WebSocketController webSocketController,
-                                   GameTimerScheduler gameTimerScheduler,
-                                   GameEngine gameEngine) {
+                                   GameTimerScheduler gameTimerScheduler) {
         this.gameRepository = gameRepository;
         this.webSocketController = webSocketController;
         this.gameTimerScheduler = gameTimerScheduler;
-        this.gameEngine = gameEngine;
     }
 
     /**
      * Creates and starts a new game based on a quiz definition.
      *
      * @param quizDefinitionId the ID of the quiz definition to base the game on
-     * @param adminId the ID of the admin who will control the game
      * @return the ID of the created game
      * @throws IllegalArgumentException if the quiz definition is invalid or not found
      */
-    public String createAndStartGame(String quizDefinitionId, String adminId) {
-        Quiz quiz = gameEngine.getQuizById(quizDefinitionId);
+    public String createAndStartGame(Quiz quiz) {
         if (quiz == null) {
-            throw new IllegalArgumentException("No quiz found with ID: " + quizDefinitionId);
+            throw new IllegalArgumentException("No quiz found with ID: " + quiz.getId());
         }
 
         // Create a new game
-        Game game = new Game(quizDefinitionId, adminId);
+        Game game = new Game(quiz.getId(), "notimplemented");
 
         // Add existing players from the quiz to the game
         for (var player : quiz.getPlayers()) {
