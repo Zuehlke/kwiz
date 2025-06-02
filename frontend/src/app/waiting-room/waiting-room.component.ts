@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion, Round, CreateRoundRequest } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { JoinQuizInfoComponent } from '../shared/join-quiz-info/join-quiz-info.component';
 
 @Component({
   selector: 'app-waiting-room',
@@ -101,9 +100,9 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
             };
 
             // If the quiz has started, navigate to the player page
-            if (this.quizDetails && this.quizDetails.started) {
+            if (this.quizDetails && this.quizDetails.started && message.currentGameId) {
               console.log('Quiz has started, navigating to player page');
-              this.router.navigate(['/player', this.quizId]);
+              this.router.navigate(['/player', this.quizId, message.currentGameId]);
             }
           }
         },
@@ -218,6 +217,20 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
           this.selectedRoundId = rounds[0].roundId;
         }
         this.loadingRounds = false;
+
+        // If there are rounds and no round is currently selected,
+        // pre-select the default round (which should be the first one)
+        if (rounds.length > 0 && !this.selectedRoundId) {
+          // Find the default round (named "Default Round")
+          const defaultRound = rounds.find(round => round.roundName === "Default Round");
+
+          // If found, select it; otherwise select the first round
+          if (defaultRound) {
+            this.selectedRoundId = defaultRound.roundId;
+          } else if (rounds.length > 0) {
+            this.selectedRoundId = rounds[0].roundId;
+          }
+        }
       },
       (error) => {
         console.error('Error fetching rounds:', error);

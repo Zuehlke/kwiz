@@ -54,7 +54,7 @@ class GameOrchestrationServiceTest {
 
     @BeforeEach
     void setUp() {
-        gameOrchestrationService = new GameOrchestrationService(gameRepository, webSocketController, gameTimerScheduler, gameEngine);
+        gameOrchestrationService = new GameOrchestrationService(gameRepository, webSocketController, gameTimerScheduler);
 
         // Create a quiz with a player and a round with a question
         quiz = new Quiz(quizId, "Test Quiz", 10);
@@ -103,7 +103,7 @@ class GameOrchestrationServiceTest {
         });
 
         // Call the service method
-        String resultGameId = gameOrchestrationService.createAndStartGame(quizId, adminId);
+        String resultGameId = gameOrchestrationService.createAndStartGame(new Quiz(quizId, "Test Quiz", 10));
 
         // Verify the result
         assertEquals(gameId, resultGameId);

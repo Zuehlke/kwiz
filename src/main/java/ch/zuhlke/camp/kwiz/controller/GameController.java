@@ -24,20 +24,6 @@ public class GameController {
         this.gameOrchestrationService = gameOrchestrationService;
     }
 
-    /**
-     * Creates and starts a new game based on a quiz definition.
-     *
-     * @param quizDefinitionId the ID of the quiz definition to base the game on
-     * @param adminId the ID of the admin who will control the game
-     * @return the ID of the created game
-     */
-    @PostMapping
-    public ResponseEntity<String> createAndStartGame(
-            @RequestParam String quizDefinitionId,
-            @RequestParam String adminId) {
-        String gameId = gameOrchestrationService.createAndStartGame(quizDefinitionId, adminId);
-        return ResponseEntity.ok(gameId);
-    }
 
     /**
      * Returns the current state of a game.

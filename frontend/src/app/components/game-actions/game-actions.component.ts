@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QuizService, CreateQuizRequest, JoinQuizRequest } from '../../services/quiz.service';
+import { GameService } from '../../services/game.service';
 import { catchError, of } from 'rxjs';
 
 @Component({
@@ -24,6 +25,7 @@ export class GameActionsComponent {
 
   constructor(
     private quizService: QuizService,
+    private gameService: GameService,
     private router: Router
   ) {}
 

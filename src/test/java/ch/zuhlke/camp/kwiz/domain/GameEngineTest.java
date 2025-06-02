@@ -1,5 +1,6 @@
 package ch.zuhlke.camp.kwiz.domain;
 
+import ch.zuhlke.camp.kwiz.application.GameOrchestrationService;
 import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,8 @@ class GameEngineTest {
     @BeforeEach
     void setUp() {
         WebSocketController mockWebSocketController = Mockito.mock(WebSocketController.class);
-        gameEngine = new GameEngine(mockWebSocketController);
+        GameOrchestrationService gameOrchestrationService = Mockito.mock(GameOrchestrationService.class);
+        gameEngine = new GameEngine(mockWebSocketController, gameOrchestrationService);
     }
 
     @Test
@@ -36,6 +38,11 @@ class GameEngineTest {
         assertEquals(quizName, quiz.getName());
         assertEquals(maxPlayers, quiz.getMaxPlayers());
         assertTrue(gameEngine.getQuizzes().contains(quiz));
+
+        // Verify that a default round was created
+        assertFalse(quiz.getRounds().isEmpty(), "Quiz should have at least one round");
+        assertEquals(1, quiz.getRounds().size(), "Quiz should have exactly one round");
+        assertEquals("Default Round", quiz.getRounds().get(0).getName(), "The round should be named 'Default Round'");
     }
 
     @Test

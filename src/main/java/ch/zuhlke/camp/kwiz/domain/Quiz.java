@@ -17,6 +17,7 @@ public class Quiz {
     private final List<Round> rounds;
     private boolean started;
     private boolean ended;
+    private String currentGameId;
 
     public Quiz(String id, String name, int maxPlayers) {
         this.id = id;
@@ -26,6 +27,12 @@ public class Quiz {
         this.rounds = new ArrayList<>();
         this.started = false;
         this.ended = false;
+        this.currentGameId = null;
+
+        Round round = new Round("Round 1");
+        round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
+        this.addPlayer(new Player("Player 1"));
+        this.addRound(round);
     }
 
     public String getId() {
@@ -54,6 +61,14 @@ public class Quiz {
 
     public boolean isEnded() {
         return ended;
+    }
+
+    public String getCurrentGameId() {
+        return currentGameId;
+    }
+
+    public void setCurrentGameId(String currentGameId) {
+        this.currentGameId = currentGameId;
     }
 
     public void addPlayer(Player player) {

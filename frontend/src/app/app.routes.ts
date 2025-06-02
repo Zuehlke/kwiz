@@ -10,15 +10,13 @@ export const routes: Routes = [
     path: 'quiz-master/:quizId', 
     loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent)
   },
-  { 
-    path: 'join-quizz/:quizId', 
+  {
+    path: 'join-quizz/:quizId',
     loadComponent: () => import('./join-quizz/join-quizz.component').then(m => m.JoinQuizzComponent)
   },
-  // Redirect from old player route to new join-quizz route for backward compatibility
-  { 
-    path: 'player/:quizId', 
-    redirectTo: 'join-quizz/:quizId', 
-    pathMatch: 'full' 
+  {
+    path: 'player/:quizId/:gameId',
+    loadComponent: () => import('./player/game-play-area/game-play-area.component').then(m => m.GamePlayAreaComponent)
   },
   { 
     path: 'waiting-room/:quizId', 

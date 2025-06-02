@@ -1,5 +1,6 @@
 package ch.zuhlke.camp.kwiz.domain;
 
+import ch.zuhlke.camp.kwiz.application.GameOrchestrationService;
 import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +20,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameEngine {
     private final Map<String, Quiz> quizzes;
     private final WebSocketController webSocketController;
+    private final GameOrchestrationService gameOrchestrationService;
 
-    public GameEngine(WebSocketController webSocketController) {
+    public GameEngine(WebSocketController webSocketController, GameOrchestrationService gameOrchestrationService) {
+        this.gameOrchestrationService = gameOrchestrationService;
         this.quizzes = new ConcurrentHashMap<>();
         this.webSocketController = webSocketController;
     }
 
     /**
      * Creates a new quiz with the given ID, name, and maximum number of players.
+     * Also creates a default round for the quiz.
      *
      * @param quizId          the unique ID of the quiz
      * @param quizName        the name of the quiz
@@ -36,6 +40,11 @@ public class GameEngine {
     public Quiz createQuiz(String quizId, String quizName, int maxPlayers) {
         Quiz quiz = new Quiz(quizId, quizName, maxPlayers);
         quizzes.put(quizId, quiz);
+
+        // Create a default round for the quiz
+        Round defaultRound = new Round("Default Round");
+        quiz.addRound(defaultRound);
+
         return quiz;
     }
 
@@ -85,7 +94,7 @@ public class GameEngine {
         quiz.addPlayer(player);
 
         // Send WebSocket message with updated quiz information
-        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers(), quiz.getCurrentGameId());
 
         return player;
     }
@@ -101,11 +110,12 @@ public class GameEngine {
         if (quiz == null) {
             throw new IllegalArgumentException("No quiz found with ID: " + quizId);
         }
-
+        String gameId = gameOrchestrationService.createAndStartGame(quiz);
+        quiz.setCurrentGameId(gameId);
         quiz.start();
 
         // Send WebSocket message with updated quiz information
-        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers());
+        webSocketController.sendQuizUpdate(quizId, quiz.getPlayers().size(), quiz.getMaxPlayers(), quiz.isStarted(), quiz.getPlayers(), quiz.getCurrentGameId());
     }
 
     /**
