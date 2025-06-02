@@ -12,6 +12,7 @@ import { PlayerScore } from '../../types/game.types';
 export class ScoreDisplayComponent {
   @Input() playerScore: number = 0;
   @Input() leaderboard: PlayerScore[] = [];
+  @Input() showPlayerScore: boolean = true;
 
   /**
    * Returns the top 5 players from the leaderboard

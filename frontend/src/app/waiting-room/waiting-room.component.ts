@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { QuizService, QuizDetails, SubmitQuestionRequest, PlayerQuestion, Round, CreateRoundRequest } from '../services/quiz.service';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import {JoinQuizInfoComponent} from "../shared/join-quiz-info/join-quiz-info.component";
 
 @Component({
   selector: 'app-waiting-room',

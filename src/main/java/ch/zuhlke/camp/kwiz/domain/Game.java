@@ -20,12 +20,13 @@ public class Game {
     private final List<Round> rounds;
     private final List<PlayerSubmission> playerSubmissions;
     private final String adminId;
-    
+
     private int currentRoundIndex;
     private int currentQuestionIndex;
     private int currentQuestionRemainingSeconds;
     private boolean isAcceptingAnswers;
     private GameStatus status;
+    private long currentQuestionStartTime;
 
     /**
      * Creates a new Game instance based on a quiz definition.
@@ -129,6 +130,15 @@ public class Game {
     }
 
     /**
+     * Returns the timestamp when the current question started.
+     *
+     * @return the start time in milliseconds since epoch
+     */
+    public long getCurrentQuestionStartTime() {
+        return currentQuestionStartTime;
+    }
+
+    /**
      * Returns whether the game is currently accepting answers.
      *
      * @return true if the game is accepting answers, false otherwise
@@ -183,11 +193,11 @@ public class Game {
         if (status != GameStatus.LOBBY) {
             throw new IllegalStateException("Cannot add player after game has started");
         }
-        
+
         if (players.containsKey(playerId)) {
             throw new IllegalArgumentException("Player with ID " + playerId + " already exists in this game");
         }
-        
+
         players.put(playerId, new PlayerInGame(playerId, displayName));
     }
 
@@ -201,22 +211,22 @@ public class Game {
         if (status != GameStatus.LOBBY) {
             throw new IllegalStateException("Game has already started");
         }
-        
+
         if (gameRounds == null || gameRounds.isEmpty()) {
             throw new IllegalStateException("Cannot start game without rounds");
         }
-        
+
         if (players.isEmpty()) {
             throw new IllegalStateException("Cannot start game without players");
         }
-        
+
         this.rounds.clear();
         this.rounds.addAll(gameRounds);
-        
+
         // Set up the first round and question
         currentRoundIndex = 0;
         currentQuestionIndex = 0;
-        
+
         // Start the first question
         startCurrentQuestion();
     }
@@ -231,16 +241,19 @@ public class Game {
         if (currentQuestion == null) {
             throw new IllegalStateException("No current question available");
         }
-        
+
         // Set the timer based on the question's time limit
         currentQuestionRemainingSeconds = currentQuestion.getTimeLimit();
-        
+
         // Start accepting answers
         isAcceptingAnswers = true;
-        
+
         // Update the game status
         status = GameStatus.QUESTION_ACTIVE;
-        
+
+        // Record the question start time
+        currentQuestionStartTime = System.currentTimeMillis();
+
         // Activate the current round if it's not already active
         Round currentRound = getCurrentRound();
         if (!currentRound.isActive()) {
@@ -261,32 +274,32 @@ public class Game {
         if (!isAcceptingAnswers) {
             throw new IllegalStateException("Game is not currently accepting answers");
         }
-        
+
         if (!players.containsKey(playerId)) {
             throw new IllegalArgumentException("Player with ID " + playerId + " does not exist in this game");
         }
-        
+
         Question currentQuestion = getCurrentQuestion();
         if (currentQuestion == null || !currentQuestion.getId().equals(questionId)) {
             throw new IllegalArgumentException("Question with ID " + questionId + " is not the current question");
         }
-        
+
         // Check if the player has already submitted an answer for this question
         boolean hasAlreadySubmitted = playerSubmissions.stream()
                 .anyMatch(submission -> submission.getPlayerId().equals(playerId) && 
                          submission.getQuestionId().equals(questionId));
-        
+
         if (hasAlreadySubmitted) {
             throw new IllegalStateException("Player has already submitted an answer for this question");
         }
-        
+
         // Check if the answer is correct
         boolean isCorrect = currentQuestion.isCorrectAnswer(answerText);
-        
+
         // Create a new submission
         PlayerSubmission submission = new PlayerSubmission(playerId, questionId, answerText, isCorrect);
         playerSubmissions.add(submission);
-        
+
         // If the answer is correct, add points to the player's score
         if (isCorrect) {
             PlayerInGame player = players.get(playerId);
@@ -302,10 +315,10 @@ public class Game {
         if (status != GameStatus.QUESTION_ACTIVE) {
             return; // Only decrement if a question is active
         }
-        
+
         if (currentQuestionRemainingSeconds > 0) {
             currentQuestionRemainingSeconds--;
-            
+
             // If the timer reaches 0, stop accepting answers
             if (currentQuestionRemainingSeconds == 0) {
                 isAcceptingAnswers = false;
@@ -325,11 +338,11 @@ public class Game {
         if (!this.adminId.equals(adminId)) {
             throw new IllegalArgumentException("Only the game admin can close the current question");
         }
-        
+
         if (status != GameStatus.QUESTION_ACTIVE) {
             throw new IllegalStateException("No active question to close");
         }
-        
+
         isAcceptingAnswers = false;
         status = GameStatus.QUESTION_CLOSED;
     }
@@ -347,21 +360,21 @@ public class Game {
         if (!this.adminId.equals(adminId)) {
             throw new IllegalArgumentException("Only the game admin can proceed to the next question");
         }
-        
+
         if (status != GameStatus.QUESTION_CLOSED) {
             throw new IllegalStateException("Cannot proceed to next question until current question is closed");
         }
-        
+
         // Complete the current round if this was the last question
         Round currentRound = getCurrentRound();
         if (currentQuestionIndex >= currentRound.getQuestions().size() - 1) {
             // This was the last question in the round
             currentRound.complete();
-            
+
             // Move to the next round
             currentRoundIndex++;
             currentQuestionIndex = 0;
-            
+
             // Check if this was the last round
             if (currentRoundIndex >= rounds.size()) {
                 // Game is over
@@ -376,7 +389,7 @@ public class Game {
             // Move to the next question in the current round
             currentQuestionIndex++;
         }
-        
+
         // Start the next question
         startCurrentQuestion();
     }
@@ -392,11 +405,11 @@ public class Game {
         if (!this.adminId.equals(adminId)) {
             throw new IllegalArgumentException("Only the game admin can start the next round");
         }
-        
+
         if (status != GameStatus.ROUND_COMPLETED) {
             throw new IllegalStateException("Cannot start next round until current round is completed");
         }
-        
+
         // Start the first question of the new round
         startCurrentQuestion();
     }

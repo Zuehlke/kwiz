@@ -309,6 +309,51 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       color: $secondary-color;
       font-weight: bold;
     }
+
+    .admin-game-display {
+      margin-top: 2rem;
+      background-color: $light-color;
+      border-radius: $border-radius;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      h3 {
+        font-size: 1.6rem;
+        color: $primary-color;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid rgba($primary-color, 0.2);
+        padding-bottom: 0.5rem;
+      }
+
+      app-game-play-area {
+        display: block;
+        width: 100%;
+
+        // Override some styles from the player view to fit admin context
+        ::ng-deep {
+          .game-play-area {
+            padding: 0;
+            box-shadow: none;
+
+            .game-header {
+              background-color: rgba($primary-color, 0.05);
+            }
+
+            .admin-info {
+              .admin-label {
+                background-color: $secondary-color;
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   .player-list {

@@ -138,11 +138,30 @@ export class GameService {
   /**
    * Submits an answer for the current question
    * 
+   * @param gameId The ID of the game
+   * @param playerId The ID of the player
    * @param questionId The ID of the question
    * @param answer The answer to submit
+   * @returns An Observable that completes when the answer is submitted
    */
-  submitAnswer(questionId: string, answer: any): void {
-    // todo
+  submitAnswer(gameId: string, playerId: string, questionId: string, answer: string): Observable<any> {
+    return this.http.post(
+      `${this.gameApiUrl}/${gameId}/answers`, 
+      null, 
+      { 
+        params: {
+          playerId,
+          questionId,
+          answerText: answer
+        }
+      }
+    ).pipe(
+      tap(() => console.log('Answer submitted successfully')),
+      catchError(error => {
+        console.error('Error submitting answer:', error);
+        return of(null);
+      })
+    );
   }
 
 

@@ -10,7 +10,8 @@
 3. Development Practices
 * Follow Test-Driven Development (TDD) strictly:
   * Write tests before implementing features. 
-  * All business logic must be covered by unit tests. 
+  * All business logic must be covered by unit tests.
+* In frontend code use component tests for angular components to test the components.
 * Use integration tests for system-wide behavior.
 
 4. Software Design Principles

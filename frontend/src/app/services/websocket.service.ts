@@ -1,3 +1,6 @@
+// Polyfill for 'global' used by sockjs-client
+(window as any).global = window;
+
 import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -29,6 +32,39 @@ export class WebSocketService {
   private connectionStatus = new BehaviorSubject<boolean>(false);
 
   constructor() {}
+
+  /**
+   * Sends a player's answer to the backend
+   * 
+   * @param gameId The ID of the game
+   * @param playerId The ID of the player
+   * @param questionId The ID of the question
+   * @param answer The player's answer
+   */
+  sendPlayerAnswer(gameId: string, playerId: string, questionId: string, answer: string): void {
+    if (!this.stompClient || !this.stompClient.active) {
+      console.error('Cannot send answer: WebSocket not connected');
+      return;
+    }
+
+    const payload = {
+      gameId,
+      playerId,
+      questionId,
+      answer,
+      timestamp: new Date().getTime()
+    };
+
+    try {
+      this.stompClient.publish({
+        destination: `/app/game/${gameId}/answer`,
+        body: JSON.stringify(payload)
+      });
+      console.log('Answer sent:', payload);
+    } catch (error) {
+      console.error('Error sending answer:', error);
+    }
+  }
 
   /**
    * Connects to the WebSocket server

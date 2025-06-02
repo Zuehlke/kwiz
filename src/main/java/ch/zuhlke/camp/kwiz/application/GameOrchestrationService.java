@@ -4,13 +4,17 @@ import ch.zuhlke.camp.kwiz.controller.WebSocketController;
 import ch.zuhlke.camp.kwiz.domain.Game;
 import ch.zuhlke.camp.kwiz.domain.GameEngine;
 import ch.zuhlke.camp.kwiz.domain.GameStatus;
+import ch.zuhlke.camp.kwiz.domain.PlayerInGame;
+import ch.zuhlke.camp.kwiz.domain.PlayerSubmission;
 import ch.zuhlke.camp.kwiz.domain.Question;
 import ch.zuhlke.camp.kwiz.domain.Quiz;
 import ch.zuhlke.camp.kwiz.domain.Round;
 import ch.zuhlke.camp.kwiz.events.TimerElapsedEvent;
 import ch.zuhlke.camp.kwiz.infrastructure.GameTimerScheduler;
 import ch.zuhlke.camp.kwiz.infrastructure.InMemoryGameRepository;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -37,7 +41,7 @@ public class GameOrchestrationService {
     /**
      * Creates and starts a new game based on a quiz definition.
      *
-     * @param quizDefinitionId the ID of the quiz definition to base the game on
+     * @param quiz the quiz to start
      * @return the ID of the created game
      * @throws IllegalArgumentException if the quiz definition is invalid or not found
      */
@@ -248,6 +252,47 @@ public class GameOrchestrationService {
         Question currentQuestion = game.getCurrentQuestion();
         Round currentRound = game.getCurrentRound();
 
+        // Get player submissions for the current question
+        List<PlayerSubmission> currentQuestionSubmissions = new ArrayList<>();
+        if (currentQuestion != null) {
+            currentQuestionSubmissions = game.getPlayerSubmissions().stream()
+                    .filter(submission -> currentQuestion.getId().equals(submission.getQuestionId()))
+                    .collect(Collectors.toList());
+        }
+
+        // Calculate how many players have answered the current question
+        int playersAnswered = currentQuestionSubmissions.size();
+
+        long questionStartTime = game.getCurrentQuestionStartTime();
+
+        // Create player answer DTOs (without including the actual answers)
+        List<PlayerAnswerDTO> playerAnswers = new ArrayList<>();
+        if (!currentQuestionSubmissions.isEmpty()) {
+            Map<String, PlayerInGame> players = game.getPlayers();
+            playerAnswers = currentQuestionSubmissions.stream()
+                    .map(submission -> {
+                        PlayerInGame player = players.get(submission.getPlayerId());
+                        String playerName = player != null ? player.getDisplayName() : "Unknown";
+                        long answerTimeMs = submission.getSubmittedAtTimestamp() - questionStartTime;
+                        return new PlayerAnswerDTO(submission.getPlayerId(), playerName, answerTimeMs);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Calculate the fastest answer time (if any)
+        Long fastestAnswerTime = null;
+        if (!currentQuestionSubmissions.isEmpty()) {
+            // Find the earliest submission timestamp
+
+            fastestAnswerTime = currentQuestionSubmissions.stream()
+                    .mapToLong(submission -> submission.getSubmittedAtTimestamp() - questionStartTime)
+                    .min()
+                    .orElse(0);
+
+            // Convert to seconds
+            fastestAnswerTime = fastestAnswerTime / 1000;
+        }
+
         return new GameStateDTO(
                 game.getId(),
                 game.getQuizDefinitionId(),
@@ -260,7 +305,10 @@ public class GameOrchestrationService {
                 game.isAcceptingAnswers(),
                 game.getPlayers().values().stream()
                         .map(player -> new PlayerDTO(player.getPlayerId(), player.getDisplayName(), player.getScore()))
-                        .collect(Collectors.toList())
+                        .collect(Collectors.toList()),
+                playersAnswered,
+                playerAnswers,
+                fastestAnswerTime
         );
     }
 
@@ -278,12 +326,16 @@ public class GameOrchestrationService {
         private final int remainingSeconds;
         private final boolean acceptingAnswers;
         private final List<PlayerDTO> players;
+        private final int playersAnswered;
+        private final List<PlayerAnswerDTO> playerAnswers;
+        private final Long fastestAnswerTime;
 
         public GameStateDTO(String gameId, String quizDefinitionId, GameStatus status,
                            String currentRoundId, String currentRoundName,
                            String currentQuestionId, String currentQuestionText,
                            int remainingSeconds, boolean acceptingAnswers,
-                           List<PlayerDTO> players) {
+                           List<PlayerDTO> players, int playersAnswered, 
+                           List<PlayerAnswerDTO> playerAnswers, Long fastestAnswerTime) {
             this.gameId = gameId;
             this.quizDefinitionId = quizDefinitionId;
             this.status = status;
@@ -294,6 +346,9 @@ public class GameOrchestrationService {
             this.remainingSeconds = remainingSeconds;
             this.acceptingAnswers = acceptingAnswers;
             this.players = players;
+            this.playersAnswered = playersAnswered;
+            this.playerAnswers = playerAnswers;
+            this.fastestAnswerTime = fastestAnswerTime;
         }
 
         public String getGameId() {
@@ -335,6 +390,18 @@ public class GameOrchestrationService {
         public List<PlayerDTO> getPlayers() {
             return players;
         }
+
+        public int getPlayersAnswered() {
+            return playersAnswered;
+        }
+
+        public List<PlayerAnswerDTO> getPlayerAnswers() {
+            return playerAnswers;
+        }
+
+        public Long getFastestAnswerTime() {
+            return fastestAnswerTime;
+        }
     }
 
     /**
@@ -363,4 +430,32 @@ public class GameOrchestrationService {
             return score;
         }
     }
+
+    /**
+     * DTO for transferring player answer information to clients without revealing the actual answer.
+     */
+    public static class PlayerAnswerDTO {
+        private final String playerId;
+        private final String playerName;
+        private final long answerTimeMs;
+
+        public PlayerAnswerDTO(String playerId, String playerName, long answerTimeMs) {
+            this.playerId = playerId;
+            this.playerName = playerName;
+            this.answerTimeMs = answerTimeMs;
+        }
+
+        public String getPlayerId() {
+            return playerId;
+        }
+
+        public String getPlayerName() {
+            return playerName;
+        }
+
+        public long getAnswerTimeMs() {
+            return answerTimeMs;
+        }
+    }
+
 }

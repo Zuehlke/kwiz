@@ -6,9 +6,11 @@
     </div>
     <nav class="navigation">
       <ul>
-        <li *ngFor="let link of navLinks">
-          <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
-        </li>
+        @for (link of navLinks; track link) {
+          <li>
+            <a [routerLink]="link.path" routerLinkActive="active">{{ link.label }}</a>
+          </li>
+        }
       </ul>
     </nav>
   </div>

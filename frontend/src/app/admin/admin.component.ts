@@ -4,12 +4,15 @@ import { CommonModule } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
-import { QRCodeComponent } from 'angularx-qrcode';
+import {GameService} from "../services/game.service";
+import {GameStateDTO} from "../types/game.types";
+import {JoinQuizInfoComponent} from "../shared/join-quiz-info/join-quiz-info.component";
+import {GamePlayAreaComponent} from "../player/game-play-area/game-play-area.component";
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, JoinQuizInfoComponent],
+  imports: [CommonModule, JoinQuizInfoComponent, GamePlayAreaComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -27,8 +30,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     private router: Router,
     private quizService: QuizService,
     private webSocketService: WebSocketService,
-    private gameService: GameService,
-    private webSocketService: WebSocketService
+    private gameService: GameService
   ) {}
 
   ngOnInit(): void {

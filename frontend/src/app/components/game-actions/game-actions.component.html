@@ -21,65 +21,73 @@
 
   <div class="tab-content">
     <!-- Create Quiz Tab -->
-    <div class="tab-pane" *ngIf="activeTab() === 'create'" id="create">
-      <form (submit)="$event.preventDefault(); createQuiz()">
-        <div class="form-group">
-          <label for="quizName">Quiz Name</label>
-          <input 
-            type="text" 
-            id="quizName" 
-            [ngModel]="quizName()" 
-            (ngModelChange)="quizName.set($event)" 
-            name="quizName" 
-            placeholder="Enter a name for your quiz"
-            class="form-control">
-        </div>
+    @if (activeTab() === 'create') {
+      <div class="tab-pane" id="create">
+        <form (submit)="$event.preventDefault(); createQuiz()">
+          <div class="form-group">
+            <label for="quizName">Quiz Name</label>
+            <input 
+              type="text" 
+              id="quizName" 
+              [ngModel]="quizName()" 
+              (ngModelChange)="quizName.set($event)" 
+              name="quizName" 
+              placeholder="Enter a name for your quiz"
+              class="form-control">
+          </div>
 
-        <div class="message" *ngIf="errorMessage()">
-          <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
-            {{ errorMessage() }}
-          </p>
-        </div>
+          @if (errorMessage()) {
+            <div class="message">
+              <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
+                {{ errorMessage() }}
+              </p>
+            </div>
+          }
 
-        <button type="submit" class="btn btn-primary">Create Quiz</button>
-      </form>
-    </div>
+          <button type="submit" class="btn btn-primary">Create Quiz</button>
+        </form>
+      </div>
+    }
 
     <!-- Join Quiz Tab -->
-    <div class="tab-pane" *ngIf="activeTab() === 'join'" id="join">
-      <form (submit)="$event.preventDefault(); joinQuiz()">
-        <div class="form-group">
-          <label for="quizId">Quiz ID</label>
-          <input 
-            type="text" 
-            id="quizId" 
-            [ngModel]="quizId()" 
-            (ngModelChange)="quizId.set($event)" 
-            name="quizId" 
-            placeholder="Enter the quiz ID"
-            class="form-control">
-        </div>
+    @if (activeTab() === 'join') {
+      <div class="tab-pane" id="join">
+        <form (submit)="$event.preventDefault(); joinQuiz()">
+          <div class="form-group">
+            <label for="quizId">Quiz ID</label>
+            <input 
+              type="text" 
+              id="quizId" 
+              [ngModel]="quizId()" 
+              (ngModelChange)="quizId.set($event)" 
+              name="quizId" 
+              placeholder="Enter the quiz ID"
+              class="form-control">
+          </div>
 
-        <div class="form-group">
-          <label for="playerName">Player Name</label>
-          <input 
-            type="text" 
-            id="playerName" 
-            [ngModel]="playerName()" 
-            (ngModelChange)="playerName.set($event)" 
-            name="playerName" 
-            placeholder="Enter your player name"
-            class="form-control">
-        </div>
+          <div class="form-group">
+            <label for="playerName">Player Name</label>
+            <input 
+              type="text" 
+              id="playerName" 
+              [ngModel]="playerName()" 
+              (ngModelChange)="playerName.set($event)" 
+              name="playerName" 
+              placeholder="Enter your player name"
+              class="form-control">
+          </div>
 
-        <div class="message" *ngIf="errorMessage()">
-          <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
-            {{ errorMessage() }}
-          </p>
-        </div>
+          @if (errorMessage()) {
+            <div class="message">
+              <p [class.error]="errorMessage().includes('Please')" [class.success]="errorMessage().includes('successfully')">
+                {{ errorMessage() }}
+              </p>
+            </div>
+          }
 
-        <button type="submit" class="btn btn-primary">Join Quiz</button>
-      </form>
-    </div>
+          <button type="submit" class="btn btn-primary">Join Quiz</button>
+        </form>
+      </div>
+    }
   </div>
 </section>

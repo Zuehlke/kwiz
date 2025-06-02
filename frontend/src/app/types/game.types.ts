@@ -23,6 +23,15 @@ export interface PlayerScore {
 }
 
 /**
+ * Represents a player's answer information
+ */
+export interface PlayerAnswer {
+  playerId: string;
+  playerName: string;
+  answerTimeMs: number;
+}
+
+/**
  * Represents the game state DTO from the backend
  */
 export interface GameStateDTO {
@@ -40,4 +49,7 @@ export interface GameStateDTO {
     displayName: string;
     score: number;
   }>;
+  playersAnswered?: number;
+  playerAnswers?: PlayerAnswer[];
+  fastestAnswerTime?: number;
 }

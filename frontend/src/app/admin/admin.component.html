@@ -6,9 +6,9 @@
           <h1 class="hero-title">Quizz {{ quizDetails.quizName }}</h1>
           <h2 class="hero-subtitle">Waiting for players...</h2>
         </div>
-        <div class="quiz-status-indicator" [class.started]="quizDetails?.started">
-          <span class="material-icons">{{ quizDetails?.started ? 'play_circle' : 'hourglass_top' }}</span>
-          <p>{{ quizDetails?.started ? 'Quiz in progress' : 'Waiting to start' }}</p>
+        <div class="quiz-status-indicator" [class.started]="quizDetails.started">
+          <span class="material-icons">{{ quizDetails.started ? 'play_circle' : 'hourglass_top' }}</span>
+          <p>{{ quizDetails.started ? 'Quiz in progress' : 'Waiting to start' }}</p>
         </div>
       } @else {
         <div class="loading">
@@ -37,6 +37,18 @@
         <p class="help-text">Once you start the quiz, all players in the waiting room will be moved to the game.</p>
       } @else {
         <p class="status-text">Quiz is in progress</p>
+
+        <!-- Game Play Area for Admin -->
+        @if (gameState) {
+          <div class="admin-game-display">
+            <h3>Live Game View</h3>
+            <app-game-play-area
+              [isAdminMode]="true"
+              [adminGameState]="gameState"
+              [adminGameId]="gameState.gameId || ''">
+            </app-game-play-area>
+          </div>
+        }
       }
     </div>
 
