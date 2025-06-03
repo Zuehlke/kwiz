@@ -40,11 +40,6 @@ public class GameEngine {
     public Quiz createQuiz(String quizId, String quizName, int maxPlayers) {
         Quiz quiz = new Quiz(quizId, quizName, maxPlayers);
         quizzes.put(quizId, quiz);
-
-        // Create a default round for the quiz
-        Round defaultRound = new Round("Default Round");
-        quiz.addRound(defaultRound);
-
         return quiz;
     }
 

@@ -29,7 +29,10 @@ public class Quiz {
         this.ended = false;
         this.currentGameId = null;
 
+        // First round should always be precreated
         Round round = new Round("Round 1");
+
+        // Just a dummy question and player for easier testing
         round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
         this.addPlayer(new Player("Player 1"));
         this.addRound(round);
