@@ -27,6 +27,7 @@
 5. Specifications
 * All features must comply with requirements in GAMEPLAY.md. 
 * If a specification is ambiguous or incomplete, ask clarifying questions before implementation.
+* If things that have been implemented are differently to what was specified then also adjust the GAMEPLAY.md files to the new changes 
 
 6. Project Structure Expectations
 * Backend:
@@ -65,3 +66,10 @@
 * **Leaderboard**: A display showing the ranking of players based on their scores.
 * **Score**: The points accumulated by a player for correct answers.
 * **Timer**: A countdown mechanism that limits the time available to answer questions.
+
+11. Definition of Done
+Whenever a task is finalized do the following additional steps to verify current implementation for correctness, quality and understandability:
+* Adjust documentation in GAMEPLAY.md if what was implemented is different from what is documented there.
+* Ensure new functionality is covered by tests - both in backend and frontend
+* Ensure all tests pass
+* Ensure there are no compile errors or tests failures as well in frontend (to be run using npm in frontend folder)
