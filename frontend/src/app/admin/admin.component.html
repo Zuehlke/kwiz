@@ -33,6 +33,26 @@
     <div class="admin-controls">
       <h3>Quiz Controls</h3>
       @if (!quizDetails.started) {
+        <!-- Max Players Slider -->
+        <div class="max-players-control">
+          <label for="maxPlayersSlider">Maximum Players: {{ maxPlayers }}</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="maxPlayersSlider" 
+              [(ngModel)]="maxPlayers" 
+              [min]="maxPlayersMin" 
+              [max]="maxPlayersMax" 
+              [step]="maxPlayersStep"
+              [disabled]="isUpdatingMaxPlayers || quizDetails.started"
+              (change)="updateMaxPlayers()"
+              class="slider">
+          </div>
+          @if (updateMaxPlayersError) {
+            <p class="error-text">{{ updateMaxPlayersError }}</p>
+          }
+        </div>
+
         <button class="btn btn-primary start-button" (click)="startQuiz()">Start Quiz</button>
         <p class="help-text">Once you start the quiz, all players in the waiting room will be moved to the game.</p>
       } @else {

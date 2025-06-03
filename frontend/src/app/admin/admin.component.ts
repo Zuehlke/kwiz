@@ -4,15 +4,16 @@ import { CommonModule } from '@angular/common';
 import { QuizService, QuizDetails } from '../services/quiz.service';
 import { WebSocketService, WebSocketMessage, PlayerInfo } from '../services/websocket.service';
 import { Subscription } from 'rxjs';
-import {GameService} from "../services/game.service";
-import {GameStateDTO} from "../types/game.types";
-import {JoinQuizInfoComponent} from "../shared/join-quiz-info/join-quiz-info.component";
-import {GamePlayAreaComponent} from "../player/game-play-area/game-play-area.component";
+import { GameService } from "../services/game.service";
+import { GameStateDTO } from "../types/game.types";
+import { JoinQuizInfoComponent } from "../shared/join-quiz-info/join-quiz-info.component";
+import { GamePlayAreaComponent } from "../player/game-play-area/game-play-area.component";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, JoinQuizInfoComponent, GamePlayAreaComponent],
+  imports: [CommonModule, JoinQuizInfoComponent, GamePlayAreaComponent, FormsModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
@@ -21,6 +22,12 @@ export class AdminComponent implements OnInit, OnDestroy {
   quizDetails: QuizDetails | null = null;
   gameState: GameStateDTO | null = null;
   players: PlayerInfo[] = [];
+  maxPlayers: number = 10; // Default value
+  maxPlayersMin: number = 10; // Minimum value
+  maxPlayersMax: number = 200; // Maximum value
+  maxPlayersStep: number = 10; // Step value
+  isUpdatingMaxPlayers: boolean = false;
+  updateMaxPlayersError: string | null = null;
   private playerCountSubscription: Subscription | null = null;
   private wsConnectionSubscription: Subscription | null = null;
   private gameStateSubscription: Subscription | null = null;
@@ -124,6 +131,9 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.quizService.getQuiz(this.quizId).subscribe(
         (quizDetails) => {
           this.quizDetails = quizDetails;
+          // Initialize maxPlayers with the current value from the quiz
+          this.maxPlayers = quizDetails.maxPlayers;
+
           if (this.quizDetails.currentGameId) {
             console.log('fetch current game with ID:', this.quizDetails.currentGameId);
             this.gameService.fetchGameState(this.quizDetails.currentGameId).subscribe(
@@ -147,6 +157,34 @@ export class AdminComponent implements OnInit, OnDestroy {
         }
       );
     }
+  }
+
+  /**
+   * Updates the maximum number of players allowed in the quiz.
+   */
+  updateMaxPlayers(): void {
+    if (!this.quizId) return;
+
+    this.isUpdatingMaxPlayers = true;
+    this.updateMaxPlayersError = null;
+
+    this.quizService.updateMaxPlayers(this.quizId, this.maxPlayers).subscribe(
+      (quizDetails) => {
+        console.log('Maximum players updated successfully:', quizDetails);
+        this.quizDetails = quizDetails;
+        this.isUpdatingMaxPlayers = false;
+      },
+      (error) => {
+        console.error('Error updating maximum players:', error);
+        this.updateMaxPlayersError = error.error?.error || 'Failed to update maximum players';
+        this.isUpdatingMaxPlayers = false;
+
+        // Reset maxPlayers to the current value if there was an error
+        if (this.quizDetails) {
+          this.maxPlayers = this.quizDetails.maxPlayers;
+        }
+      }
+    );
   }
 
   // Method to start the quiz

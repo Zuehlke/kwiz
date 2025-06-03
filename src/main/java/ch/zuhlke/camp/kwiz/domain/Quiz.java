@@ -20,6 +20,18 @@ public class Quiz {
     private String currentGameId;
 
     public Quiz(String id, String name, int maxPlayers) {
+        this(id, name, maxPlayers, true);
+    }
+
+    /**
+     * Creates a new Quiz instance.
+     *
+     * @param id the unique ID of the quiz
+     * @param name the name of the quiz
+     * @param maxPlayers the maximum number of players allowed in the quiz
+     * @param addDefaults whether to add default round, question, and player
+     */
+    public Quiz(String id, String name, int maxPlayers, boolean addDefaults) {
         this.id = id;
         this.name = name;
         this.maxPlayers = maxPlayers;
@@ -29,13 +41,15 @@ public class Quiz {
         this.ended = false;
         this.currentGameId = null;
 
-        // First round should always be precreated
-        Round round = new Round("Round 1");
+        if (addDefaults) {
+            // First round should always be precreated
+            Round round = new Round("Round 1");
 
-        // Just a dummy question and player for easier testing
-        round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
-        this.addPlayer(new Player("Player 1"));
-        this.addRound(round);
+            // Just a dummy question and player for easier testing
+            round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
+            this.addPlayer(new Player("Player 1"));
+            this.addRound(round);
+        }
     }
 
     public String getId() {
@@ -73,6 +87,7 @@ public class Quiz {
     public void setCurrentGameId(String currentGameId) {
         this.currentGameId = currentGameId;
     }
+
 
     public void addPlayer(Player player) {
         if (isStarted()) {

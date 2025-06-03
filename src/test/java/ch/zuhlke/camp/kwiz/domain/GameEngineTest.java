@@ -279,4 +279,80 @@ class GameEngineTest {
         // Verify the exception message for whitespace name
         assertTrue(whitespaceNameException.getMessage().contains("Player name cannot be empty"));
     }
+
+    @Test
+    void shouldUpdateMaxPlayers() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int initialMaxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, initialMaxPlayers);
+
+        // Add a player to the quiz
+        Player player = gameEngine.addPlayerToQuiz(quizId, "Player A");
+
+        int newMaxPlayers = 10;
+
+        // When
+        Quiz updatedQuiz = gameEngine.updateMaxPlayers(quizId, newMaxPlayers);
+
+        // Then
+        assertNotNull(updatedQuiz);
+        assertEquals(quizId, updatedQuiz.getId());
+        assertEquals(quizName, updatedQuiz.getName());
+        assertEquals(newMaxPlayers, updatedQuiz.getMaxPlayers());
+
+        // Verify that the players were preserved
+        assertEquals(2, updatedQuiz.getPlayers().size());
+        assertTrue(updatedQuiz.getPlayers().contains(player));
+    }
+
+    @Test
+    void shouldNotUpdateMaxPlayersWhenQuizDoesNotExist() {
+        // When/Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.updateMaxPlayers("nonexistent", 10);
+        });
+    }
+
+    @Test
+    void shouldNotUpdateMaxPlayersWhenQuizHasStarted() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
+
+        // Add a player to the quiz
+        gameEngine.addPlayerToQuiz(quizId, "Player A");
+
+        // Start the quiz
+        gameEngine.startQuiz(quizId);
+
+        // When/Then
+        assertThrows(IllegalStateException.class, () -> {
+            gameEngine.updateMaxPlayers(quizId, 10);
+        });
+    }
+
+    @Test
+    void shouldNotUpdateMaxPlayersWhenNewMaxIsLessThanCurrentPlayerCount() {
+        // Given
+        String quizId = "quiz123";
+        String quizName = "Test Quiz";
+        int maxPlayers = 5;
+        Quiz quiz = gameEngine.createQuiz(quizId, quizName, maxPlayers);
+
+        // Add players to the quiz
+        gameEngine.addPlayerToQuiz(quizId, "Player A");
+        gameEngine.addPlayerToQuiz(quizId, "Player B");
+        gameEngine.addPlayerToQuiz(quizId, "Player C");
+
+        int newMaxPlayers = 2; // Less than the current player count (3)
+
+        // When/Then
+        assertThrows(IllegalArgumentException.class, () -> {
+            gameEngine.updateMaxPlayers(quizId, newMaxPlayers);
+        });
+    }
 }

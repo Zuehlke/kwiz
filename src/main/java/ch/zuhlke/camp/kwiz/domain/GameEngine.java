@@ -295,6 +295,57 @@ public class GameEngine {
     }
 
     /**
+     * Updates the maximum number of players allowed in a quiz.
+     *
+     * @param quizId the ID of the quiz to update
+     * @param maxPlayers the new maximum number of players
+     * @return the updated quiz
+     * @throws IllegalArgumentException if no quiz with the given ID exists
+     * @throws IllegalStateException if the quiz has already started
+     * @throws IllegalArgumentException if the new maximum is less than the current number of players
+     */
+    public Quiz updateMaxPlayers(String quizId, int maxPlayers) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz == null) {
+            throw new IllegalArgumentException("No quiz found with ID: " + quizId);
+        }
+
+        if (quiz.isStarted()) {
+            throw new IllegalStateException("Cannot update maximum players after quiz has started");
+        }
+
+        if (maxPlayers < quiz.getPlayers().size()) {
+            throw new IllegalArgumentException("New maximum players cannot be less than current player count");
+        }
+
+        // Create a new quiz with the updated maxPlayers, without adding default player and round
+        Quiz updatedQuiz = new Quiz(quiz.getId(), quiz.getName(), maxPlayers, false);
+
+        // Copy over the existing players
+        for (Player player : quiz.getPlayers()) {
+            updatedQuiz.addPlayer(player);
+        }
+
+        // Copy over the existing rounds
+        for (Round round : quiz.getRounds()) {
+            updatedQuiz.addRound(round);
+        }
+
+        // Copy over the current game ID if it exists
+        if (quiz.getCurrentGameId() != null) {
+            updatedQuiz.setCurrentGameId(quiz.getCurrentGameId());
+        }
+
+        // Replace the old quiz in the map
+        quizzes.put(quizId, updatedQuiz);
+
+        // Send WebSocket message with updated quiz information
+        webSocketController.sendQuizUpdate(quizId, updatedQuiz.getPlayers().size(), updatedQuiz.getMaxPlayers(), updatedQuiz.isStarted(), updatedQuiz.getPlayers(), updatedQuiz.getCurrentGameId());
+
+        return updatedQuiz;
+    }
+
+    /**
      * Retrieves all questions submitted by a specific player in a quiz.
      *
      * @param quizId the ID of the quiz

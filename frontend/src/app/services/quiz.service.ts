@@ -163,4 +163,15 @@ export class QuizService {
   getRounds(quizId: string): Observable<Round[]> {
     return this.http.get<Round[]>(`${this.apiUrl}/${quizId}/rounds`);
   }
+
+  /**
+   * Updates the maximum number of players allowed in a quiz.
+   *
+   * @param quizId The ID of the quiz to update
+   * @param maxPlayers The new maximum number of players
+   * @returns An observable of the updated quiz details
+   */
+  updateMaxPlayers(quizId: string, maxPlayers: number): Observable<QuizDetails> {
+    return this.http.patch<QuizDetails>(`${this.apiUrl}/${quizId}/max-players`, { maxPlayers });
+  }
 }

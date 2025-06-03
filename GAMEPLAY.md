@@ -18,6 +18,10 @@ The quizmaster is responsible for:
    3. The quizmaster can create a quiz with multiple answers per question.
    4. The quizmaster can set a time limit for each question.
 2. The quizmaster can set a maximum number of players
+   1. The quizmaster can adjust the maximum number of players using a slider on the admin page.
+   2. The slider allows selecting up to 200 players in steps of 10.
+   3. The maximum number of players can only be adjusted before the quiz has started.
+   4. The maximum number of players cannot be set lower than the current number of players.
 3. The quizmaster can submit the quiz to the server.
 4. The quizmaster can start the quiz.
 5. The quizmaster can end the quiz.

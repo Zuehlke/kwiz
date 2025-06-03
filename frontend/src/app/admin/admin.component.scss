@@ -545,3 +545,210 @@ $box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
   }
 }
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.admin-hero {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-section {
+  flex: 1;
+}
+
+.hero-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.quiz-status-indicator {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  color: #666;
+
+  &.started {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+  }
+
+  .material-icons {
+    margin-right: 8px;
+  }
+}
+
+.admin-hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-counter {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  
+  .material-icons {
+    margin-right: 8px;
+    color: #1976d2;
+  }
+}
+
+.admin-controls {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  .start-button {
+    margin-bottom: 16px;
+  }
+
+  .help-text {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .status-text {
+    font-weight: bold;
+    color: #1976d2;
+  }
+}
+
+.player-list {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  .players {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .player-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .material-icons {
+      margin-right: 8px;
+      color: #1976d2;
+    }
+  }
+
+  .no-players {
+    color: #666;
+    font-style: italic;
+  }
+}
+
+.admin-game-display {
+  margin-top: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: white;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+}
+
+/* Slider styles */
+.max-players-control {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .slider-container {
+    width: 100%;
+    padding: 0 10px;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #d3d3d3;
+    outline: none;
+    
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+    }
+    
+    &::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #1976d2;
+      cursor: pointer;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      
+      &::-webkit-slider-thumb {
+        background: #999;
+      }
+      
+      &::-moz-range-thumb {
+        background: #999;
+      }
+    }
+  }
+  
+  .error-text {
+    color: #d32f2f;
+    font-size: 0.9rem;
+    margin-top: 8px;
+  }
+}

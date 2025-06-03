@@ -405,6 +405,65 @@ public class QuizController {
     }
 
     /**
+     * Updates the maximum number of players allowed in a quiz.
+     *
+     * @param quizId the ID of the quiz to update
+     * @param request the request containing the new maximum number of players
+     * @return the updated quiz
+     */
+    @Operation(
+            summary = "Update maximum players",
+            description = "Updates the maximum number of players allowed in the quiz with the specified ID",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Maximum players updated successfully"),
+                    @ApiResponse(responseCode = "404", description = "Quiz not found"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request"),
+                    @ApiResponse(responseCode = "409", description = "Quiz has already started or new maximum is less than current player count")
+            }
+    )
+    @PatchMapping("/{quizId}/max-players")
+    public ResponseEntity<Map<String, Object>> updateMaxPlayers(
+            @PathVariable String quizId,
+            @RequestBody UpdateMaxPlayersRequest request) {
+        try {
+            Quiz quiz = gameEngine.updateMaxPlayers(quizId, request.getMaxPlayers());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("quizId", quiz.getId());
+            response.put("quizName", quiz.getName());
+            response.put("maxPlayers", quiz.getMaxPlayers());
+            response.put("started", quiz.isStarted());
+            response.put("ended", quiz.isEnded());
+            response.put("playerCount", quiz.getPlayers().size());
+            response.put("currentGameId", quiz.getCurrentGameId());
+
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("New maximum players cannot be less than current player count")) {
+                return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Request object for updating the maximum number of players.
+     */
+    public static class UpdateMaxPlayersRequest {
+        private int maxPlayers;
+
+        public int getMaxPlayers() {
+            return maxPlayers;
+        }
+
+        public void setMaxPlayers(int maxPlayers) {
+            this.maxPlayers = maxPlayers;
+        }
+    }
+
+    /**
      * Request object for submitting a question.
      */
     public static class SubmitQuestionRequest {
