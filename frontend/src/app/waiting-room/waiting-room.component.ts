@@ -288,6 +288,14 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Scroll to a section by ID
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   // Submit the question
   submitQuestion(): void {
     this.errorMessage = '';
