@@ -96,7 +96,67 @@ class GameTest {
         assertTrue(game.getPlayerSubmissions().get(0).isCorrect());
 
         // Verify the player's score was updated
-        assertEquals(100, game.getPlayers().get(playerId).getScore());
+        // Since we can't control the exact timing in this test, we just verify that points were awarded
+        assertTrue(game.getPlayers().get(playerId).getScore() > 0);
+    }
+
+    @Test
+    void testPointCalculationBasedOnTimeLeft() {
+        // Create a game with a question that has a 10-second time limit
+        Game testGame = new Game("quiz123", adminId);
+        testGame.addPlayer(playerId, playerName);
+
+        Round testRound = new Round("Test Round");
+        Question testQuestion = new Question("Test Question", Collections.singletonList("correct"), 10);
+        testRound.addQuestion(testQuestion);
+
+        // Start the game
+        testGame.startGame(Collections.singletonList(testRound));
+
+        // Get the current question start time
+        long startTime = testGame.getCurrentQuestionStartTime();
+
+        // Test case 1: Answer immediately (should get close to 100 points)
+        // We can't directly manipulate the timestamp, so we'll use reflection to access the private calculatePoints method
+        int pointsImmediate = calculatePointsWithReflection(testGame, 0);
+        assertEquals(100, pointsImmediate, "Answering immediately should award 100 points");
+
+        // Test case 2: Answer after half the time (should get around 50 points)
+        int pointsHalfTime = calculatePointsWithReflection(testGame, 5000);
+        assertEquals(50, pointsHalfTime, "Answering after half the time should award 50 points");
+
+        // Test case 3: Answer at the last moment (should get minimum 1 point)
+        int pointsLastMoment = calculatePointsWithReflection(testGame, 9999);
+        assertEquals(1, pointsLastMoment, "Answering at the last moment should award 1 point");
+    }
+
+    @Test
+    void testZeroPointsForIncorrectAnswers() {
+        // Start the game
+        game.startGame(Collections.singletonList(round));
+
+        // Submit an incorrect answer
+        game.acceptPlayerAnswer(playerId, question.getId(), "wrong");
+
+        // Verify the player's score was not updated (remains 0)
+        assertEquals(0, game.getPlayers().get(playerId).getScore(), "Incorrect answers should award 0 points regardless of timing");
+    }
+
+    /**
+     * Helper method to calculate points using reflection to access the private calculatePoints method
+     */
+    private int calculatePointsWithReflection(Game game, long answerTimeMs) {
+        try {
+            // Get the calculatePoints method
+            java.lang.reflect.Method calculatePointsMethod = Game.class.getDeclaredMethod("calculatePoints", long.class);
+            calculatePointsMethod.setAccessible(true);
+
+            // Call the method and return the result
+            return (int) calculatePointsMethod.invoke(game, answerTimeMs);
+        } catch (Exception e) {
+            fail("Failed to call calculatePoints method via reflection: " + e.getMessage());
+            return 0;
+        }
     }
 
     @Test

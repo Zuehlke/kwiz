@@ -438,17 +438,23 @@ public class Game {
     }
 
     /**
-     * Calculates points based on answer time.
-     * Max points is 100, and 1 point is deducted per millisecond.
+     * Calculates points based on the percentage of time left when answering.
+     * Points are linearly spread over the whole time that was available.
+     * Maximum points (100) are awarded when answering immediately.
+     * Minimum points (1) are awarded when answering at the last moment.
      * 
      * @param answerTimeMs the time taken to answer in milliseconds
      * @return the calculated points (minimum 1 if correct)
      */
     private int calculatePoints(long answerTimeMs) {
-        // Calculate points: 100 - milliseconds (with a minimum of 1 point)
-        // This gives players less time than microseconds but is more reasonable
-        // for a quiz game where answers typically take seconds
-        int points = 100 - (int)(answerTimeMs / 100); // Divide by 100 to make it more reasonable
+        // Get the total time available for the current question in milliseconds
+        int totalTimeMs = getCurrentQuestion().getTimeLimit() * 1000;
+
+        // Calculate the percentage of time left
+        double percentageTimeLeft = 1.0 - ((double) answerTimeMs / totalTimeMs);
+
+        // Calculate points based on percentage of time left (0-100 scale)
+        int points = (int) Math.round(percentageTimeLeft * 100);
 
         // Ensure minimum 1 point for correct answers
         return Math.max(1, points);
