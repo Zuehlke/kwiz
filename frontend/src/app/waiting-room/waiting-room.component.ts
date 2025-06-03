@@ -146,9 +146,13 @@ export class WaitingRoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Get the player data from local storage
+  // Get the player data from session storage (unique per tab)
   private getPlayerId(): string | null {
-    const playerData = localStorage.getItem(`player_${this.quizId}`);
+    if (!this.quizId) {
+      return null;
+    }
+
+    const playerData = sessionStorage.getItem(`player_${this.quizId}`);
     if (playerData) {
       try {
         const data = JSON.parse(playerData);

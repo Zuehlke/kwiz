@@ -293,6 +293,16 @@ public class GameOrchestrationService {
             fastestAnswerTime = fastestAnswerTime / 1000;
         }
 
+        // Determine if we should show the correct answer
+        // Show it when all players have answered or time is up
+        String correctAnswerToShow = null;
+        if (currentQuestion != null && 
+            (!game.isAcceptingAnswers() || playersAnswered == game.getPlayers().size())) {
+            // Get the first correct answer from the question
+            correctAnswerToShow = currentQuestion.getCorrectAnswers().isEmpty() ? 
+                "No correct answer defined" : currentQuestion.getCorrectAnswers().get(0);
+        }
+
         return new GameStateDTO(
                 game.getId(),
                 game.getQuizDefinitionId(),
@@ -308,7 +318,8 @@ public class GameOrchestrationService {
                         .collect(Collectors.toList()),
                 playersAnswered,
                 playerAnswers,
-                fastestAnswerTime
+                fastestAnswerTime,
+                correctAnswerToShow
         );
     }
 
@@ -329,13 +340,15 @@ public class GameOrchestrationService {
         private final int playersAnswered;
         private final List<PlayerAnswerDTO> playerAnswers;
         private final Long fastestAnswerTime;
+        private final String correctAnswer; // Added field for correct answer
 
         public GameStateDTO(String gameId, String quizDefinitionId, GameStatus status,
                            String currentRoundId, String currentRoundName,
                            String currentQuestionId, String currentQuestionText,
                            int remainingSeconds, boolean acceptingAnswers,
                            List<PlayerDTO> players, int playersAnswered, 
-                           List<PlayerAnswerDTO> playerAnswers, Long fastestAnswerTime) {
+                           List<PlayerAnswerDTO> playerAnswers, Long fastestAnswerTime,
+                           String correctAnswer) {
             this.gameId = gameId;
             this.quizDefinitionId = quizDefinitionId;
             this.status = status;
@@ -349,6 +362,7 @@ public class GameOrchestrationService {
             this.playersAnswered = playersAnswered;
             this.playerAnswers = playerAnswers;
             this.fastestAnswerTime = fastestAnswerTime;
+            this.correctAnswer = correctAnswer;
         }
 
         public String getGameId() {
@@ -401,6 +415,10 @@ public class GameOrchestrationService {
 
         public Long getFastestAnswerTime() {
             return fastestAnswerTime;
+        }
+
+        public String getCorrectAnswer() {
+            return correctAnswer;
         }
     }
 

@@ -159,10 +159,10 @@ public class Game {
     /**
      * Returns the current round.
      *
-     * @return the current round, or null if there are no rounds
+     * @return the current round, or null if there are no rounds or if currentRoundIndex is out of bounds
      */
     public Round getCurrentRound() {
-        if (rounds.isEmpty()) {
+        if (rounds.isEmpty() || currentRoundIndex < 0 || currentRoundIndex >= rounds.size()) {
             return null;
         }
         return rounds.get(currentRoundIndex);
@@ -300,10 +300,16 @@ public class Game {
         PlayerSubmission submission = new PlayerSubmission(playerId, questionId, answerText, isCorrect);
         playerSubmissions.add(submission);
 
-        // If the answer is correct, add points to the player's score
+        // If the answer is correct, calculate and add points to the player's score
         if (isCorrect) {
             PlayerInGame player = players.get(playerId);
-            player.addPoints(1); // Could be more sophisticated, e.g., based on time remaining
+
+            // Calculate points based on answer time
+            // Max points is 100, and 1 point is deducted per microsecond
+            long answerTimeMs = submission.getSubmittedAtTimestamp() - currentQuestionStartTime;
+            int points = calculatePoints(answerTimeMs);
+
+            player.addPoints(points);
         }
     }
 
@@ -371,9 +377,12 @@ public class Game {
             // This was the last question in the round
             currentRound.complete();
 
-            // Move to the next round
+            // Move to the next round that has questions
             currentRoundIndex++;
             currentQuestionIndex = 0;
+            while (currentRoundIndex < rounds.size() && getCurrentRound().getQuestions().isEmpty()) {
+                currentRoundIndex++;
+            }
 
             // Check if this was the last round
             if (currentRoundIndex >= rounds.size()) {
@@ -381,8 +390,9 @@ public class Game {
                 status = GameStatus.GAME_OVER;
                 return;
             } else {
-                // New round
-                status = GameStatus.ROUND_COMPLETED;
+                // Automatically start the next round with the first question
+                // instead of setting status to ROUND_COMPLETED
+                startCurrentQuestion();
                 return;
             }
         } else {
@@ -425,5 +435,22 @@ public class Game {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    /**
+     * Calculates points based on answer time.
+     * Max points is 100, and 1 point is deducted per millisecond.
+     * 
+     * @param answerTimeMs the time taken to answer in milliseconds
+     * @return the calculated points (minimum 1 if correct)
+     */
+    private int calculatePoints(long answerTimeMs) {
+        // Calculate points: 100 - milliseconds (with a minimum of 1 point)
+        // This gives players less time than microseconds but is more reasonable
+        // for a quiz game where answers typically take seconds
+        int points = 100 - (int)(answerTimeMs / 100); // Divide by 100 to make it more reasonable
+
+        // Ensure minimum 1 point for correct answers
+        return Math.max(1, points);
     }
 }

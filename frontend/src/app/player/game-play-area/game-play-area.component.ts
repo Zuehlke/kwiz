@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -28,6 +28,8 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
   @Input() adminGameState: GameStateDTO | null = null;
   @Input() adminGameId: string | null = null;
 
+  @ViewChild(QuestionDisplayComponent) questionDisplay!: QuestionDisplayComponent;
+
   private gameStateSubscription: Subscription | null = null;
   private quizId: string | null = null;
   private gameId: string | null = null;
@@ -54,7 +56,7 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     public gameService: GameService,
-    private webSocketService: WebSocketService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -79,8 +81,8 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
         console.log(this.gameId);
 
         if (this.quizId) {
-          // Check if player data exists in local storage
-          const playerDataStr = localStorage.getItem(`player_${this.quizId}`);
+          // Check if player data exists in session storage (unique per tab)
+          const playerDataStr = sessionStorage.getItem(`player_${this.quizId}`);
 
           if (playerDataStr && this.gameId) {
             try {
@@ -137,16 +139,20 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     if (gameState.players) {
       this.totalPlayers = gameState.players.length;
 
-      // Create leaderboard
+      // Create leaderboard and sort by score in descending order
       this.leaderboard = gameState.players.map(player => ({
         playerId: player.playerId,
         playerName: player.displayName,
         score: player.score
-      }));
+      })).sort((a, b) => b.score - a.score);
 
-      // Reset answer if a new question is detected
+      // Reset answer and statistics if a new question is detected
       if (this.currentQuestion?.id !== gameState.currentQuestionId) {
         this.resetAnswer();
+
+        // Reset question-specific statistics
+        this.playersAnswered = 0;
+        this.fastestAnswerTime = null;
       }
 
       // Create current question object if there is a current question
@@ -160,9 +166,7 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
         };
 
         // Reset answer start time for the new question
-        if (!this.answerSubmitted) {
-          this.answerStartTime = new Date().getTime();
-        }
+        this.answerStartTime = new Date().getTime();
       }
 
       // Update players answered count from the game state
@@ -181,6 +185,11 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     this.answerSubmitted = false;
     this.answerTime = null;
     this.answerStartTime = new Date().getTime();
+
+    // Reset the question display component if it exists
+    if (this.questionDisplay) {
+      this.questionDisplay.resetState();
+    }
   }
 
   /**
@@ -191,9 +200,9 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
       this.playerAnswer = answer;
       this.answerSubmitted = true;
 
-      // Calculate time taken to answer
+      // Calculate time taken to answer with one decimal place for accuracy
       const endTime = new Date().getTime();
-      this.answerTime = this.answerStartTime ? Math.floor((endTime - this.answerStartTime) / 1000) : null;
+      this.answerTime = this.answerStartTime ? parseFloat(((endTime - this.answerStartTime) / 1000).toFixed(1)) : null;
 
       // Send answer to backend using GameOrchestrationService
       this.gameService.submitAnswer(
@@ -233,4 +242,22 @@ export class GamePlayAreaComponent implements OnInit, OnDestroy {
     return player ? player.score : 0;
   }
 
+  /**
+   * Handle the admin's request to advance to the next question
+   */
+  onNextQuestion(): void {
+    if (!this.isAdminMode || !this.gameState || this.gameState.status !== 'QUESTION_CLOSED') {
+      return;
+    }
+
+    // Call the adminAdvanceToNextQuestion method in the GameService
+    this.gameService.adminAdvanceToNextQuestion(this.gameState.gameId).subscribe({
+      next: () => {
+        console.log('Advanced to next question successfully');
+      },
+      error: (error) => {
+        console.error('Error advancing to next question:', error);
+      }
+    });
+  }
 }

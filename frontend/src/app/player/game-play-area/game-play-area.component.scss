@@ -61,12 +61,6 @@
     flex-direction: column;
     gap: 2rem;
 
-    app-timer-display {
-      margin: 0 auto;
-      width: 100%;
-      max-width: 500px;
-    }
-
     .game-stats {
       display: flex;
       justify-content: space-around;
@@ -80,6 +74,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 0 0.5rem;
 
         .stats-label {
           font-size: 0.9rem;
@@ -92,6 +87,49 @@
           font-weight: 600;
           color: #2575fc;
         }
+
+        app-timer-display {
+          margin: 0;
+          width: 100%;
+          max-width: 120px;
+        }
+      }
+    }
+
+    .game-ended-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.5s ease-in-out;
+
+      .game-ended-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #6a11cb;
+        margin-bottom: 2rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .winner-info {
+        h3 {
+          font-size: 1.8rem;
+          color: #2575fc;
+          font-weight: 600;
+        }
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
@@ -191,6 +229,33 @@
           }
         }
       }
+
+      .correct-answer-container {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+        .correct-answer-info {
+          text-align: center;
+
+          h4 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: 600;
+          }
+
+          .correct-answer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2e7d32;
+            margin: 1rem 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
     }
 
     .waiting-message {
@@ -209,12 +274,42 @@
     }
 
     .admin-controls-container {
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       padding: 1.5rem;
       background-color: #f8f9fa;
       border-radius: 12px;
       border-left: 4px solid #2575fc;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: #333;
+        font-size: 1.4rem;
+      }
+
+      .next-question-btn {
+        padding: 0.8rem 1.5rem;
+        background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &:active {
+          transform: translateY(1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+      }
     }
   }
 }

@@ -107,8 +107,8 @@ export class GameActionsComponent {
           console.log('Joined quiz:', response);
           this.errorMessage.set('Joined quiz successfully! Redirecting to waiting room...');
 
-          // Store player data in local storage
-          localStorage.setItem(`player_${response.quizId}`, JSON.stringify({
+          // Store player data in session storage (unique per tab)
+          sessionStorage.setItem(`player_${response.quizId}`, JSON.stringify({
             playerId: response.playerId,
             playerName: response.playerName
           }));

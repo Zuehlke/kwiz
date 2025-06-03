@@ -62,6 +62,27 @@ export class GameService {
       }
     });
 
+    // Subscribe to game state updates
+    this.webSocketService.getGameStateUpdates(gameId).subscribe({
+      next: (gameState: GameStateDTO) => {
+        console.log('Game state update received:', gameState);
+        this.handleGameStateUpdate(gameState);
+      },
+      error: (error) => {
+        console.error('Error receiving game state updates:', error);
+      }
+    });
+
+    // Fetch initial game state
+    this.fetchGameState(gameId).subscribe({
+      next: (gameState: GameStateDTO) => {
+        console.log('Initial game state fetched:', gameState);
+      },
+      error: (error) => {
+        console.error('Error fetching initial game state:', error);
+      }
+    });
+
     // Emit initial game state
     this.emitGameState();
   }
@@ -122,6 +143,9 @@ export class GameService {
   private handleGameStateUpdate(gameState: any): void {
     console.log('Handling game state update:', gameState);
 
+    // Update the game state signal with the new state
+    this._gameState.set(gameState);
+
     // Emit updated game state
     this.emitGameState();
   }
@@ -130,10 +154,29 @@ export class GameService {
    * Emits the current game state
    */
   private emitGameState(): void {
-
-    this.gameStateUpdateSubject.next(this._gameState()!);
+    const currentState = this._gameState();
+    if (currentState) {
+      this.gameStateUpdateSubject.next(currentState);
+    }
   }
 
+  /**
+   * Returns an observable that emits game state updates
+   * 
+   * @returns An observable of game state updates
+   */
+  getGameStateUpdates(): Observable<GameStateDTO> {
+    return this.gameStateUpdateSubject.asObservable();
+  }
+
+  /**
+   * Returns the current game state
+   * 
+   * @returns The current game state
+   */
+  getCurrentGameState(): GameStateDTO | null {
+    return this._gameState();
+  }
 
   /**
    * Submits an answer for the current question
@@ -159,6 +202,30 @@ export class GameService {
       tap(() => console.log('Answer submitted successfully')),
       catchError(error => {
         console.error('Error submitting answer:', error);
+        return of(null);
+      })
+    );
+  }
+
+  /**
+   * Advances to the next question (admin only)
+   * 
+   * @param gameId The ID of the game
+   * @returns An Observable that completes when the next question is loaded
+   */
+  adminAdvanceToNextQuestion(gameId: string): Observable<any> {
+    return this.http.post(
+      `${this.gameApiUrl}/${gameId}/next-question`,
+      null,
+      {
+        params: {
+          adminId: 'notimplemented' // This is a placeholder, as the backend uses a fixed admin ID
+        }
+      }
+    ).pipe(
+      tap(() => console.log('Advanced to next question successfully')),
+      catchError(error => {
+        console.error('Error advancing to next question:', error);
         return of(null);
       })
     );

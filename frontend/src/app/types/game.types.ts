@@ -52,4 +52,5 @@ export interface GameStateDTO {
   playersAnswered?: number;
   playerAnswers?: PlayerAnswer[];
   fastestAnswerTime?: number;
+  correctAnswer?: string;
 }

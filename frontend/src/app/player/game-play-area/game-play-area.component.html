@@ -21,15 +21,17 @@
   </div>
 
   <div class="game-content">
-    <!-- Timer Display -->
-    @if (gameState?.remainingSeconds !== undefined) {
-      <app-timer-display 
-        [timeRemaining]="gameState?.remainingSeconds!">
-      </app-timer-display>
-    }
-
     <!-- Game Stats -->
     <div class="game-stats">
+      <!-- Timer Display -->
+      @if (gameState?.remainingSeconds !== undefined) {
+        <div class="stats-item">
+          <span class="stats-label">Time Remaining:</span>
+          <app-timer-display 
+            [timeRemaining]="gameState?.remainingSeconds!">
+          </app-timer-display>
+        </div>
+      }
       <div class="stats-item">
         <span class="stats-label">Players Answered:</span>
         <span class="stats-value">{{ playersAnswered }} / {{ totalPlayers }}</span>
@@ -39,6 +41,52 @@
         <span class="stats-value">{{ fastestAnswerTime !== null ? fastestAnswerTime + 's' : 'N/A' }}</span>
       </div>
     </div>
+
+    <!-- Game Ended Display -->
+    @if (gameState?.status === 'GAME_OVER') {
+      <div class="game-ended-container">
+        <h2 class="game-ended-title">GAME ENDED</h2>
+        @if (leaderboard.length > 0) {
+          <div class="winner-info">
+            <h3>The winner is: {{ leaderboard[0].playerName }} with {{ leaderboard[0].score }} points</h3>
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Question Display -->
+      @if (currentQuestion) {
+        <div class="question-container">
+          <app-question-display
+            [question]="currentQuestion"
+            [isSubmissionAllowed]="!isAdminMode && (gameState?.acceptingAnswers ?? false) && !answerSubmitted"
+            (answerSelected)="onAnswerSelected($event)">
+          </app-question-display>
+
+          <!-- Answer Status - Only shown for players, not admins -->
+          @if (answerSubmitted && !isAdminMode) {
+            <div class="answer-status">
+              <div class="answer-info">
+                <h4>Your Answer:</h4>
+                <p class="player-answer">{{ playerAnswer }}</p>
+                @if (answerTime !== null) {
+                  <p class="answer-time">Time: {{ answerTime }}s</p>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Correct Answer - Shown when available -->
+          @if (gameState?.correctAnswer) {
+            <div class="correct-answer-container">
+              <div class="correct-answer-info">
+                <h4>Correct Answer:</h4>
+                <p class="correct-answer">{{ gameState?.correctAnswer }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
 
     <!-- Players Who Answered -->
     @if (gameState?.playerAnswers?.length) {
@@ -55,35 +103,19 @@
       </div>
     }
 
-    <!-- Question Display -->
-    @if (currentQuestion) {
-      <div class="question-container">
-        <app-question-display
-          [question]="currentQuestion"
-          [isSubmissionAllowed]="!isAdminMode && (gameState?.acceptingAnswers ?? false) && !answerSubmitted"
-          (answerSelected)="onAnswerSelected($event)">
-        </app-question-display>
-
-        <!-- Answer Status - Only shown for players, not admins -->
-        @if (answerSubmitted && !isAdminMode) {
-          <div class="answer-status">
-            <div class="answer-info">
-              <h4>Your Answer:</h4>
-              <p class="player-answer">{{ playerAnswer }}</p>
-              @if (answerTime !== null) {
-                <p class="answer-time">Time: {{ answerTime }}s</p>
-              }
-            </div>
-          </div>
-        }
-      </div>
-    }
-
     <!-- Score Display -->
     <app-score-display
       [playerScore]="isAdminMode ? 0 : getCurrentPlayerScore()"
       [leaderboard]="leaderboard"
       [showPlayerScore]="!isAdminMode">
     </app-score-display>
+
+    <!-- Admin Controls - Only shown in admin mode -->
+    @if (isAdminMode && gameState?.status === 'QUESTION_CLOSED') {
+      <div class="admin-controls-container">
+        <h3>Admin Controls</h3>
+        <button class="next-question-btn" (click)="onNextQuestion()">Next Question</button>
+      </div>
+    }
   </div>
 </section>

@@ -67,8 +67,8 @@ export class JoinQuizzComponent implements OnInit {
         if (response) {
           console.log('Joined quiz:', response);
 
-          // Store player data in local storage
-          localStorage.setItem(`player_${response.quizId}`, JSON.stringify({
+          // Store player data in session storage (unique per tab)
+          sessionStorage.setItem(`player_${response.quizId}`, JSON.stringify({
             playerId: response.playerId,
             playerName: response.playerName
           }));
