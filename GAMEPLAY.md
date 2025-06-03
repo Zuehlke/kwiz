@@ -2,13 +2,14 @@
 
 ## Quizmaster
 The quizmaster is responsible for:
-1. Preparing the quiz questions and answers.
-2. Providing the link or code to join a quiz to players.
+1. Preparing the quiz questions and answers (or asking each player to add some during wait for game start). 
+2. Providing the link or code to join a quiz to players (simply share the join link or the screen - so everybody can use the QR code on the admin screen).
 
-## players
+## Players
 1. **No Cheating**: The Online research or asking people not part of the player group is not allowed.
 2. **Quiet During Questions**: players should remain quiet while questions are being read.
 3. **Time Limit**: Each round typically has a set time limit for answering questions.
+4. **Create Questions:** You can create own questions during wait for game start, if the game master asks you too. But do only add the amount of questions you have been asked for - such that all players have same amount of known questions and answers to keep it fair.
 
 ## Quiz creation
 1. The quizmaster creates a quiz with a set of questions and answers.
@@ -51,3 +52,13 @@ The quizmaster is responsible for:
 2. Once an answer is submitted, the answer cannot be changed.
 3. Before a player sees the next question, the player sees a countdown.
 4. After every round, every player can see the ranking.
+
+## Scoring System
+1. Points are only awarded for correct answers.
+2. The point calculation is based on how quickly a player answers a question:
+   1. Maximum points (100) are awarded when answering immediately.
+   2. Minimum points (1) are awarded when answering at the last moment.
+   3. Points are linearly distributed based on the percentage of time left when answering.
+   4. The formula is: `points = percentageTimeLeft * 100`, where `percentageTimeLeft = 1.0 - (answerTimeMs / totalTimeMs)`.
+3. Incorrect answers receive 0 points.
+4. A player's total score is the sum of points earned across all questions.
