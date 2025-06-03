@@ -92,9 +92,6 @@ class GameOrchestrationServiceTest {
 
     @Test
     void testCreateAndStartGame() {
-        // Mock the game engine to return the quiz
-        when(gameEngine.getQuizById(quizId)).thenReturn(quiz);
-
         // Mock the repository to return the game ID
         when(gameRepository.save(any(Game.class))).thenAnswer(invocation -> {
             Game savedGame = invocation.getArgument(0);
@@ -107,9 +104,6 @@ class GameOrchestrationServiceTest {
 
         // Verify the result
         assertEquals(gameId, resultGameId);
-
-        // Verify the game engine was called to get the quiz
-        verify(gameEngine).getQuizById(quizId);
 
         // Verify the repository was called to save the game
         verify(gameRepository).save(any(Game.class));
@@ -235,17 +229,16 @@ class GameOrchestrationServiceTest {
         multiRoundGame.startGame(java.util.Arrays.asList(round1, round2));
         setPrivateField(multiRoundGame, "id", gameId);
 
-        // Close the current question and advance to the next round
+        // Close the current question
         multiRoundGame.adminCloseCurrentQuestion(adminId);
-        multiRoundGame.adminProceedToNextQuestion(adminId);
 
         // Mock the repository to return the multi-round game
         when(gameRepository.findById(gameId)).thenReturn(Optional.of(multiRoundGame));
 
-        // Call the service method
-        gameOrchestrationService.adminStartNextRound(gameId, adminId);
+        // Call the service method to advance to the next question/round
+        gameOrchestrationService.adminAdvanceToNextQuestion(gameId, adminId);
 
-        // Verify the game state
+        // Verify the game state after advancing to the next round
         assertEquals(GameStatus.QUESTION_ACTIVE, multiRoundGame.getStatus());
         assertEquals(1, multiRoundGame.getCurrentRoundIndex());
         assertEquals(0, multiRoundGame.getCurrentQuestionIndex());
