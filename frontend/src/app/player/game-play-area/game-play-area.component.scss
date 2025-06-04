@@ -20,21 +20,22 @@
     color: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
-    h2 {
-      font-size: 2.5rem;
-      margin: 0;
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      letter-spacing: 1px;
-    }
-
-    .game-info {
+    .header-content {
       display: flex;
-      flex-direction: column;
-      gap: 0.8rem;
-      font-size: 1.2rem;
+      align-items: center;
+      gap: 1rem;
 
-      .player-info {
+      h2 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        letter-spacing: 1px;
+        order: 1; // Default order for desktop
+      }
+
+      .player-info, .admin-info {
+        order: 2; // Default order for desktop
         padding: 0.5rem 1rem;
         background-color: rgba(255, 255, 255, 0.2);
         border-radius: 8px;
@@ -44,6 +45,13 @@
           font-weight: 600;
         }
       }
+    }
+
+    .game-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      font-size: 1.2rem;
 
       .round-info {
         display: flex;
@@ -317,12 +325,183 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .game-play-area {
-    padding: 1rem;
+    padding: 0.75rem;
+    min-height: auto;
 
     .game-header {
-      flex-direction: column;
-      align-items: flex-start;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      padding: 0.75rem;
+
+      .header-content {
+        flex: 1;
+
+        h2 {
+          font-size: 1.5rem;
+          margin-bottom: 0;
+          order: 2; // Swap order on tablets
+        }
+
+        .player-info, .admin-info {
+          order: 1; // Swap order on tablets
+          padding: 0.25rem 0.5rem;
+          font-size: 0.9rem;
+        }
+      }
+
+      .game-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: auto;
+        gap: 0.4rem;
+        font-size: 1rem;
+
+        .round-info {
+          padding: 0.25rem 0.5rem;
+        }
+      }
+    }
+
+    .game-content {
       gap: 1rem;
+
+      .game-stats {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+
+        .stats-item {
+          margin: 0.25rem;
+          flex-direction: row;
+          gap: 0.5rem;
+          align-items: center;
+          justify-content: center;
+
+          .stats-label {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+          }
+
+          .stats-value {
+            font-size: 1.1rem;
+          }
+
+          app-timer-display {
+            max-width: 80px;
+          }
+        }
+      }
+
+      .question-container {
+        padding: 1rem;
+
+        &:hover {
+          transform: none;
+        }
+      }
+
+      .players-answered {
+        padding: 1rem;
+        margin-bottom: 1rem;
+
+        h4 {
+          font-size: 1rem;
+        }
+
+        .players-list {
+          gap: 0.5rem;
+
+          .player-item {
+            min-width: auto;
+            width: 100%;
+            padding: 0.4rem 0.75rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Additional adjustments for very small screens */
+@media (max-width: 480px) {
+  .game-play-area {
+    padding: 0.5rem;
+
+    .game-header {
+      padding: 0.5rem;
+
+      .header-content {
+        gap: 0.5rem;
+
+        h2 {
+          font-size: 1.1rem; // Even smaller on mobile
+          order: 2; // Keep the swapped order
+        }
+
+        .player-info, .admin-info {
+          order: 1; // Keep the swapped order
+          font-size: 0.8rem;
+          padding: 0.15rem 0.3rem;
+
+          .player-name {
+            font-weight: 500; // Slightly lighter font weight
+          }
+        }
+      }
+
+      .game-info {
+        .round-info {
+          display: none; // Hide round info on very small screens to save space
+        }
+      }
+    }
+
+    .game-content {
+      gap: 0.5rem; // Reduce vertical spacing between panels
+
+      .game-stats {
+        flex-direction: column;
+        padding: 0.5rem;
+
+        .stats-item {
+          &:first-child {
+            width: 100%;
+            margin-bottom: 0.25rem;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 0.25rem;
+          }
+
+          &:not(:first-child) {
+            display: inline-flex;
+            width: auto;
+            margin: 0 0.25rem;
+            padding: 0.15rem 0;
+            border-bottom: none;
+
+            .stats-label {
+              font-size: 0.7rem;
+            }
+
+            .stats-value {
+              font-size: 0.9rem;
+              margin-left: 0.25rem;
+            }
+          }
+        }
+
+        // Create a flex container for players answered and fastest answer
+        &::after {
+          content: "";
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          width: 100%;
+        }
+      }
     }
   }
 }

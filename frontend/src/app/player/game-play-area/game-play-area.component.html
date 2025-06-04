@@ -1,22 +1,23 @@
 <section class="game-play-area">
   <div class="game-header">
-    <h2>{{ gameState?.currentRoundName || 'Quiz Game' }}</h2>
-    <div class="game-info">
+    <div class="header-content">
       @if (!isAdminMode) {
         <div class="player-info">
-          <span class="player-name">Player: {{ currentPlayer?.playerName || 'Unknown' }}</span>
+          <span class="player-name">{{ currentPlayer?.playerName || 'Unknown' }}</span>
         </div>
       } @else {
         <div class="admin-info">
           <span class="admin-label">Admin View</span>
         </div>
       }
-      <div class="round-info">
-        <span>Round: {{ gameState?.currentRoundName || 'Loading...' }}</span>
-        @if (gameState?.totalRounds) {
+      <h2>{{ gameState?.currentRoundName || 'Quiz Game' }}</h2>
+    </div>
+    <div class="game-info">
+      @if (gameState?.totalRounds) {
+        <div class="round-info">
           <span>{{ gameState?.currentRoundId ? gameState?.currentRoundId : '?' }}/{{ gameState?.totalRounds }}</span>
-        }
-      </div>
+        </div>
+      }
     </div>
   </div>
 

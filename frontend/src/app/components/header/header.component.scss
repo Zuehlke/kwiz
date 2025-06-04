@@ -11,7 +11,7 @@ $transition-speed: 0.3s;
   position: sticky;
   top: 0;
   z-index: 100;
-  
+
   .header-container {
     display: flex;
     justify-content: space-between;
@@ -20,11 +20,11 @@ $transition-speed: 0.3s;
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .logo {
     display: flex;
     flex-direction: column;
-    
+
     h1 {
       margin: 0;
       font-size: 2rem;
@@ -32,24 +32,24 @@ $transition-speed: 0.3s;
       color: $primary-color;
       letter-spacing: 1px;
     }
-    
+
     .tagline {
       font-size: 0.9rem;
       color: $text-color;
       opacity: 0.8;
     }
   }
-  
+
   .navigation {
     ul {
       display: flex;
       list-style: none;
       margin: 0;
       padding: 0;
-      
+
       li {
         margin-left: 1.5rem;
-        
+
         a {
           text-decoration: none;
           color: $text-color;
@@ -57,14 +57,14 @@ $transition-speed: 0.3s;
           padding: 0.5rem 0;
           position: relative;
           transition: color $transition-speed ease;
-          
+
           &:hover {
             color: $primary-color;
           }
-          
+
           &.active {
             color: $primary-color;
-            
+
             &:after {
               content: '';
               position: absolute;
@@ -85,20 +85,58 @@ $transition-speed: 0.3s;
 @media (max-width: 768px) {
   .header {
     .header-container {
-      flex-direction: column;
-      padding: 1rem;
+      flex-direction: row;
+      padding: 0.75rem 1rem;
     }
-    
+
     .logo {
-      margin-bottom: 1rem;
+      margin-bottom: 0;
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .tagline {
+        font-size: 0.7rem;
+      }
     }
-    
+
     .navigation ul {
       flex-wrap: wrap;
-      justify-content: center;
-      
+      justify-content: flex-end;
+
       li {
-        margin: 0 0.75rem;
+        margin: 0 0.5rem;
+      }
+    }
+  }
+}
+
+// Additional media query for very small screens (mobile)
+@media (max-width: 480px) {
+  .header {
+    .header-container {
+      padding: 0.5rem;
+    }
+
+    .logo {
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .tagline {
+        display: none; // Hide tagline on very small screens
+      }
+    }
+
+    .navigation ul {
+      li {
+        margin: 0 0.25rem;
+
+        a {
+          font-size: 0.9rem;
+          padding: 0.25rem 0;
+        }
       }
     }
   }
