@@ -42,12 +42,12 @@ public class Quiz {
         this.currentGameId = null;
 
         if (addDefaults) {
-            // First round should always be precreated
+            // First default round
             Round round = new Round("Round 1");
 
             // Just a dummy question and player for easier testing
-            round.addQuestion(new Question("What is 2+2?", Collections.singletonList("4"), 10));
-            this.addPlayer(new Player("Player 1"));
+            round.addQuestion(new Question("What game did Christian Moser’s 9 year old son implement using AI? Is it Snake, Minecraft, Tetris or Pub Quiz?", Collections.singletonList("Minecraft"), 30));
+            this.addPlayer(new Player("Junie"));
             this.addRound(round);
         }
     }
