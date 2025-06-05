@@ -1,5 +1,7 @@
 # KwiZ - The Zühlke Pub Quiz
 
+A sample fullstack application built for education purpose using AI (IntelliJ Junie) to try out it's newest AI capabilities and power.
+
 ## Introduction
 A pub quiz is a quiz held in a pub or bar. These quizzes are popular social events that combine knowledge testing with a fun, relaxed atmosphere. This document outlines the basic rules for running and participating in a pub quiz.
 
